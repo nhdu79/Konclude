@@ -1,0 +1,23 @@
+# qmake-generated build files
+Makefile
+Makefile*
+*.pro.user
+*.pro.user.*
+.qmake.stash
+
+# qmake build output directories (per .pro variant)
+GeneratedFiles/
+release/
+Release/
+releaseembedded/
+ReleaseEmbedded/
+debug/
+Debug/
+
+# compiled object/moc/ui/rcc files, wherever they land
+*.o
+*.obj
+moc_*.cpp
+moc_*.h
+ui_*.h
+qrc_*.cpp

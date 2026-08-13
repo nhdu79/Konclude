@@ -31,7 +31,7 @@ the next — failures in this integration tend to be crashes/memory corruption
 rather than clean exceptions, so validating incrementally matters more here
 than in typical Python-side work.
 
-**Status: Phase 1 done. Phase 2 not started.**
+**Status: Phase 1 done. Phase 2 in progress (facade skeleton built and linking; incremental axiom assert/retract still missing; CQ answering designed via Rasqal-free SPARQL parsing, not yet implemented).**
 
 ### 1. Prove "builds as a library, no `main()`" first, with zero new API code — ✅ done
 
@@ -130,6 +130,150 @@ than in typical Python-side work.
   - `CConfigJNIReader` reads configuration from an in-memory string instead
     of a `-c FILEPATH` file — the precedent for configuring
     `konclude_create_reasoner` without requiring a config file on disk.
+
+**What was actually done:**
+
+- Added `Source/Control/Interface/Embedded/` with four files, wired into
+  `Konclude.pri` (`HEADERS` and `SOURCES`) the same way the JNI files are:
+  - `konclude_embedded.h` — the public `extern "C"` facade. Opaque
+    `typedef void* KoncludeReasonerHandle`, no Qt/C++ types in any signature.
+  - `CEmbeddedReasoner.h`/`.cpp` — wraps a per-instance `CCommanderManager`
+    (via `CCommanderManagerThread`), guarded by `KONCLUDE_COMPILE_EMBEDDED_INTERFACE`
+    exactly like the JNI files are guarded by their own flag.
+  - `CEmbeddedInterfaceCAPI.cpp` — the thin `extern "C"` shim that downcasts
+    the opaque handle and forwards to `CEmbeddedReasoner`.
+- Implemented and working: `konclude_create_reasoner`,
+  `konclude_destroy_reasoner`, `konclude_load_ontology_file`,
+  `konclude_check_consistency`, `konclude_check_satisfiability`,
+  `konclude_last_error`.
+- Phase 3 (QCoreApplication-once, never `exec()`) and Phase 4 (`-w N>=2`
+  hard-enforced) were folded directly into `CEmbeddedReasoner`'s constructor
+  rather than deferred — see that file for the detail on *how* each is
+  applied (a per-`CConfiguration` override for the processor count, mirroring
+  the CLI's `-w N` flag exactly, since the naive approach of re-registering
+  the config description silently created a second, unread one and
+  reproduced the deadlock it was meant to prevent).
+- Building `KoncludeEmbedded.pro` compiles this cleanly with zero errors and
+  links into `libKonclude.dylib`. Verified via `nm -g`: all six functions
+  above are present as exported symbols (`_konclude_create_reasoner`,
+  `_konclude_check_satisfiability`, etc.) — the facade is real, not just
+  compiling in isolation.
+
+**Left to do for phase 2:**
+
+- **`konclude_assert_axiom` / `konclude_retract_axiom` are not implemented
+  yet.** This is the actual point of the exercise: FD cannot reload the
+  whole ontology file per search state at millions-of-calls scale, so
+  `konclude_load_ontology_file` alone (one-shot, once per instance) isn't
+  sufficient for the real integration. The precedent this needs
+  (`CJNIAxiomExpressionVisitingLoader` + `CJNIOntologyRevisionData` /
+  `COntologyRevision`) is referenced in code comments but not yet used.
+- No config-string input path exists — `konclude_create_reasoner` takes no
+  parameters, so there's no analogue to `CConfigJNIReader`'s in-memory
+  config yet. Lower priority than assert/retract; may be fine to defer past
+  phase 2.
+- No smoke test yet confirming the facade works end-to-end (load →
+  consistency/satisfiability → answer matches trusted CLI output) — only
+  that it compiles and the symbols link. An untracked `roberts-class.owl.xml`
+  at the repo root looks like a manual test fixture from exploring this, but
+  there's no test harness or driver code yet. Formal correctness gating is
+  phase 7's job, but a minimal manual sanity check before adding more
+  surface area (assert/retract) would de-risk building on an unverified
+  foundation.
+
+**Conjunctive query (CQ) answering — design findings (not yet implemented):**
+
+- **JNI is not usable prior art here.** `CJNIQueryProcessor` only exposes
+  fixed-shape, single-atom queries (`queryOntologyInstances`,
+  `queryOntologySubClasses`, `queryOntologyTypes`, etc.), each built from a
+  single class/individual/property name string. None of them construct a
+  `CComplexAnsweringQuery` or touch the composition-tree join/propagation
+  machinery that real multi-atom CQ answering uses. `CInstancesQuery` /
+  `CIsInstanceOfQuery` (`Reasoner/Query/`) are similarly single-atom only —
+  neither can express a 2-3 atom pattern like
+  `Person(?x), hasParent(?x,?y), Doctor(?y)`.
+- **Initial design assumption was wrong — corrected by follow-up research.**
+  The first pass assumed CQs would need to be built atom-by-atom through a
+  bespoke C API (`konclude_query_add_class_atom`/`add_property_atom`/...),
+  reasoning that real SPARQL-text parsing requires Rasqal, which the
+  embedded build deliberately excludes. That's false:
+  `CSPARQLSimpleQueryParser` (`Parser/CSPARQLSimpleQueryParser.h/.cpp`)
+  parses genuine SPARQL `SELECT` syntax with **zero Rasqal/Redland
+  dependency** (no `KONCLUDE_REDLAND_INTEGRATION` guard anywhere in it), and
+  it's already compiled unconditionally into every `.pro` variant via
+  `Konclude.pri:413,3056` — including the current `KoncludeEmbedded.pro`
+  build, with nothing new to add. So the embedded facade can accept a real
+  SPARQL `SELECT` string directly, rather than needing a hand-rolled
+  atom-building C API.
+- **The non-Rasqal SPARQL execution sequence**, confirmed from a real
+  non-Rasqal call site in `Control/Interface/OWLlink/COWLlinkProcessor.cpp:890-917`:
+  ```cpp
+  CConcreteOntologyUpdateSeparateHashingCollectorBuilder* builder =
+      new CConcreteOntologyUpdateSeparateHashingCollectorBuilder(onto);
+  CConcreteOntologyQueryExtendedBuilder* queryBuilderGen =
+      new CConcreteOntologyQueryExtendedBuilder(baseOnt, onto, ontConfig, builder);
+  CSPARQLQueryParser* sparqlQueryParser =
+      new CSPARQLSimpleQueryParser(queryBuilderGen, builder, onto);
+  builder->initializeBuilding();
+  sparqlQueryParser->parseQueryTextList(queryStringList);   // real SPARQL SELECT text
+  builder->completeBuilding();
+  queryList = queryBuilderGen->generateQuerys();            // QList<CQuery*>, ready for CCalculateQueryCommand
+  ```
+  From there, dispatch is identical to every other query already in
+  `CEmbeddedReasoner`: wrap the resulting `CQuery*` in `CCalculateQueryCommand`
+  (the same single command class used for satisfiability/consistency — there
+  is no separate CQ-specific command; dispatch is polymorphic on the
+  `CQuery*`'s own type), delegate through `mPreconditionSynchronizer`, block
+  on `CCommandExecutedBlocker::waitExecutedCommand`.
+- **`expressionOntology` is not a fresh/empty ontology — it's the knowledge
+  base's own current `COntologyRevision`.** Confirmed at both non-Rasqal call
+  sites (`COWLlinkProcessor.cpp:876-877,2162-2170`):
+  `onto = ontRev->getOntology()` (the current revision) is passed as
+  `expressionOntology`, and `ontRev->getPreviousOntologyRevision()->getOntology()`
+  (the prior revision) is passed as `baseOntology`. No separate/empty
+  ontology object is constructed anywhere in the codebase for this purpose —
+  query-local declarations (like SPARQL variables) get registered directly
+  onto the live ontology's current revision via the
+  `CConcreteOntologyUpdateSeparateHashingCollectorBuilder` transaction
+  (`initializeBuilding()` → parse → `completeBuilding()`), not onto a
+  disposable side object. `CExpressionVariable` itself
+  (`Parser/Expressions/CExpressionVariable.h:57`) is a trivial name-only leaf
+  type with no separate registration call.
+- **Open risk carried forward, not yet resolved:** because query parsing
+  mutates the live ontology's revision chain (to register query-local
+  variable declarations) rather than a disposable object, executing a CQ is
+  not obviously side-effect-free on `CEmbeddedReasoner`'s knowledge base
+  state. At FD's millions-of-calls scale, if each query execution leaves
+  behind a new `COntologyRevision`, that's a per-call revision-chain growth
+  problem analogous to (and possibly compounding with) the assert/retract
+  axiom item above. Needs verification before this is built: does
+  `completeBuilding()`/query execution clean up query-local declarations
+  afterward, or does the revision chain grow unboundedly per query?
+- **Result extraction API** (confirmed, in `Reasoner/Query/`): three-level
+  pull-iterator structure — `CVariableBindingsAnswersResult` (result set:
+  `getVariableNames()`, `getResultCount()`,
+  `getVariableBindingsAnswersIterator()`) → `CVariableBindingsAnswersResultIterator`
+  (row-by-row) → `CVariableBindingsResultIterator` (cell-by-cell within a
+  row) → `CVariableBindingStringResult::getBindingString()` (each bound
+  value as a `QString`, convertible to `const char*` the same way
+  `CEmbeddedReasoner::getLastErrorCStr()` already handles `mLastError`).
+- **Proposed (not yet implemented) C API shape**, given the corrected design:
+  ```c
+  typedef void* KoncludeQueryResultHandle;
+
+  KoncludeQueryResultHandle konclude_execute_sparql_query(KoncludeReasonerHandle handle, const char* sparqlSelectQuery);
+  int konclude_query_result_row_count(KoncludeQueryResultHandle r);
+  int konclude_query_result_variable_count(KoncludeQueryResultHandle r);
+  const char* konclude_query_result_variable_name(KoncludeQueryResultHandle r, int varIndex);
+  const char* konclude_query_result_binding(KoncludeQueryResultHandle r, int row, int varIndex);
+  void konclude_query_result_destroy(KoncludeQueryResultHandle r);
+  ```
+  Much smaller surface than the originally-proposed atom-by-atom API — one
+  execute call plus a result accessor set. `generateQuerys()` returns a
+  `QList<CQuery*>` (plural) for a batch of query texts; the single-string
+  `konclude_execute_sparql_query` should assume/assert a one-query-in,
+  one-query-out relationship and treat more-or-fewer than one as an error,
+  rather than silently taking `.first()`.
 
 ### 3. `QCoreApplication` / event-loop ownership — resolved by the JNI precedent
 

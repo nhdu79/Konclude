@@ -276,6 +276,8 @@ HEADERS += \
    ./Source\Control\Interface\JNI\CJNICommandProcessor.h \
    ./Source\Control\Interface\JNI\CJNIAxiomExpressionVisitingLoader.h \
    ./Source\Control\Interface\JNI\CConfigJNIReader.h \
+   ./Source/Control/Interface/Embedded/konclude_embedded.h \
+   ./Source/Control/Interface/Embedded/CEmbeddedReasoner.h \
    ./Source\Control\Interface\OWLlink\OWLlinkSettings.h \
    ./Source\Control\Interface\OWLlink\COWLLinkRecordInterpreter.h \
    ./Source\Control\Interface\OWLlink\COWLlinkHttpConnectionHandlerProcessorFactory.h \
@@ -2652,7 +2654,7 @@ HEADERS += \
    ./Source\Utilities\Memory\CAllocationLimitationProvider.h \
    ./Source\Utilities\Memory\CMemoryPoolAllocationManager.h \
    ./Source\Utilities\Memory\CMemoryPoolContainer.h \
-
+
 SOURCES += \
    ./Source/CKoncludeInfo.cpp \
    ./Source/mainLoader.cpp \
@@ -2925,6 +2927,8 @@ SOURCES += \
    ./Source/Control/Interface/JNI/CJNICommandProcessor.cpp \
    ./Source/Control/Interface/JNI/CJNIAxiomExpressionVisitingLoader.cpp \
    ./Source/Control/Interface/JNI/CConfigJNIReader.cpp \
+   ./Source/Control/Interface/Embedded/CEmbeddedReasoner.cpp \
+   ./Source/Control/Interface/Embedded/CEmbeddedInterfaceCAPI.cpp \
    ./Source/Control/Interface/OWLlink/COWLLinkRecordInterpreter.cpp \
    ./Source/Control/Interface/OWLlink/COWLlinkHttpConnectionHandlerProcessorFactory.cpp \
    ./Source/Control/Interface/OWLlink/COWLlinkHttpConnectionHandlerProcessor.cpp \

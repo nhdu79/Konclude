@@ -27,6 +27,23 @@ make -j$(sysctl -n hw.ncpu)
 
 The build produces `Release/Konclude.app/Contents/MacOS/Konclude` on macOS (a `.app` bundle even though it's a console tool), or `Release/Konclude` / `Release/Konclude.exe` on Linux/Windows. The `Scripts/Konclude(.sh|.bat)` wrapper scripts point at that binary.
 
+There's also `KoncludeEmbedded.pro`, which builds Konclude as a shared library (`libKonclude.so`/`.dylib`, no `main()`) exposing a plain C `extern "C"` facade for in-process embedding into other applications — see `docs/FASTDOWNWARD_EMBEDDING.md` for the design and `Source/Control/Interface/Embedded/` for the facade itself:
+
+```sh
+qmake -o MakefileEmbedded KoncludeEmbedded.pro
+make -f MakefileEmbedded -j$(nproc)   # -j$(sysctl -n hw.ncpu) on macOS
+```
+
+### `compile_commands.json` for clangd
+
+qmake doesn't emit a compilation database itself. Generate one with the [`compiledb`](https://github.com/nickdiego/compiledb) tool (`pip install compiledb`, ideally in a venv since Debian/Ubuntu's system Python is externally managed) against whichever `Makefile*` you care about:
+
+```sh
+compiledb -n -o compile_commands.json make -f MakefileEmbedded   # or plain `make` for the default Makefile
+```
+
+The `-n` flag does a `make -n` dry run, so this doesn't actually compile anything — safe to run anytime the source file list changes. Regenerate it after adding/removing files from whichever `.pro`/`.pri` target you're editing.
+
 ## Running
 
 ```sh

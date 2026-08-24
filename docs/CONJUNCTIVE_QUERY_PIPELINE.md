@@ -237,6 +237,30 @@ stream instead of a file), and each pooled HTTP connection gets its own
 handler instance ("Pooled" in the class name) rather than sharing one global
 processor.
 
+## Known bugs noticed in this pipeline (not fixed — out of scope when found)
+
+Found while extending `CCreateKnowledgeBaseRevisionUpdateCommand` for direct
+ABox/query injection (unrelated task); left unfixed since they weren't part
+of that change. Both are in `CSPARQLBatchFileLoader`
+(`Control/Loader/CSPARQLBatchFileLoader.cpp`), the loader traced in §2/§6
+above.
+
+- **Null-deref risk on `Konclude.SPARQL.File.WriteBufferBlockingLimit <= 0`.**
+  The constructor only allocates `mWriteLimitSemaphore` when the configured
+  limit is positive (`init()`, lines 91-96: `if (writeBufferBlockingLimit > 0)
+  { mWriteLimitSemaphore = new QSemaphore(...); } else { mWriteLimitSemaphore
+  = nullptr; }`), but `processCustomsEvents()` releases it unconditionally on
+  every `CResultStreamingWriteEvent` (line 138:
+  `mWriteLimitSemaphore->release(1);`, no null check). Setting that config key
+  to `0`/negative — a legal value per its own guard — crashes on the first
+  streamed SPARQL result write.
+- **Acknowledged-unresolved sleep-as-race-workaround.** In
+  `initializeOWLlinkContent()`'s file-not-found branch (lines 180-186), a
+  `this->usleep(200)` precedes `concludeOWLlinkContent()` with the comment
+  `// seems to be required to preventing crashes // TODO: fix`. This is a
+  known timing-dependent workaround for some ordering bug, not a real fix —
+  worth revisiting if `-s` is ever pointed at a missing file under load.
+
 ## Relevance to the embedded facade design
 
 `docs/FASTDOWNWARD_EMBEDDING.md`'s Phase 2 CQ design (`konclude_execute_sparql_query`)

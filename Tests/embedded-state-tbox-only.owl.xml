@@ -1,0 +1,19 @@
+<?xml version='1.0'?>
+<!DOCTYPE Ontology>
+<Ontology xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xml:base="http://example.org/test" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2002/07/owl#" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:xsd="http://www.w3.org/2001/XMLSchema#" ontologyIRI="http://example.org/test">
+ <Prefix name="" IRI="http://example.org/test#"/>
+ <Prefix name="owl" IRI="http://www.w3.org/2002/07/owl#"/>
+ <Prefix name="rdf" IRI="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
+ <Prefix name="xsd" IRI="http://www.w3.org/2001/XMLSchema#"/>
+ <Prefix name="rdfs" IRI="http://www.w3.org/2000/01/rdf-schema#"/>
+ <Declaration>
+  <Class IRI="#Father"/>
+ </Declaration>
+ <Declaration>
+  <Class IRI="#Person"/>
+ </Declaration>
+ <SubClassOf>
+  <Class IRI="#Father"/>
+  <Class IRI="#Person"/>
+ </SubClassOf>
+</Ontology>

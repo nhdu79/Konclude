@@ -1,0 +1,1266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sparql xmlns="http://www.w3.org/2005/sparql-results#" xml:base="http://www.w3.org/2005/sparql-results#" xmlns:owl="http://www.w3.org/2002/07/owl#" xmlns:xsd="http://www.w3.org/2001/XMLSchema#">
+<head>
+  <variable name="x"/>
+  <variable name="y"/>
+</head>
+<results>
+ <!-- end of part 1 -->
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_rivers_lockey_1815</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#sarah_lockey_1848</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_rivers_lockey_1815</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_lockey_1840</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_rivers_lockey_1815</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#elizabeth_ann_lockey_1846</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#edward_jessop_1802</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#mary_jessop_1840</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_rivers_lockey_1815</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#ridman_lockey_1842</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_archer_1835</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#mary_archer_1885</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#edward_jessop_1802</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#amelia_jessop_1837</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_alexander_archer_1882</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#iris_ellen_archer_1906</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_archer_1835</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#ellen_archer_1875</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#edward_jessop_1802</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#ann_jessop_1833</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_alexander_archer_1882</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#joyce_archer_1921</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_archer_1835</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#lily_archer_1880</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#edward_jessop_1802</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#charles_jessop_1831</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_alexander_archer_1882</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#alec_john_archer_1927</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_archer_1835</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_alexander_archer_1882</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_alexander_archer_1882</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#norman_james_archer_1909</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_archer_1835</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_archer_1887</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_alexander_archer_1882</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#ethel_archer_1912</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_dickens_1774</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#mary_dickens_1802</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_dickens_1774</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#sarah_dickens_1801</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#henry_green_1836</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#henrietta_sarah_green_1873</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#vincent_cotton_1808</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#mary_ann_cotton_1847</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_bright_1787</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_bright_1809</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_green</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#mary_green_1803</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_bright_1809</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#martha_ann_bright_1835</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_tubb_1786</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#sarah_jane_tubb_1812</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#henry_green_1836</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#elizabeth_quincey_green_1886</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_rever_1870</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#charles_herbert_rever_1895</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#vincent_cotton_1808</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_cotton_1842</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_bright_1787</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#harriet_bright_1811</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_bright_1809</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#eliza_bright_1842</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_tubb_1786</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_tubb_1808</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#edward_jessop_1802</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_jessop_1836</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#henry_green_1836</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#minnie_green_1871</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_rever_1870</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#beatrice_rever_1901</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#vincent_cotton_1808</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#elizabeth_cotton_1838</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_bright_1787</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#sarah_bright_1817</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_bright_1809</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_bright_1839</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_tubb_1786</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_tubb_1816</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#edward_jessop_1802</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_jessop_1834</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#henry_green_1836</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#mary_kate_green_1865</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_rever_1870</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#vera_gertrude_rever_1904</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_tacey_steward_1873</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#reginald_tacey_steward_1895</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#henry_edmund_bright_1862</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#charlotte_caroline_jane_bright_1894</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#vincent_cotton_1808</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#rebecca_cotton_1845</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_bright_1787</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#edmund_bright_1813</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_bright_1809</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#caroline_bright_1845</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_tubb_1786</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#mary_tubb_1814</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#edward_jessop_1802</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#ellen_jessop_1844</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_rever_1870</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#mabel_rever_1897</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_tacey_steward_1873</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#violet_sylvia_steward_1894</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_green_1813</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#hannah_green_1839</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#henry_edmund_bright_1862</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#kathleen_minnie_bright_1904</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_bright_1787</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#mary_ann_bright_1815</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#vincent_cotton_1808</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#charlotte_cotton_1840</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_tubb_1786</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#henry_tubb_1825</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#edward_jessop_1802</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#emma_jessop_1839</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_rever_1870</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#rose_evlyn_rever_1906</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_tacey_steward_1873</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#minnie_maud_steward_1909</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_green_1813</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#mary_ann_green_1846</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#henry_edmund_bright_1862</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_frank_hayden_bright_1891</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_bright_1787</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#caroline_bright_1822</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#vincent_cotton_1808</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#martha_cotton_1832</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_jessop_1836</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#charlotte_ann_jessop_1865</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_tacey_steward_1873</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#richard_henry_steward_1897</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_green_1813</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#mary_ann_green_1841</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_rever_1870</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_stanley_rever_1899</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#henry_edmund_bright_1862</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#leonard_john_bright_1890</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_bright_1787</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_bright_1827</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#vincent_cotton_1808</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#frances_cotton_1834</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_jessop_1836</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#elizabeth_frances_jessop_1869</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_green_1813</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_green_1843</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#henry_edmund_bright_1862</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#nora_ada_bright_1899</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_bright_1787</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#eliza_bright_1825</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#vincent_cotton_1808</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#susanna_cotton_1836</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_jessop_1836</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#mary_eliza_jessop_1863</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_green_1813</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#george_green_1834</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#henry_edmund_bright_1862</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#henry_edmund_bright_1887</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_bright_1787</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#jane_bright_1820</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#vincent_cotton_1808</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#edward_cotton_1850</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#edward_blanchard_1771</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#elizabeth_blanchard_1807</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_jessop_1836</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#herbert_vincent_jessop_1871</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_green_1813</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#henry_green_1836</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#henry_edmund_bright_1862</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#frederick_herbert_bright_1889</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_jessop_1836</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#edward_jessop_1867</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#henry_edmund_bright_1862</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_george_bright_1901</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_green</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_green_1813</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_green</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#rebecca_green_1800</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_bright_1839</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#caroline_martha_bright_1864</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#henry_green_1836</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#eleanor_frances_green_1863</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_green</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#ann_green_1806</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_bright_1839</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#henry_edmund_bright_1862</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#henry_green_1836</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_henry_hutchinson_green_1875</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#charles_herbert_rever_1895</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#eileen_mary_rever_1929</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_green</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#tamar_green_1810</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_bright_1839</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_samuel_bright_1860</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#henry_green_1836</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#lois_green_1871</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#charles_herbert_rever_1895</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#margaret_grace_rever_1934</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_green</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_green_1802</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_bright_1809</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#sarah_rebecca_bright_1849</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_tubb_1786</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#samuel_tubb_1811</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#henry_green_1836</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#frank_reginald_green_1883</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_green</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#zilpah_green_1810</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_bright_1809</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#edmund_charles_bright_1852</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_tubb_1786</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#edward_tubb_1827</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#ian_bright_1959</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#avril_bright_1990</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#ian_bright_1959</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#thomas_john_bright_1988</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_whitfield_1821</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#alice_whitfield_1859</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#dereck_heath</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#mark_anthony_heath_1960</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#samuel_tubb_1811</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#emma_jane_tubb_1836</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_whitfield_1792</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#thomas_william_whitfield_1826</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_archer_1835</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#thomas_archer_2</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_george_bright_1901</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#david_bright_1934</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_tacey_1783</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#thomas_tacey_1806</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_steward_1802</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#houghton_steward_1841</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#nicholas_charles_heath_1964</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#joshua_charles_heath_2003</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#david_bright_1934</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#robert_david_bright_1965</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#edward_young_1795</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#samuel_young_1829</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#stephen_templar_1960</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#louise_templar_1993</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_bright_1761</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_bright_1787</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#alfred_hostler</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#robert_jerome_hostler</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#luke_bateman_story</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#elma_ellen_story_1893</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#samuel_tubb_1811</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#samuel_tubb_1832</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_whitfield_1792</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#sarah_jane_whitfield_1818</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#mark_anthony_heath_1960</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#rhys_anthony_heath_2006</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_steward_1830</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#george_steward_1856</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_archer_1835</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_english_archer</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_stafford_1779</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#rebecca_stafford_1816</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_bright_1930</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#mark_bright_1956</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#thomas_taisy</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_tacey_1783</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_steward_1802</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#george_steward_1835</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#nicholas_charles_heath_1964</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#benjamin_anthony_heath_2005</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#edward_young_1795</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_young_1836</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#mark_bright_1956</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#holly_bright_1983</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#alfred_hostler</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#edna_hostler</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#samuel_tubb_1811</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#caroline_lavinia_tubb_1840</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_whitfield_1792</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#sarah_jane_whitfield_1829</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_steward_1830</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#betsy_ann_steward_1865</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_stafford_1779</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_stafford_1803</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_bright_1930</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#janet_bright_1964</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_archer_1804</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#elizabeth_archer_1843</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_steward_1802</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#elizabeth_steward_1850</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#edward_young_1795</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#henry_young_1831</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#norman_james_archer_1909</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#jean_margaret_archer_1934</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#mark_bright_1956</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#christian_bright_1985</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#samuel_tubb_1811</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#thomas_andrew_tubb_1838</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_whitfield_1792</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#louisa_whitfield_1817</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_stafford_1779</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#george_stafford_1807</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_steward_1830</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#mary_ellen_steward_1855</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_bright_1930</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#ian_bright_1959</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_archer_1804</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#dorothy_archer_1845</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_steward_1802</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_steward_1830</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#edward_young_1795</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_young_1827</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#norman_james_archer_1909</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#yvonne_archer_1940</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_lock</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_lock_jacobs_1861</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_frank_hayden_bright_1891</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#frank_hewett_bright_1920</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_stafford_1779</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#martha_stafford_1814</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_steward_1830</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#laura_steward_1859</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_bright_1964</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_bright_2001</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_bright_1930</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_bright_1970</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_archer_1804</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#thomas_archer_1849</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_tubb_1786</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_tubb_1809</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_steward_1802</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_steward_1833</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#edward_young_1795</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_young_1823</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#norman_james_archer_1909</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#ian_alexander_archer_1944</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_lock_jacobs_1861</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#ivy_grace_heath_1894</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_frank_hayden_bright_1891</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#henry_edmond_peter_bright_1926</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#alec_john_archer_1927</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#anne_archer_1964</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_heath</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#lemuel_frederick_heath_1871</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_stafford_1779</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#mary_ann_stafford_1810</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_steward_1830</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#thomas_henry_steward_1874</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_hollinsworth_1768</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#ann_hollinsworth_1808</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_bright_1964</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#rebecca_bright_1999</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_archer_1804</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_archer_1832</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_frank_hayden_bright_1891</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#kathleen_constance_susan_bright_1924</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_cotton_1778</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#martha_cotton_1806</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_tubb_1786</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#thomas_tubb_1820</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_steward_1802</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#ellen_steward_1844</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#norman_james_archer_1909</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_keith_archer_1946</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_lockey_1789</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#henry_waterloo_lockey_1820</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_lock_jacobs_1861</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#clarence_john_heath_1896</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#alec_john_archer_1927</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#paul_archer_1950</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_stafford_1779</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_hewson_stafford_1811</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_steward_1830</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#fred_steward_1869</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_heath</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#ada_rachel_heath_1868</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_hollinsworth_1768</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_hollinsworth_1804</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_archer_1804</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#jane_archer_1837</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_cotton_1778</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_john_cotton_1804</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#peter_william_bright_1941</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#julie_bright_1966</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_steward_1802</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#harsley_steward_1839</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_lockey_1789</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_lockey_1824</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_lock_jacobs_1861</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#iris_maud_gertrude_heath_1901</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#peter_templar_1962</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#laura_templar_1994</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#alec_john_archer_1927</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#helen_archer_1955</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_whitfield_1821</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_whitfield_1848</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_steward_1830</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#catherine_steward_1863</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_heath</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#gwendoline_heath_1878</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_hollinsworth_1768</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#mary_hollingsworth_1801</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_archer_1804</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#mary_archer_1850</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_cotton_1778</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#susannah_cotton_1813</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#Humphrey_archer_1726</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#george_archer_1760</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#peter_william_bright_1941</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#clare_bright_1966</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#dereck_heath</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#nicholas_charles_heath_1964</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_ingelby_1789</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#frances_elizabeth_ingelby_1816</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#robert_harsley_1762</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#elizabeth_harsley_1803</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_steward_1766</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#hannah_steward_1801</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_lockey_1789</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#george_baker_lockey_1812</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_jacobs_1806</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#sarah_jacobs_1834</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_lock_jacobs_1861</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#florelle_nenuphar_heath_1880</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_whitfield_1821</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#harriet_ann_whitfield_1850</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_steward_1830</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#ada_steward_1871</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_archer_1804</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_archer_1840</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#thomas_tacey_1806</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#matthew_tacey_1837</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_cotton_1778</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#rebecca_cotton_1818</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#Humphrey_archer_1726</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_archer_1764</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#peter_william_bright_1941</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_bright_1964</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_ingelby_1789</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#sarah_ingelby_1821</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#robert_harsley_1762</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#randall_harsley_1801</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#richard_pickard_1807</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#george_pickard_1847</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#ralph_pickard_1775</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#ann_pickard_1809</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_steward_1766</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#mark_steward_1811</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_lockey_1789</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#mary_lockey_1818</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_jacobs_1806</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#george_jacobs_1852</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_lock_jacobs_1861</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_alfred_heath_1885</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_whitfield_1821</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#annie_whitfield</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_steward_1830</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_tacey_steward_1873</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_archer_1804</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_archer_1835</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#thomas_tacey_1806</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#george_tacey_1831</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_ingelby_1789</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_ingelby_1811</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#robert_harsley_1762</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#rebecca_harsley_1793</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#ralph_pickard_1775</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_pickard_1805</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_steward_1766</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#ellen_steward_1797</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_frank_hayden_bright_1891</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#charlotte_bright_1928</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#richard_pickard_1807</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#charles_pickard_1854</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_lockey_1789</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#anne_lockey_1829</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_jacobs_1806</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#charles_jacobs_1842</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_lock_jacobs_1861</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#daisy_harriet_heath_1889</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_whitfield_1821</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_whitfield_1852</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#thomas_tacey_1806</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_william_tacey_1841</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_ingelby_1789</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#george_ingelby_1814</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#robert_harsley_1762</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_harsley_1791</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_archer_1764</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#jane_archer</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#ralph_pickard_1775</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#richard_pickard_1807</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_steward_1766</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_steward_1802</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#richard_pickard_1807</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#sarah_pickard_1839</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_steward_1802</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#caroline_steward_1853</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_lockey_1789</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_rivers_lockey_1815</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_jacobs_1806</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#lucy_jacobs_1844</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_lock_jacobs_1861</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#sydney_victor_heath_1899</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_whitfield_1821</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#walter_whitfield_1863</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#robert_harsley_1762</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#mary_harsley_1810</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_tacey_1783</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#mary_tacey_1811</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_archer_1764</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_archer_1801</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#ralph_pickard_1775</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#elizabeth_pickard_1805</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_steward_1766</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_steward_1798</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#richard_pickard_1807</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#harriet_ingelby_pickard_1858</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_steward_1802</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#joseph_steward_1837</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_lockey_1789</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#joseph_lockey_1833</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_hutchinson</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#hannah_hutchinson_1804</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_jacobs_1806</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#jane_jacobs_1836</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_lock_jacobs_1861</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#lemuel_frederic_heath_1891</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_whitfield_1821</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#harry_whitfield_1854</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_whitfield_1792</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#robert_whitfield_1813</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#david_brown</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#rhiannon_brown_1969</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#robert_harsley_1762</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#eleanor_harsley_1808</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_tacey_1783</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#mary_tacey_1809</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_bright_1970</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#reece_bright_1993</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_archer_1764</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_archer_1804</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#ralph_pickard_1775</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#susanna_pickard_1803</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#richard_pickard_1807</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#hannah_pickard_1844</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_steward_1802</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_steward_1827</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_lockey_1789</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#redman_lockey_1822</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_jacobs_1806</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#fanny_jacobs_1840</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#alfred_hostler</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#harry_bright_hostler</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_whitfield_1821</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#george_whitfield_1865</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_whitfield_1792</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#mary_ann_whitfield_1824</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#peter_templar_1962</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#emma_templar_1991</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_george_bright_1901</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_bright_1930</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_tacey_1783</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_tacey_1818</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_frank_hayden_bright_1891</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#marion_jean_bright_1922</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#richard_pickard_1807</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#susanna_pickard_1841</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_steward_1802</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#sarah_steward_1849</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_lockey_1789</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#sarah_lockey_1810</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#edward_young_1795</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#harriet_ann_young_1825</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_jacobs_1806</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#henry_jacobs_1849</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_cotton</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_cotton_1778</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#andrew_usher_1965</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#jack_william_usher_1999</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#tom_pinchbeck</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#celia_pinchbeck_1949</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_whitfield_1821</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#louisa_whitfield_1857</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_whitfield_1792</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_whitfield_1821</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#mark_anthony_heath_1960</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#lynn_michaela_heath_2008</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_george_bright_1901</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#peter_william_bright_1941</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_tacey_1783</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#mary_tacey_1808</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_frank_hayden_bright_1891</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#patricia_bright_1938</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#richard_pickard_1807</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#ralph_pickard_1857</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_steward_1802</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#alfred_steward_1846</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#david_bright_1934</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#richard_john_bright_1962</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#edward_young_1795</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#edward_young_1821</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#arthur_tuton</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#vera_tuton_1920</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#alfred_hostler</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#ruth_hostler</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#jeremiah_jacobs</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_jacobs_1806</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_steward_1766</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_steward_1799</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_lockey_1789</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#nicholas_lockey_1826</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_jacobs_1806</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#frank_jacobs_1846</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#william_lock_jacobs_1861</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#violet_heath_1887</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#alec_john_archer_1927</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#clare_archer_1957</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_whitfield_1821</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#harriet_whitefield_1861</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_steward_1830</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#arthur_steward_1861</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_jessop_1773</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#edward_jessop_1802</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_frank_hayden_bright_1891</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#james_alexander_bright_1921</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_archer_1804</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#christopher_archer_1849</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#thomas_tacey_1806</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#susannah_tacey_1834</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#john_cotton_1778</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#vincent_cotton_1808</uri></binding>
+ </result>
+ <result>
+  <binding name="x"><uri>http://www.co-ode.org/roberts/family-tree.owl#Humphrey_archer_1726</uri></binding>
+  <binding name="y"><uri>http://www.co-ode.org/roberts/family-tree.owl#James_archer_1757</uri></binding>
+ </result>
+</results>
+</sparql>

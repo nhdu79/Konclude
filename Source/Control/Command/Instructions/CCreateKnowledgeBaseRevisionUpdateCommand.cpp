@@ -35,6 +35,8 @@ namespace Konclude {
 					onRev = nullptr;
 					mCreateIfNotExist = false;
 					mReportErrorIfNotExists = true;
+					mABoxOntology = nullptr;
+					mQuery = nullptr;
 				}
 
 				CCreateKnowledgeBaseRevisionUpdateCommand::CCreateKnowledgeBaseRevisionUpdateCommand(const QString &knowledgeBaseNameString, bool createIfNotExist, CCommand *parentSuperCommand) : CKnowledgeBaseCommand(parentSuperCommand) {
@@ -42,6 +44,8 @@ namespace Konclude {
 					onRev = nullptr;
 					mCreateIfNotExist = createIfNotExist;
 					mReportErrorIfNotExists = true;
+					mABoxOntology = nullptr;
+					mQuery = nullptr;
 				}
 
 				CCreateKnowledgeBaseRevisionUpdateCommand::CCreateKnowledgeBaseRevisionUpdateCommand(const QString &knowledgeBaseNameString, bool createIfNotExist, bool reportErrorIfNotExists, CCommand *parentSuperCommand) : CKnowledgeBaseCommand(parentSuperCommand) {
@@ -49,6 +53,17 @@ namespace Konclude {
 					onRev = nullptr;
 					mCreateIfNotExist = createIfNotExist;
 					mReportErrorIfNotExists = reportErrorIfNotExists;
+					mABoxOntology = nullptr;
+					mQuery = nullptr;
+				}
+
+				CCreateKnowledgeBaseRevisionUpdateCommand::CCreateKnowledgeBaseRevisionUpdateCommand(const QString &knowledgeBaseNameString, CConcreteOntology *aboxOntology, CQuery *query, CCommand *parentSuperCommand) : CKnowledgeBaseCommand(parentSuperCommand) {
+					kbString = knowledgeBaseNameString;
+					onRev = nullptr;
+					mCreateIfNotExist = false;
+					mReportErrorIfNotExists = true;
+					mABoxOntology = aboxOntology;
+					mQuery = query;
 				}
 
 				CCreateKnowledgeBaseRevisionUpdateCommand::~CCreateKnowledgeBaseRevisionUpdateCommand() {
@@ -80,6 +95,15 @@ namespace Konclude {
 
 				CCommand *CCreateKnowledgeBaseRevisionUpdateCommand::getCommand() {
 					return this;
+				}
+
+
+				CConcreteOntology *CCreateKnowledgeBaseRevisionUpdateCommand::getABoxOntology() {
+					return mABoxOntology;
+				}
+
+				CQuery *CCreateKnowledgeBaseRevisionUpdateCommand::getQuery() {
+					return mQuery;
 				}
 
 

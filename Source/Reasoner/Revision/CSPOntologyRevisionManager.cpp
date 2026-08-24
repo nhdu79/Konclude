@@ -174,7 +174,7 @@ namespace Konclude {
 					bool forceCreation = cKBRevUpC->requireCreateIfNotExist();
 					bool reportError = cKBRevUpC->reportErrorCreateIfNotExist();
 
-					COntologyRevision* nextOntologyRev = createNewOntologyRevision(kbName, forceCreation, reportError, commandRecordRouter);
+					COntologyRevision* nextOntologyRev = createNewOntologyRevision(kbName, forceCreation, reportError, commandRecordRouter, cKBRevUpC->getABoxOntology());
 					cKBRevUpC->setOntologyRevision(nextOntologyRev);
 
 					CStopProcessCommandRecord::makeRecord(&commandRecordRouter);
@@ -454,7 +454,7 @@ namespace Konclude {
 
 
 
-			COntologyRevision* CSPOntologyRevisionManager::createNewOntologyRevision(const QString& ontologyName, bool forceCreation, bool reportError, CCommandRecordRouter& commandRecordRouter) {
+			COntologyRevision* CSPOntologyRevisionManager::createNewOntologyRevision(const QString& ontologyName, bool forceCreation, bool reportError, CCommandRecordRouter& commandRecordRouter, CConcreteOntology* presetOntology) {
 				QString kbName = ontologyName;
 
 				bool kbExist = checkHasOntology(kbName);
@@ -486,7 +486,11 @@ namespace Konclude {
 						COntologyConfigurationExtension *currOntConfig = currOntologyRev->getOntologyConfiguration();
 						COntologyConfigurationExtension *nextOntConfig = new COntologyConfigurationExtension(currOntConfig, currOntConfig->getAdditionalConfigurationList(), currOntConfig->getConfigurationID() + 1);
 
-						CConcreteOntology *ont = new CConcreteOntology(currOnt, nextOntConfig);
+						// If the caller already handed us a fully-built ABox ontology (the
+						// CCreateKnowledgeBaseRevisionUpdateCommand ABox/query constructor),
+						// wrap that directly as this revision's ontology instead of creating
+						// a fresh empty one to be filled by a parser/builder afterward.
+						CConcreteOntology *ont = presetOntology ? presetOntology : new CConcreteOntology(currOnt, nextOntConfig);
 						kbName = currOnt->getOntologyName();
 						ont->setOntologyName(currOnt->getOntologyName());
 						ont->setOntologyID(ontologyID);

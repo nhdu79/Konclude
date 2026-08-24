@@ -1,0 +1,1269 @@
+<?xml version="1.0"?>
+<Ontology xmlns="http://www.w3.org/2002/07/owl#"
+     xml:base="http://www.semanticweb.org/anon/ontologies/2021/3/robot"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     ontologyIRI="http://www.semanticweb.org/anon/ontologies/2021/3/robot">
+    <Prefix name="" IRI="http://www.semanticweb.org/anon/ontologies/2021/3/robot"/>
+    <Prefix name="owl" IRI="http://www.w3.org/2002/07/owl#"/>
+    <Prefix name="rdf" IRI="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
+    <Prefix name="xml" IRI="http://www.w3.org/XML/1998/namespace"/>
+    <Prefix name="xsd" IRI="http://www.w3.org/2001/XMLSchema#"/>
+    <Prefix name="rdfs" IRI="http://www.w3.org/2000/01/rdf-schema#"/>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf0"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf1"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf10"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf11"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf12"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf13"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf14"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf15"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf16"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf17"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf18"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf19"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf2"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf20"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf21"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf3"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf4"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf5"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf6"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf7"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf8"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf9"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf1"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf10"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf11"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf12"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf13"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf14"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf15"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf16"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf17"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf18"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf19"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf2"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf20"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf21"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf22"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf3"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf4"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf5"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf6"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf7"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf8"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf9"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Column0"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Column1"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Column10"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Column11"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Column12"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Column13"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Column14"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Column15"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Column16"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Column17"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Column18"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Column19"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Column2"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Column20"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Column21"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Column3"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Column4"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Column5"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Column6"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Column7"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Column8"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Column9"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf1"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf10"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf11"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf12"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf13"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf14"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf15"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf16"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf17"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf18"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf19"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf2"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf20"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf21"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf22"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf3"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf4"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf5"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf6"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf7"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf8"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf9"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf0"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf1"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf10"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf11"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf12"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf13"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf14"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf15"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf16"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf17"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf18"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf19"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf2"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf20"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf21"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf3"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf4"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf5"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf6"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf7"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf8"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf9"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Row0"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Row1"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Row10"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Row11"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Row12"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Row13"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Row14"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Row15"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Row16"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Row17"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Row18"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Row19"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Row2"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Row20"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Row21"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Row3"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Row4"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Row5"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Row6"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Row7"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Row8"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Row9"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Rows"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Columns"/>
+    </Declaration>
+    <Declaration>
+        <NamedIndividual IRI="#robot"/>
+    </Declaration>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf0"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Rows"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf1"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf0"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf10"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf9"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf11"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf10"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf12"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf11"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf13"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf12"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf14"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf13"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf15"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf14"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf16"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf15"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf17"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf16"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf18"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf17"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf19"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf18"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf2"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf1"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf20"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf19"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf21"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf20"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf3"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf2"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf4"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf3"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf5"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf4"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf6"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf5"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf7"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf6"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf8"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf7"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf9"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf8"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf1"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf2"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf10"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf11"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf11"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf12"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf12"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf13"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf13"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf14"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf14"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf15"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf15"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf16"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf16"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf17"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf17"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf18"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf18"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf19"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf19"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf20"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf2"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf3"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf20"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf21"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf21"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf22"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf22"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Rows"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf3"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf4"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf4"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf5"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf5"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf6"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf6"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf7"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf7"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf8"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf8"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf9"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf9"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf10"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf1"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf2"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf10"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf11"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf11"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf12"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf12"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf13"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf13"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf14"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf14"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf15"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf15"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf16"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf16"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf17"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf17"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf18"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf18"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf19"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf19"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf20"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf2"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf3"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf20"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf21"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf21"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf22"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf22"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Columns"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf3"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf4"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf4"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf5"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf5"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf6"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf6"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf7"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf7"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf8"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf8"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf9"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf9"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf10"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf0"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Columns"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf1"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf0"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf10"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf9"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf11"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf10"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf12"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf11"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf13"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf12"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf14"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf13"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf15"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf14"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf16"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf15"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf17"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf16"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf18"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf17"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf19"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf18"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf2"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf1"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf20"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf19"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf21"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf20"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf3"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf2"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf4"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf3"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf5"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf4"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf6"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf5"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf7"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf6"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf8"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf7"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf9"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf8"/>
+    </SubClassOf>
+    <SubClassOf>
+        <ObjectIntersectionOf>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf0"/>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf1"/>
+        </ObjectIntersectionOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Row0"/>
+    </SubClassOf>
+    <SubClassOf>
+        <ObjectIntersectionOf>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf1"/>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf2"/>
+        </ObjectIntersectionOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Row1"/>
+    </SubClassOf>
+    <SubClassOf>
+        <ObjectIntersectionOf>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf10"/>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf11"/>
+        </ObjectIntersectionOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Row10"/>
+    </SubClassOf>
+    <SubClassOf>
+        <ObjectIntersectionOf>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf11"/>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf12"/>
+        </ObjectIntersectionOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Row11"/>
+    </SubClassOf>
+    <SubClassOf>
+        <ObjectIntersectionOf>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf12"/>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf13"/>
+        </ObjectIntersectionOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Row12"/>
+    </SubClassOf>
+    <SubClassOf>
+        <ObjectIntersectionOf>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf13"/>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf14"/>
+        </ObjectIntersectionOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Row13"/>
+    </SubClassOf>
+    <SubClassOf>
+        <ObjectIntersectionOf>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf14"/>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf15"/>
+        </ObjectIntersectionOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Row14"/>
+    </SubClassOf>
+    <SubClassOf>
+        <ObjectIntersectionOf>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf15"/>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf16"/>
+        </ObjectIntersectionOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Row15"/>
+    </SubClassOf>
+    <SubClassOf>
+        <ObjectIntersectionOf>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf16"/>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf17"/>
+        </ObjectIntersectionOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Row16"/>
+    </SubClassOf>
+    <SubClassOf>
+        <ObjectIntersectionOf>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf17"/>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf18"/>
+        </ObjectIntersectionOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Row17"/>
+    </SubClassOf>
+    <SubClassOf>
+        <ObjectIntersectionOf>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf18"/>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf19"/>
+        </ObjectIntersectionOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Row18"/>
+    </SubClassOf>
+    <SubClassOf>
+        <ObjectIntersectionOf>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf19"/>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf20"/>
+        </ObjectIntersectionOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Row19"/>
+    </SubClassOf>
+    <SubClassOf>
+        <ObjectIntersectionOf>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf2"/>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf3"/>
+        </ObjectIntersectionOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Row2"/>
+    </SubClassOf>
+    <SubClassOf>
+        <ObjectIntersectionOf>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf20"/>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf21"/>
+        </ObjectIntersectionOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Row20"/>
+    </SubClassOf>
+    <SubClassOf>
+        <ObjectIntersectionOf>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf21"/>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf22"/>
+        </ObjectIntersectionOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Row21"/>
+    </SubClassOf>
+    <SubClassOf>
+        <ObjectIntersectionOf>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf3"/>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf4"/>
+        </ObjectIntersectionOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Row3"/>
+    </SubClassOf>
+    <SubClassOf>
+        <ObjectIntersectionOf>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf4"/>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf5"/>
+        </ObjectIntersectionOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Row4"/>
+    </SubClassOf>
+    <SubClassOf>
+        <ObjectIntersectionOf>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf5"/>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf6"/>
+        </ObjectIntersectionOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Row5"/>
+    </SubClassOf>
+    <SubClassOf>
+        <ObjectIntersectionOf>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf6"/>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf7"/>
+        </ObjectIntersectionOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Row6"/>
+    </SubClassOf>
+    <SubClassOf>
+        <ObjectIntersectionOf>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf7"/>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf8"/>
+        </ObjectIntersectionOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Row7"/>
+    </SubClassOf>
+    <SubClassOf>
+        <ObjectIntersectionOf>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf8"/>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf9"/>
+        </ObjectIntersectionOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Row8"/>
+    </SubClassOf>
+    <SubClassOf>
+        <ObjectIntersectionOf>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf9"/>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf10"/>
+        </ObjectIntersectionOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Row9"/>
+    </SubClassOf>
+    <SubClassOf>
+        <ObjectIntersectionOf>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf1"/>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf0"/>
+        </ObjectIntersectionOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Column0"/>
+    </SubClassOf>
+    <SubClassOf>
+        <ObjectIntersectionOf>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf10"/>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf9"/>
+        </ObjectIntersectionOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Column9"/>
+    </SubClassOf>
+    <SubClassOf>
+        <ObjectIntersectionOf>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf11"/>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf10"/>
+        </ObjectIntersectionOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Column10"/>
+    </SubClassOf>
+    <SubClassOf>
+        <ObjectIntersectionOf>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf12"/>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf11"/>
+        </ObjectIntersectionOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Column11"/>
+    </SubClassOf>
+    <SubClassOf>
+        <ObjectIntersectionOf>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf13"/>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf12"/>
+        </ObjectIntersectionOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Column12"/>
+    </SubClassOf>
+    <SubClassOf>
+        <ObjectIntersectionOf>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf14"/>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf13"/>
+        </ObjectIntersectionOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Column13"/>
+    </SubClassOf>
+    <SubClassOf>
+        <ObjectIntersectionOf>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf15"/>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf14"/>
+        </ObjectIntersectionOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Column14"/>
+    </SubClassOf>
+    <SubClassOf>
+        <ObjectIntersectionOf>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf16"/>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf15"/>
+        </ObjectIntersectionOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Column15"/>
+    </SubClassOf>
+    <SubClassOf>
+        <ObjectIntersectionOf>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf17"/>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf16"/>
+        </ObjectIntersectionOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Column16"/>
+    </SubClassOf>
+    <SubClassOf>
+        <ObjectIntersectionOf>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf18"/>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf17"/>
+        </ObjectIntersectionOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Column17"/>
+    </SubClassOf>
+    <SubClassOf>
+        <ObjectIntersectionOf>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf19"/>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf18"/>
+        </ObjectIntersectionOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Column18"/>
+    </SubClassOf>
+    <SubClassOf>
+        <ObjectIntersectionOf>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf2"/>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf1"/>
+        </ObjectIntersectionOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Column1"/>
+    </SubClassOf>
+    <SubClassOf>
+        <ObjectIntersectionOf>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf20"/>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf19"/>
+        </ObjectIntersectionOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Column19"/>
+    </SubClassOf>
+    <SubClassOf>
+        <ObjectIntersectionOf>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf21"/>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf20"/>
+        </ObjectIntersectionOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Column20"/>
+    </SubClassOf>
+    <SubClassOf>
+        <ObjectIntersectionOf>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf22"/>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf21"/>
+        </ObjectIntersectionOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Column21"/>
+    </SubClassOf>
+    <SubClassOf>
+        <ObjectIntersectionOf>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf3"/>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf2"/>
+        </ObjectIntersectionOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Column2"/>
+    </SubClassOf>
+    <SubClassOf>
+        <ObjectIntersectionOf>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf4"/>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf3"/>
+        </ObjectIntersectionOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Column3"/>
+    </SubClassOf>
+    <SubClassOf>
+        <ObjectIntersectionOf>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf5"/>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf4"/>
+        </ObjectIntersectionOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Column4"/>
+    </SubClassOf>
+    <SubClassOf>
+        <ObjectIntersectionOf>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf6"/>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf5"/>
+        </ObjectIntersectionOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Column5"/>
+    </SubClassOf>
+    <SubClassOf>
+        <ObjectIntersectionOf>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf7"/>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf6"/>
+        </ObjectIntersectionOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Column6"/>
+    </SubClassOf>
+    <SubClassOf>
+        <ObjectIntersectionOf>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf8"/>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf7"/>
+        </ObjectIntersectionOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Column7"/>
+    </SubClassOf>
+    <SubClassOf>
+        <ObjectIntersectionOf>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf9"/>
+            <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf8"/>
+        </ObjectIntersectionOf>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/Column8"/>
+    </SubClassOf>
+    <DisjointClasses>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf1"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf1"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf10"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf10"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf11"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf11"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf12"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf12"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf13"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf13"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf14"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf14"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf15"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf15"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf16"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf16"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf17"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf17"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf18"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf18"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf19"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf19"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf2"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf2"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf20"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf20"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf21"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf21"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf3"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf3"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf4"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf4"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf5"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf5"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf6"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf6"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf7"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf7"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf8"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf8"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf9"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf9"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf1"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf1"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf10"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf10"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf11"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf11"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf12"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf12"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf13"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf13"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf14"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf14"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf15"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf15"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf16"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf16"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf17"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf17"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf18"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf18"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf19"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf19"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf2"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf2"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf20"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf20"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf21"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf21"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf3"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf3"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf4"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf4"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf5"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf5"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf6"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf6"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf7"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf7"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf8"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf8"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf9"/>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf9"/>
+    </DisjointClasses>
+    <ClassAssertion>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/RightOf1"/>
+        <NamedIndividual IRI="#robot"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/LeftOf10"/>
+        <NamedIndividual IRI="#robot"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/AboveOf0"/>
+        <NamedIndividual IRI="#robot"/>
+    </ClassAssertion>
+    <ClassAssertion>
+        <Class IRI="http://www.semanticweb.org/anon/ontologies/2021/3/BelowOf10"/>
+        <NamedIndividual IRI="#robot"/>
+    </ClassAssertion>
+</Ontology>
+
+
+
+<!-- Generated by the OWL API (version 4.5.29.2024-05-13T12:11:03Z) https://github.com/owlcs/owlapi -->
+

@@ -1,0 +1,10 @@
+
+# Simple conjunctive query: father-child pairs, i.e. Father(?x), hasChild(?x, ?y).
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX fam: <http://www.co-ode.org/roberts/family-tree.owl#>
+SELECT ?x ?y
+WHERE
+{
+  ?x rdf:type fam:Father .
+  ?x fam:hasChild ?y .
+}

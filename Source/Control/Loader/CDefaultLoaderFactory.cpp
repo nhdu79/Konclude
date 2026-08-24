@@ -47,6 +47,8 @@ namespace Konclude {
 					loader = new COWLlinkBatchFileLoader();
 				} else if (loaderName == "AnalyseReasonerLoader") {
 					loader = new CAnalyseReasonerLoader();
+				} else if (loaderName == "EmbeddedScratchOntologyBenchmarkLoader") {
+					loader = new CEmbeddedScratchOntologyBenchmarkLoader();
 				} else if (loaderName == "ExperimentalReasonerLoader") {
 					loader = new CExperimentalReasonerLoader();
 				} else if (loaderName == "CommandLineTranlatorHelpLoader") {
@@ -132,6 +134,8 @@ namespace Konclude {
 				} else if (loaderName == "OWLlinkBatchFileLoader") {
 					canLoad = true;
 				} else if (loaderName == "AnalyseReasonerLoader") {
+					canLoad = true;
+				} else if (loaderName == "EmbeddedScratchOntologyBenchmarkLoader") {
 					canLoad = true;
 				} else if (loaderName == "ExperimentalReasonerLoader") {
 					canLoad = true;

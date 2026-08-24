@@ -119,7 +119,7 @@ namespace Konclude {
 
 					COntologyRevision* createNewOntologyRevisionFromBasementOntology(const QString& ontologyName, CCommandRecordRouter& commandRecordRouter);
 
-					COntologyRevision* createNewOntologyRevision(const QString& ontologyName, bool forceCreation, bool reportError, CCommandRecordRouter& commandRecordRouter);
+					COntologyRevision* createNewOntologyRevision(const QString& ontologyName, bool forceCreation, bool reportError, CCommandRecordRouter& commandRecordRouter, CConcreteOntology* presetOntology = nullptr);
 					QString createNewOntology(const QString& ontologyName, QList<CNamePrefix*>* prefixList, CCommandRecordRouter& commandRecordRouter);
 
 					bool checkHasOntology(const QString& ontologyName);

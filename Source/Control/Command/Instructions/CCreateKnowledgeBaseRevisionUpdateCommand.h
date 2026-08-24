@@ -33,6 +33,9 @@
 #include "Control/Command/CCommand.h"
 #include "Control/Command/CPreconditionCommand.h"
 
+#include "Reasoner/Ontology/CConcreteOntology.h"
+#include "Reasoner/Query/CQuery.h"
+
 
 // Logger includes
 #include "Logger/CLogger.h"
@@ -41,6 +44,9 @@ using namespace Konclude::Logger;
 
 
 namespace Konclude {
+
+	using namespace Reasoner::Ontology;
+	using namespace Reasoner::Query;
 
 	namespace Control {
 
@@ -64,6 +70,9 @@ namespace Konclude {
 						CCreateKnowledgeBaseRevisionUpdateCommand(const QString &knowledgeBaseNameString, bool createIfNotExist, CCommand *parentSuperCommand = 0);
 						CCreateKnowledgeBaseRevisionUpdateCommand(const QString &knowledgeBaseNameString, bool createIfNotExist, bool reportErrorIfNotExists, CCommand *parentSuperCommand = 0);
 
+						//! Constructor taking an already-built ABox ontology and query as internal data objects, bypassing OWL/SPARQL text parsing
+						CCreateKnowledgeBaseRevisionUpdateCommand(const QString &knowledgeBaseNameString, CConcreteOntology *aboxOntology, CQuery *query, CCommand *parentSuperCommand = 0);
+
 						//! Destructor
 						virtual ~CCreateKnowledgeBaseRevisionUpdateCommand();
 
@@ -74,6 +83,9 @@ namespace Konclude {
 						virtual COntologyRevision *getOntologyRevision();
 						virtual CCreateKnowledgeBaseRevisionUpdateCommand *setOntologyRevision(COntologyRevision *ontologyRevision);
 						virtual CCommand *getCommand();
+
+						virtual CConcreteOntology *getABoxOntology();
+						virtual CQuery *getQuery();
 
 						bool requireCreateIfNotExist();
 						bool reportErrorCreateIfNotExist();
@@ -87,6 +99,8 @@ namespace Konclude {
 						bool mReportErrorIfNotExists;
 						QString kbString;
 						COntologyRevision *onRev;
+						CConcreteOntology *mABoxOntology;
+						CQuery *mQuery;
 
 					// private methods
 					private:

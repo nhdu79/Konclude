@@ -33,6 +33,7 @@
 #include "CDefaultReasonerLoader.h"
 #include "COWLlinkBatchFileLoader.h"
 #include "CAnalyseReasonerLoader.h"
+#include "CEmbeddedScratchOntologyBenchmarkLoader.h"
 #include "CExperimentalReasonerLoader.h"
 #include "CCommandLineTranlatorHelpLoader.h"
 #include "CConfigurableCoutLogObserverLoader.h"

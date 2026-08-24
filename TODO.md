@@ -1,0 +1,2 @@
+- [ ] Use CQuery instead of SPARQL
+- [ ] Use CConcreteOntology instead of OWL XML

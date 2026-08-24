@@ -21,3 +21,10 @@ moc_*.cpp
 moc_*.h
 ui_*.h
 qrc_*.cpp
+compile_commands.json
+embedded_cq_benchmark
+embedded_cq_driver
+embedded_scratch_revision_probe
+embedded_state_benchmark
+embedded_state_driver
+embedded_state_existing_abox_probe

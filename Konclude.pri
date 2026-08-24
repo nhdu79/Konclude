@@ -278,6 +278,7 @@ HEADERS += \
    ./Source\Control\Interface\JNI\CConfigJNIReader.h \
    ./Source/Control/Interface/Embedded/konclude_embedded.h \
    ./Source/Control/Interface/Embedded/CEmbeddedReasoner.h \
+   ./Source/Control/Interface/Embedded/CEmbeddedOWLlinkProcessor.h \
    ./Source\Control\Interface\OWLlink\OWLlinkSettings.h \
    ./Source\Control\Interface\OWLlink\COWLLinkRecordInterpreter.h \
    ./Source\Control\Interface\OWLlink\COWLlinkHttpConnectionHandlerProcessorFactory.h \
@@ -343,6 +344,7 @@ HEADERS += \
    ./Source\Control\Loader\CCLIClassClassificationBatchProcessingLoader.h \
    ./Source\Control\Loader\CCLIBatchProcessingLoader.h \
    ./Source\Control\Loader\CAnalyseReasonerLoader.h \
+   ./Source\Control\Loader\CEmbeddedScratchOntologyBenchmarkLoader.h \
    ./Source\Control\Loader\CSPARQLBatchFileLoader.h \
    ./Source\Logger\LoggerSettings.h \
    ./Source\Logger\CQtDebugPrintLogObserver.h \
@@ -2928,6 +2930,7 @@ SOURCES += \
    ./Source/Control/Interface/JNI/CJNIAxiomExpressionVisitingLoader.cpp \
    ./Source/Control/Interface/JNI/CConfigJNIReader.cpp \
    ./Source/Control/Interface/Embedded/CEmbeddedReasoner.cpp \
+   ./Source/Control/Interface/Embedded/CEmbeddedOWLlinkProcessor.cpp \
    ./Source/Control/Interface/Embedded/CEmbeddedInterfaceCAPI.cpp \
    ./Source/Control/Interface/OWLlink/COWLLinkRecordInterpreter.cpp \
    ./Source/Control/Interface/OWLlink/COWLlinkHttpConnectionHandlerProcessorFactory.cpp \
@@ -2989,6 +2992,7 @@ SOURCES += \
    ./Source/Control/Loader/CCLIClassClassificationBatchProcessingLoader.cpp \
    ./Source/Control/Loader/CCLIBatchProcessingLoader.cpp \
    ./Source/Control/Loader/CAnalyseReasonerLoader.cpp \
+   ./Source/Control/Loader/CEmbeddedScratchOntologyBenchmarkLoader.cpp \
    ./Source/Control/Loader/CConfigurableCoutLogObserverLoader.cpp \
    ./Source/Control/Loader/CCommandLineTranlatorHelpLoader.cpp \
    ./Source/Control/Loader/CSPARQLBatchFileLoader.cpp \

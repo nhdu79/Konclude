@@ -75,6 +75,65 @@ extern "C" {
 		return ok ? 1 : 0;
 	}
 
+	int konclude_state_begin(KoncludeReasonerHandle handle) {
+		if (!handle) {
+			return 0;
+		}
+		bool ok = static_cast<CEmbeddedReasoner*>(handle)->beginNewState();
+		return ok ? 1 : 0;
+	}
+
+	int konclude_state_assert_class_fact(KoncludeReasonerHandle handle, const char* individualIRI, const char* classIRI) {
+		if (!handle || !individualIRI || !classIRI) {
+			return 0;
+		}
+		bool ok = static_cast<CEmbeddedReasoner*>(handle)->assertClassFact(QString::fromUtf8(individualIRI), QString::fromUtf8(classIRI));
+		return ok ? 1 : 0;
+	}
+
+	int konclude_execute_conjunctive_query(KoncludeReasonerHandle handle, const char* sparqlSelectQuery) {
+		if (!handle || !sparqlSelectQuery) {
+			return 0;
+		}
+		bool ok = static_cast<CEmbeddedReasoner*>(handle)->executeConjunctiveQuery(QString::fromUtf8(sparqlSelectQuery));
+		return ok ? 1 : 0;
+	}
+
+	int konclude_probe_scratch_revision_cycles(KoncludeReasonerHandle handle, int iterations) {
+		if (!handle) {
+			return -1;
+		}
+		return static_cast<CEmbeddedReasoner*>(handle)->probeScratchRevisionCycles(iterations);
+	}
+
+	int konclude_query_result_row_count(KoncludeReasonerHandle handle) {
+		if (!handle) {
+			return 0;
+		}
+		return static_cast<CEmbeddedReasoner*>(handle)->getLastQueryResultRowCount();
+	}
+
+	int konclude_query_result_variable_count(KoncludeReasonerHandle handle) {
+		if (!handle) {
+			return 0;
+		}
+		return static_cast<CEmbeddedReasoner*>(handle)->getLastQueryResultVariableCount();
+	}
+
+	const char* konclude_query_result_variable_name(KoncludeReasonerHandle handle, int varIndex) {
+		if (!handle) {
+			return "";
+		}
+		return static_cast<CEmbeddedReasoner*>(handle)->getLastQueryResultVariableNameCStr(varIndex);
+	}
+
+	const char* konclude_query_result_binding(KoncludeReasonerHandle handle, int row, int varIndex) {
+		if (!handle) {
+			return "";
+		}
+		return static_cast<CEmbeddedReasoner*>(handle)->getLastQueryResultBindingCStr(row, varIndex);
+	}
+
 	const char* konclude_last_error(KoncludeReasonerHandle handle) {
 		if (!handle) {
 			return "";

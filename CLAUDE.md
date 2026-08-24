@@ -19,6 +19,7 @@ make
 - Requires Qt 5.11+ (`xml network concurrent` modules) and a C++11 compiler.
 - `Konclude.pro` links against the bundled Redland/Raptor2/Rasqal/libxml2 static libs under `External/librdf/<Platform>/<Arch>/lib/`. If these paths don't match your platform, either fix them in `Konclude.pro` or build `KoncludeWithoutRedland.pro` instead (this is what CI uses — see `.github/workflows/build-without-redland.yml`).
 - `KoncludeLIB.pro` builds Konclude as a library with a JNI interface (`KONCLUDE_COMPILE_JNI_INTERFACE`, requires `JAVA_HOME`) instead of the standalone `main()` in `Source/mainLoader.cpp`.
+- `KoncludeEmbedded.pro` builds Konclude as a shared library with a plain `extern "C"` facade (`KONCLUDE_COMPILE_EMBEDDED_INTERFACE`, no JNI/Java dependency) for in-process embedding into other applications — see `Source/Control/Interface/Embedded/` and `docs/FASTDOWNWARD_EMBEDDING.md`.
 - A `gitbuild` pre-target runs `UnixGitBuildScript.sh` / `WinGitBuildScript.bat` to stamp the build with git revision info into `revision-git.h` before compiling — don't hand-edit `revision-git.h`.
 - Output binary goes to `./Release/Konclude`. Wrapper scripts `Scripts/Konclude` / `Scripts/Konclude.sh` / `Scripts/Konclude.bat` invoke it.
 - Docker builds are available via the separate `KoncludeDocker` repo (`./build_release.sh` there produces a statically linked binary); useful when local Qt/Redland setup is painful.
@@ -70,6 +71,10 @@ Everything lives under `Source/`, organized by layer:
 - **`Network/`** — HTTP client/server plumbing (`Network/HTTP/`) used by the OWLlink/SPARQL servers.
 - **`Logger/`** — the `CLogger` singleton + `LOG(LEVEL, domain, message, code)` macro used throughout instead of ad-hoc logging; multiple pluggable log observers (console, Qt debug, configurable).
 - **`Utilities/`** — foundational data structures, including `Utilities/Container/` — **modified versions of Qt's `QMap`/`QHash`/`QList`** (`CQtManagedRestrictedModification*` files) that integrate with Konclude's own memory management. Use these container types rather than raw Qt containers in reasoning-hot-path code, consistent with existing surrounding code.
+
+## Task Scope
+
+- If you notice a bug while working on something unrelated to it, do not fix it as part of that change. Report it instead (to the user, and/or as a note in the relevant `docs/*.md` file with file/line references and the failure scenario) and leave the fix for a dedicated follow-up task. This keeps unrelated diffs reviewable and avoids silently changing behavior the current task wasn't asked to touch.
 
 ### Conventions
 

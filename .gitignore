@@ -28,3 +28,5 @@ embedded_scratch_revision_probe
 embedded_state_benchmark
 embedded_state_driver
 embedded_state_existing_abox_probe
+.ua/
+.clangd

@@ -75,6 +75,7 @@ Everything lives under `Source/`, organized by layer:
 ## Task Scope
 
 - If you notice a bug while working on something unrelated to it, do not fix it as part of that change. Report it instead (to the user, and/or as a note in the relevant `docs/*.md` file with file/line references and the failure scenario) and leave the fix for a dedicated follow-up task. This keeps unrelated diffs reviewable and avoids silently changing behavior the current task wasn't asked to touch.
+- When documenting, favour conciseness to improve readability. When explaining a concept, always follow step-wise reasoning and include code entry points.
 
 ### Conventions
 

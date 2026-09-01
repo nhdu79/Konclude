@@ -278,6 +278,8 @@ HEADERS += \
    ./Source\Control\Interface\JNI\CConfigJNIReader.h \
    ./Source/Control/Interface/Embedded/konclude_embedded.h \
    ./Source/Control/Interface/Embedded/CEmbeddedReasoner.h \
+   ./Source/Control/Interface/Embedded/CEmbeddedOntologyLoader.h \
+   ./Source/Control/Interface/Embedded/CEmbeddedQueryManager.h \
    ./Source/Control/Interface/Embedded/CEmbeddedOWLlinkProcessor.h \
    ./Source\Control\Interface\OWLlink\OWLlinkSettings.h \
    ./Source\Control\Interface\OWLlink\COWLLinkRecordInterpreter.h \
@@ -2930,6 +2932,8 @@ SOURCES += \
    ./Source/Control/Interface/JNI/CJNIAxiomExpressionVisitingLoader.cpp \
    ./Source/Control/Interface/JNI/CConfigJNIReader.cpp \
    ./Source/Control/Interface/Embedded/CEmbeddedReasoner.cpp \
+   ./Source/Control/Interface/Embedded/CEmbeddedOntologyLoader.cpp \
+   ./Source/Control/Interface/Embedded/CEmbeddedQueryManager.cpp \
    ./Source/Control/Interface/Embedded/CEmbeddedOWLlinkProcessor.cpp \
    ./Source/Control/Interface/Embedded/CEmbeddedInterfaceCAPI.cpp \
    ./Source/Control/Interface/OWLlink/COWLLinkRecordInterpreter.cpp \

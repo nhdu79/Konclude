@@ -481,6 +481,18 @@ monitoring exposure to both:
    virtual memory before *K* is reached. Not required for correctness, just
    headroom.
 
+## Bug: reusing an individual name across states silently drops new facts about it, once the earlier state was installed
+
+**Moved to `docs/EMBEDDED_STATE_ISOLATION_BUG.md`** — the investigation
+(hash construction/destruction, the axiom-tracking layer, the
+`CExpressionDataBoxMapping` layer, and the reasoner-kernel model-caching
+layer, plus a minimal repro and next steps) grew long enough across
+several rounds to warrant its own file. Status remains **reported, not
+fixed**; this is still the single most important open issue for FD's
+actual use case (see that doc's "Practical impact" section) since it hits
+on essentially every state transition once individual names are reused,
+unlike the `CRealizerThread` leak below which needs ~9+ states to matter.
+
 ## Recommended plan of record
 
 1. ~~Verify Decision 4's open item first.~~ **Done.**

@@ -31,9 +31,7 @@
 #include "Config/CConfiguration.h"
 #include "Control/Command/CCommanderManager.h"
 #include "Control/Command/CPreconditionSynchronizer.h"
-#include "Control/Command/Instructions/CKnowledgeBaseQueryCommand.h"
 #include "Control/Interface/OWLlink/COWLlinkProcessor.h"
-#include "Reasoner/Revision/COntologyRevision.h"
 
 // Logger includes
 #include "Logger/CLogger.h"
@@ -43,9 +41,7 @@
 using namespace Konclude::Config;
 using namespace Konclude::Logger;
 using namespace Konclude::Control::Command;
-using namespace Konclude::Control::Command::Instructions;
 using namespace Konclude::Control::Interface::OWLlink;
-using namespace Konclude::Reasoner::Revision;
 
 
 namespace Konclude {
@@ -56,13 +52,29 @@ namespace Konclude {
 
 			namespace Embedded {
 
+				class CEmbeddedOntologyLoader;
+				class CEmbeddedQueryManager;
+
 				/*!
 				 *		\class		CEmbeddedReasoner
-				 *		\brief		Wraps a single, independent CCommanderManager instance
-				 *					(own worker threads, own knowledge base namespace) behind
-				 *					a synchronous, blocking call interface, for use behind the
-				 *					konclude_embedded.h C API. See docs/FASTDOWNWARD_EMBEDDING.md
-				 *					for the design this mirrors from the JNI/CLI code paths.
+				 *		\brief		Central instance manager: wraps a single, independent
+				 *					CCommanderManager instance (own worker threads, own
+				 *					knowledge base namespace) behind a synchronous, blocking
+				 *					call interface, for use behind the konclude_embedded.h C
+				 *					API. See docs/FASTDOWNWARD_EMBEDDING.md for the design this
+				 *					mirrors from the JNI/CLI code paths.
+				 *
+				 *					Owns the shared instance infrastructure -- configuration,
+				 *					command delegation (CPreconditionSynchronizer), the OWLlink
+				 *					command delegater, and error/log-message capture -- and
+				 *					delegates every reasoning operation to two collaborators
+				 *					constructed against it: CEmbeddedOntologyLoader (ontology
+				 *					loading and FD-state/ABox building) and
+				 *					CEmbeddedQueryManager (consistency/satisfiability/
+				 *					conjunctive-query execution). Public method signatures are
+				 *					unchanged from before that split -- this class remains the
+				 *					sole type the konclude_embedded.h C API shim
+				 *					(CEmbeddedInterfaceCAPI.cpp) talks to.
 				 *
 				 *					Not safe to call concurrently from multiple threads on the
 				 *					same instance; separate instances are independent.
@@ -77,50 +89,31 @@ namespace Konclude {
 						bool checkConsistency(bool* consistentOut);
 						bool checkSatisfiability(const QString& classIRI, bool* satisfiableOut);
 
-						//! Starts a new FD "state": discards whatever scratch ABox revision
-						//! was current (see docs/EMBEDDED_HIGH_VOLUME_CQ_OPTIMIZATION.md's
-						//! Decision 2 -- never installed, so a plain delete is the whole
-						//! cleanup) and creates a fresh one layered on the loaded/classified
-						//! base ontology via CCreateKnowledgeBaseRevisionUpdateCommand. Call
-						//! this once per FD state, before asserting that state's ABox facts.
+						//! Starts a new FD "state" -- see CEmbeddedOntologyLoader::
+						//! beginNewState() for the ontology-loader-side details, and
+						//! CEmbeddedQueryManager::resetForNewState() for the query-manager
+						//! side. Call this once per FD state, before asserting that state's
+						//! ABox facts.
 						bool beginNewState();
 
 						//! Asserts one ClassAssertion(individualIRI, classIRI) ground fact
-						//! into the current state's scratch revision (see beginNewState()),
-						//! via the same CConcreteOntologyUpdateCollectorBuilder/
-						//! tellOntologyAxiom mechanism every file-based ontology loader in
-						//! this codebase uses -- not a preset CConcreteOntology handed in
-						//! from outside (see CCreateKnowledgeBaseRevisionUpdateCommand's
-						//! ABox/query constructor -- unused anywhere in this codebase and,
-						//! per createNewOntologyRevision's presetOntology handling, untested).
-						//! Requires beginNewState() to have been called first.
+						//! into the current state -- see CEmbeddedOntologyLoader::
+						//! assertClassFact(). Requires beginNewState() to have been called
+						//! first.
 						bool assertClassFact(const QString& individualIRI, const QString& classIRI);
 
 						//! Runs a single-BGP SPARQL SELECT conjunctive query against the
-						//! current state's scratch revision (see beginNewState()/
-						//! assertClassFact() above -- this no longer creates its own
-						//! revision per call, so multiple queries against the same asserted
-						//! ABox now actually see each other and the asserted facts; see
-						//! docs/CONJUNCTIVE_QUERY_PIPELINE.md for the query engine this
-						//! uses -- the same non-Rasqal path as sparqlfile/sparqlserver,
-						//! since Rasqal is never linked into KoncludeEmbedded.pro). Requires
-						//! beginNewState() to have been called first. Results are captured
-						//! and retrievable via the getLastQueryResult* accessors below until
-						//! the next call.
+						//! current state -- see CEmbeddedQueryManager::
+						//! executeConjunctiveQuery(). Requires beginNewState() to have been
+						//! called first. Results are captured and retrievable via the
+						//! getLastQueryResult* accessors below until the next call.
 						bool executeConjunctiveQuery(const QString& sparqlSelectQuery);
 
-						//! Correctness probe for docs/EMBEDDED_HIGH_VOLUME_CQ_OPTIMIZATION.md's
-						//! Decision 4 open item: repeatedly builds a scratch knowledge-base
-						//! revision via CCreateKnowledgeBaseRevisionUpdateCommand -- WITHOUT
-						//! ever installing it -- and immediately deletes it again, asserting
-						//! no facts. Prints one progress line per iteration to stderr, so
-						//! that running this under a shell-level timeout (e.g. `timeout 30`)
-						//! still shows how many iterations completed before a hang, if the
-						//! CPreconditionSynchronizer dispatch bug documented in
-						//! docs/FASTDOWNWARD_EMBEDDING.md reproduces for this exact command
-						//! sequence. Returns the number of iterations that completed; a hang
-						//! never returns at all, by definition, so a short return count with
-						//! no crash/error message means "it hung," not "it failed".
+						//! Correctness probe -- see CEmbeddedOntologyLoader::
+						//! probeScratchRevisionCycles(). Returns the number of iterations
+						//! that completed; a hang never returns at all, by definition, so a
+						//! short return count with no crash/error message means "it hung,"
+						//! not "it failed".
 						int probeScratchRevisionCycles(int iterations);
 
 						int getLastQueryResultRowCount();
@@ -136,11 +129,24 @@ namespace Konclude {
 						// CAbstractLogObserver
 						virtual void postLogMessage(CLogMessage* message);
 
+						// --- Collaborator-facing services -----------------------------
+						// The methods below are the interface CEmbeddedOntologyLoader and
+						// CEmbeddedQueryManager use to reach this instance's shared
+						// infrastructure; not intended for the konclude_embedded.h C API
+						// surface.
+
+						//! Whether construction succeeded and commands can be delegated.
+						//! False means every public method above will fail, with
+						//! getLastErrorCStr() explaining why (set in the constructor).
+						bool isReady() const;
+						CPreconditionSynchronizer* getPreconditionSynchronizer() const;
+						COWLlinkProcessor* getOwlLinkProcessor() const;
+						const QString& getKnowledgeBaseName() const;
+						void setLastError(const QString& error);
+
 					// private methods
 					private:
 						static void ensureQCoreApplication();
-
-						bool extractBooleanResult(CKnowledgeBaseQueryCommand* command, bool* resultOut);
 
 					// private variables
 					private:
@@ -160,50 +166,18 @@ namespace Konclude {
 						//! mReasonerCommander is (constructed together in the constructor's
 						//! commanderConfigType branch).
 						COWLlinkProcessor* mOwlLinkProcessor;
-						bool mOntologyLoaded;
 
-						//! The current FD state's ABox revision. Starts out never-installed
-						//! (see docs/EMBEDDED_HIGH_VOLUME_CQ_OPTIMIZATION.md's Decision 2)
-						//! but gets installed lazily, once, by the first executeConjunctiveQuery()
-						//! call for this state -- see mCurrentStateInstalled below for why.
-						//! Owned here; freed explicitly by beginNewState() (on the next
-						//! state) and the destructor UNLESS installed, in which case
-						//! CSPOntologyRevisionManager's onRevContainer owns it instead (see
-						//! CEmbeddedReasoner.cpp). Null until the first beginNewState() call.
-						COntologyRevision* mCurrentStateRevision;
-						//! Whether mCurrentStateRevision has been installed yet. Reset to
-						//! false by beginNewState(). Installing turns out to be required,
-						//! not optional, for facts asserted into mCurrentStateRevision to be
-						//! visible to any query at all -- see the long comment on
-						//! executeConjunctiveQuery()'s implementation for what was tried and
-						//! ruled out first (forcing OPSBUILD directly on a never-installed
-						//! revision looked plausible but empirically corrupted query results,
-						//! including for content that predates the Tell). Every existing Tell
-						//! path in this codebase (COWLlinkProcessor.cpp's SPARQL UPDATE
-						//! MODIFY handling) installs before any query ever touches the
-						//! Told revision; nothing in the codebase does otherwise.
-						bool mCurrentStateInstalled;
-
-						//! A revision layered on top of mCurrentStateRevision, created
-						//! lazily by the first executeConjunctiveQuery() call for this
-						//! state and REUSED for every subsequent query against the same
-						//! state (matches COWLlinkProcessor's own SPARQL_QUERY batching
-						//! behaviour, which shares one such layer across consecutive
-						//! queries too -- see the long comment on executeConjunctiveQuery()'s
-						//! implementation). Never installed; owned here; freed by
-						//! beginNewState() (on the next state) and the destructor.
-						COntologyRevision* mCurrentQueryRevision;
+						//! Ontology loading and FD-state/ABox-building collaborator. Always
+						//! constructed (even if the infrastructure above failed to set up --
+						//! see isReady()); see CEmbeddedOntologyLoader.
+						CEmbeddedOntologyLoader* mOntologyLoader;
+						//! Query-execution collaborator. Always constructed (even if the
+						//! infrastructure above failed to set up -- see isReady()); see
+						//! CEmbeddedQueryManager.
+						CEmbeddedQueryManager* mQueryManager;
 
 						QString mLastError;
 						QByteArray mLastErrorUtf8;
-
-						//! Result of the most recent executeConjunctiveQuery() call,
-						//! extracted eagerly into plain Qt containers so the CQuery/
-						//! CQueryResult object graph doesn't need to stay alive for the
-						//! caller to read it back through the C API.
-						QStringList mLastQueryVariableNames;
-						QList<QStringList> mLastQueryResultRows;
-						QByteArray mLastQueryResultStringUtf8;
 				};
 
 			}; // end namespace Embedded

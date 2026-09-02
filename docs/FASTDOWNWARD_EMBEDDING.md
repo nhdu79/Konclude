@@ -732,6 +732,19 @@ and are still the right reference if this gets revisited.
 - Sort out runtime library discovery (`rpath`, `DYLD_LIBRARY_PATH` /
   `LD_LIBRARY_PATH`, or co-locating the `.so`/`.dylib` next to FD's binary)
   deliberately, rather than discovering it at deploy time.
+  **Partially resolved for macOS:** qmake's default `-install_name` for a
+  `CONFIG += shared` target is a bare filename (`libKonclude.1.dylib`), which
+  dyld only resolves via system library paths — an `-rpath` baked into a
+  *consuming* binary (as `Tools/EmbeddedDriver/rebuild.sh` does) is silently
+  ignored unless the dependency is itself recorded as `@rpath/`-relative.
+  Every `Tools/EmbeddedDriver/*` driver failed to start with "Library not
+  loaded: libKonclude.1.dylib" until `KoncludeEmbedded.pro` added
+  `macx: QMAKE_LFLAGS_SONAME = -Wl,-install_name,@rpath/`. Confirmed fixed:
+  `otool -L` now shows `@rpath/libKonclude.1.dylib`, and
+  `embedded_state_driver` runs and passes with no `DYLD_LIBRARY_PATH` set.
+  Not yet verified whether Linux's default `-soname`-based linking needs the
+  equivalent treatment, or how FD's own build should consume this (still an
+  open question, not just "point FD's linker at `-lKonclude`").
 
 ### 7. Correctness gate before touching FD's search loop
 

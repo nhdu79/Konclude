@@ -101,6 +101,38 @@ int konclude_state_begin(KoncludeReasonerHandle handle);
 int konclude_state_assert_class_fact(KoncludeReasonerHandle handle, const char* individualIRI, const char* classIRI);
 
 /*
+ * Correctness-experiment API, not part of the stable surface: exercises
+ * CEmbeddedChainedOntologyLoader/CEmbeddedChainedQueryManager, kept as
+ * separate C++ classes from (and sharing no state with) the
+ * konclude_state_* functions above -- see those classes' doc comments and
+ * docs/EMBEDDED_STATE_ISOLATION_BUG.md's "Confirmed empirically" entry for
+ * what this tests. Unlike konclude_state_assert_class_fact (which
+ * accumulates every Tell into one shared, lazily-installed state
+ * revision), konclude_state_assert_class_fact_chained/
+ * konclude_state_retract_class_fact_chained each create a brand new
+ * revision layered on the current installed head, tell/retract the single
+ * fact into it, and install it immediately -- mirroring
+ * COWLlinkProcessor.cpp's SPARQL_UPDATE_MODIFY handling call-for-call.
+ * konclude_state_begin_chained/konclude_execute_conjunctive_query_chained/
+ * konclude_chained_query_result_* are this API's own state-begin/query/
+ * result-reading counterparts to konclude_state_begin/
+ * konclude_execute_conjunctive_query/konclude_query_result_* -- use the
+ * *_chained functions together as one self-contained set, not mixed with
+ * the non-chained ones, since they track separate "current state" objects.
+ * All require an ontology already loaded via konclude_load_ontology_file.
+ * The assert/retract/query functions return 1 on success, 0 on failure
+ * (see konclude_last_error).
+ */
+int konclude_state_begin_chained(KoncludeReasonerHandle handle);
+int konclude_state_assert_class_fact_chained(KoncludeReasonerHandle handle, const char* individualIRI, const char* classIRI);
+int konclude_state_retract_class_fact_chained(KoncludeReasonerHandle handle, const char* individualIRI, const char* classIRI);
+int konclude_execute_conjunctive_query_chained(KoncludeReasonerHandle handle, const char* sparqlSelectQuery);
+int konclude_chained_query_result_row_count(KoncludeReasonerHandle handle);
+int konclude_chained_query_result_variable_count(KoncludeReasonerHandle handle);
+const char* konclude_chained_query_result_variable_name(KoncludeReasonerHandle handle, int varIndex);
+const char* konclude_chained_query_result_binding(KoncludeReasonerHandle handle, int row, int varIndex);
+
+/*
  * Runs a SPARQL SELECT conjunctive query (single basic graph pattern --
  * several atoms joined by shared variables; OPTIONAL/UNION/nested SELECT
  * are not supported, see docs/CONJUNCTIVE_QUERY_PIPELINE.md) against the

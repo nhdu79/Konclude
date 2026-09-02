@@ -1,13 +1,18 @@
 # Bug: Reusing an Individual Name Across States Drops New Facts About It
 
-**Status: reported, not fixed.** Read `CLAUDE.md`'s Task Scope convention
-if picking this up — this is `Reasoner/Revision/` + `Reasoner/Kernel/Cache/`
-+ `Reasoner/Realizer/` behavior, unrelated to (and predating) the
-embedded-interface work it was found through. It is very likely a latent
-bug affecting any long-lived caller that tells new facts about a
-previously-queried individual across multiple revisions of the same
-knowledge base (OWLlink/SPARQL server "Tell more axioms, then query
-again" flows included), not something embedded-API-specific.
+**Status: reported, not fixed, and confirmed NOT embedded-API-specific.**
+Read `CLAUDE.md`'s Task Scope convention if picking this up — this is
+`Reasoner/Revision/` + `Reasoner/Kernel/Cache/` + `Reasoner/Realizer/`
+behavior, unrelated to (and predating) the embedded-interface work it was
+found through. It is very likely a latent bug affecting any long-lived
+caller that tells new facts about a previously-queried individual across
+multiple revisions of the same knowledge base (OWLlink/SPARQL server "Tell
+more axioms, then query again" flows included), not something
+embedded-API-specific — no longer just a suspicion, see the "Confirmed
+empirically" entry under "Attempted fixes (ruled out)" below, which
+reproduces this bug through a driver that mirrors
+`COWLlinkProcessor.cpp`'s real Tell/Install pattern call-for-call, not just
+the embedded interface's simplified one.
 
 ## Symptom
 
@@ -244,3 +249,51 @@ tradeoff to take before touching `Reasoner/Revision/` or
   batch is fix option 1 (reuse the predecessor's `ontologyID`) or the
   other two options, all of which touch `Reasoner/Revision/`/
   `Reasoner/Kernel/Cache/`/`Reasoner/Realizer/` directly.
+- **Confirmed empirically: the real `COWLlinkProcessor.cpp` Tell/Install
+  pattern IS subject to this bug too** (settling the "implied but not
+  verified" hedge in the entry above). Added temporary
+  `assertClassFactChained()`/`retractClassFactChained()` to
+  `CEmbeddedOntologyLoader`/`CEmbeddedReasoner` plus
+  `konclude_state_assert_class_fact_chained`/
+  `konclude_state_retract_class_fact_chained` in the C API, and a driver
+  (`Tools/EmbeddedDriver/embedded_state_isolation_chained_probe.cpp`) — all
+  reverted after testing, not left in the tree. Unlike the "Follow-up"
+  attempt above (which kept Telling into one static, once-installed base
+  revision, only refreshing the query layer), this mirrored
+  `SPARQL_UPDATE_MODIFY` call-for-call: **every** chained assert/retract
+  created a brand-new revision layered on the current installed head (via
+  `CCreateKnowledgeBaseRevisionUpdateCommand`), Told/retracted the single
+  fact into it, and installed it immediately (via
+  `CInstallKnowledgeBaseRevisionUpdateCommand`) — a genuine chain of
+  installed revisions, each with its own fresh `ontologyID`, exactly as
+  `COWLlinkProcessor.cpp`'s real flow does. Result, run against the exact
+  repro from "Symptom" above (state 1: tell `a0`, query → `[a0]`; state 2:
+  re-tell `a0` + tell `a1`, query): **`a0` is still dropped, query returns
+  `[a1]` only — identical symptom, identical failure.** This is the
+  expected outcome given "Root cause" above: every install still goes
+  through `createNewOntologyRevision()`, which mints a fresh `ontologyID`
+  unconditionally (`.cpp:483`) regardless of *how* often or via what
+  Control-layer pattern installs happen — so no revision-chain-management
+  scheme at `Control::Interface::Embedded` (or, by the same reasoning,
+  `Control::Interface::OWLlink`) can dodge this without one of the three
+  structural fixes above.
+  **Two further findings from this run, both new:**
+  1. **Per-call install reproduces the exact cost
+     `docs/EMBEDDED_HIGH_VOLUME_CQ_OPTIMIZATION.md`'s Decision 2 explicitly
+     rejected** ("install every call" — `onRevContainer` growth and
+     `referenceBuildData()` cost compounding per call instead of per
+     state), confirming that doc's rejection was correct independent of
+     this bug.
+  2. **Intermittent crash (SIGTRAP, exit 133), not present in the
+     non-chained design, in roughly 1 of 3 standalone runs** — the same
+     probe binary, unchanged, alternated between a clean completion
+     (matching the result above) and a crash after only 1-2 query calls,
+     across 3 consecutive runs on the same machine. Did not reproduce under
+     `lldb` (ran to clean completion there every time), consistent with a
+     genuine timing-dependent race rather than a deterministic bug —
+     plausibly from the back-to-back create→Tell→install command
+     round-trips each chained call adds relative to `assertClassFact()`'s
+     single accumulate-only Tell. Not investigated further (out of scope
+     for this isolation-bug test; would need its own dedicated look at
+     `Control/Command` dispatch or `Reasoner/Revision` under rapid
+     sequential installs).

@@ -91,6 +91,66 @@ extern "C" {
 		return ok ? 1 : 0;
 	}
 
+	int konclude_state_begin_chained(KoncludeReasonerHandle handle) {
+		if (!handle) {
+			return 0;
+		}
+		bool ok = static_cast<CEmbeddedReasoner*>(handle)->beginNewChainedState();
+		return ok ? 1 : 0;
+	}
+
+	int konclude_state_assert_class_fact_chained(KoncludeReasonerHandle handle, const char* individualIRI, const char* classIRI) {
+		if (!handle || !individualIRI || !classIRI) {
+			return 0;
+		}
+		bool ok = static_cast<CEmbeddedReasoner*>(handle)->assertClassFactChained(QString::fromUtf8(individualIRI), QString::fromUtf8(classIRI));
+		return ok ? 1 : 0;
+	}
+
+	int konclude_state_retract_class_fact_chained(KoncludeReasonerHandle handle, const char* individualIRI, const char* classIRI) {
+		if (!handle || !individualIRI || !classIRI) {
+			return 0;
+		}
+		bool ok = static_cast<CEmbeddedReasoner*>(handle)->retractClassFactChained(QString::fromUtf8(individualIRI), QString::fromUtf8(classIRI));
+		return ok ? 1 : 0;
+	}
+
+	int konclude_execute_conjunctive_query_chained(KoncludeReasonerHandle handle, const char* sparqlSelectQuery) {
+		if (!handle || !sparqlSelectQuery) {
+			return 0;
+		}
+		bool ok = static_cast<CEmbeddedReasoner*>(handle)->executeChainedConjunctiveQuery(QString::fromUtf8(sparqlSelectQuery));
+		return ok ? 1 : 0;
+	}
+
+	int konclude_chained_query_result_row_count(KoncludeReasonerHandle handle) {
+		if (!handle) {
+			return 0;
+		}
+		return static_cast<CEmbeddedReasoner*>(handle)->getChainedQueryResultRowCount();
+	}
+
+	int konclude_chained_query_result_variable_count(KoncludeReasonerHandle handle) {
+		if (!handle) {
+			return 0;
+		}
+		return static_cast<CEmbeddedReasoner*>(handle)->getChainedQueryResultVariableCount();
+	}
+
+	const char* konclude_chained_query_result_variable_name(KoncludeReasonerHandle handle, int varIndex) {
+		if (!handle) {
+			return "";
+		}
+		return static_cast<CEmbeddedReasoner*>(handle)->getChainedQueryResultVariableNameCStr(varIndex);
+	}
+
+	const char* konclude_chained_query_result_binding(KoncludeReasonerHandle handle, int row, int varIndex) {
+		if (!handle) {
+			return "";
+		}
+		return static_cast<CEmbeddedReasoner*>(handle)->getChainedQueryResultBindingCStr(row, varIndex);
+	}
+
 	int konclude_execute_conjunctive_query(KoncludeReasonerHandle handle, const char* sparqlSelectQuery) {
 		if (!handle || !sparqlSelectQuery) {
 			return 0;

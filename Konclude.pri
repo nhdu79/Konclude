@@ -280,6 +280,8 @@ HEADERS += \
    ./Source/Control/Interface/Embedded/CEmbeddedReasoner.h \
    ./Source/Control/Interface/Embedded/CEmbeddedOntologyLoader.h \
    ./Source/Control/Interface/Embedded/CEmbeddedQueryManager.h \
+   ./Source/Control/Interface/Embedded/CEmbeddedChainedOntologyLoader.h \
+   ./Source/Control/Interface/Embedded/CEmbeddedChainedQueryManager.h \
    ./Source/Control/Interface/Embedded/CEmbeddedOWLlinkProcessor.h \
    ./Source\Control\Interface\OWLlink\OWLlinkSettings.h \
    ./Source\Control\Interface\OWLlink\COWLLinkRecordInterpreter.h \
@@ -2934,6 +2936,8 @@ SOURCES += \
    ./Source/Control/Interface/Embedded/CEmbeddedReasoner.cpp \
    ./Source/Control/Interface/Embedded/CEmbeddedOntologyLoader.cpp \
    ./Source/Control/Interface/Embedded/CEmbeddedQueryManager.cpp \
+   ./Source/Control/Interface/Embedded/CEmbeddedChainedOntologyLoader.cpp \
+   ./Source/Control/Interface/Embedded/CEmbeddedChainedQueryManager.cpp \
    ./Source/Control/Interface/Embedded/CEmbeddedOWLlinkProcessor.cpp \
    ./Source/Control/Interface/Embedded/CEmbeddedInterfaceCAPI.cpp \
    ./Source/Control/Interface/OWLlink/COWLLinkRecordInterpreter.cpp \

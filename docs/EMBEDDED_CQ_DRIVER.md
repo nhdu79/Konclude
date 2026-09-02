@@ -17,11 +17,45 @@ Tests/roberts-family-full-D.owl.xml -o cq-answers.xml`).
 
 ## Build
 
+### Quick start
+
+`Tools/EmbeddedDriver/rebuild.sh` does steps 1 and 2 below (plus the
+benchmark driver and every other `Tools/EmbeddedDriver/*.cpp`) in one
+command, and picks a working Qt5 `qmake` automatically:
+
+```sh
+./Tools/EmbeddedDriver/rebuild.sh
+```
+
+Safe to re-run any time — `make` only recompiles what changed, and it only
+regenerates `MakefileEmbedded` (via `qmake`) when `KoncludeEmbedded.pro` or
+`Konclude.pri` changed since the last run. The manual steps below spell out
+what it's doing and why, and are useful if you want a debug (`-g -O0`) build
+instead (see "Debug build" further down) or need to build just one binary.
+
 ### Step 1 — build the embedded shared library
+
+**Requires Qt 5, not Qt 6** — Qt 6 removed `QLinkedList`, which this
+codebase still uses throughout, so a build against Qt 6's `qmake` fails with
+`QLinkedList: No such file or directory`. Check what plain `qmake` resolves
+to before relying on it:
+
+```sh
+qmake -v   # must print "Using Qt version 5.x"
+```
+
+If it prints Qt 6 instead (e.g. because a newer Qt is the one on `PATH`,
+which is the case on this repo's primary dev machine), point at a Qt5
+`qmake` explicitly rather than the one in `PATH` — e.g.
+`/opt/homebrew/opt/qt@5/bin/qmake` for a keg-only Homebrew `qt@5` on macOS,
+or install one via `apt install qtbase5-dev qt5-qmake` on Debian/Ubuntu.
+`rebuild.sh`'s `find_qt5_qmake()` automates this search; set `QMAKE=` to
+force a specific binary either for that script or by substituting it for
+`qmake` below.
 
 ```sh
 qmake -o MakefileEmbedded KoncludeEmbedded.pro
-make -f MakefileEmbedded -j$(nproc)
+make -f MakefileEmbedded -j$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4)
 ```
 
 - `KoncludeEmbedded.pro` is one of several qmake project files in the repo
@@ -36,10 +70,12 @@ make -f MakefileEmbedded -j$(nproc)
   generates a plain `Makefile` named `MakefileEmbedded` (the `-o` names the
   output file explicitly so it doesn't clobber a `Makefile` from a different
   variant you might also have built, e.g. the plain CLI one).
-- `make -f MakefileEmbedded -j$(nproc)` compiles all ~2500 translation units
+- `make -f MakefileEmbedded -j...` compiles all ~2500 translation units
   and links them into `ReleaseEmbedded/libKonclude.so` (plus versioned
   symlinks `libKonclude.so.1`, `libKonclude.so.1.0`, pointing at
-  `libKonclude.so.1.0.0`). `-j$(nproc)` parallelizes across all CPU cores.
+  `libKonclude.so.1.0.0`) on Linux, or the `.dylib` equivalents on macOS.
+  `-j...` parallelizes across all CPU cores (`nproc` on Linux; macOS has no
+  `nproc`, hence the `sysctl -n hw.ncpu` fallback above).
   `-f MakefileEmbedded` is needed because plain `make` would look for a file
   literally named `Makefile`, not `MakefileEmbedded`.
 - Only needs to be redone when C++ source changes — not before every driver
@@ -78,9 +114,10 @@ itself) in a debugger, rebuild both with `-g -O0` instead:
 
 ```sh
 # Library: regenerate MakefileEmbedded with debug flags, then clean + rebuild
+# (same Qt5-qmake requirement as Step 1 above)
 qmake -o MakefileEmbedded "QMAKE_CXXFLAGS_RELEASE=-g -O0" KoncludeEmbedded.pro
 make -f MakefileEmbedded clean
-make -f MakefileEmbedded -j$(nproc)
+make -f MakefileEmbedded -j$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4)
 
 # Driver: compile+link with matching flags
 g++ -std=c++11 -g -O0 -I Source/Control/Interface/Embedded \
@@ -118,7 +155,8 @@ g++ -std=c++11 -g -O0 -I Source/Control/Interface/Embedded \
   ```
 - To go back to a fast/optimized build afterward, regenerate once more
   without the override (`qmake -o MakefileEmbedded KoncludeEmbedded.pro`),
-  `make -f MakefileEmbedded clean`, rebuild.
+  `make -f MakefileEmbedded clean`, rebuild — or just delete
+  `MakefileEmbedded` and let `rebuild.sh` regenerate it plain.
 
 ### Setting breakpoints inside the library
 

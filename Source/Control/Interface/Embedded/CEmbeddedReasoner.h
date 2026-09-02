@@ -54,6 +54,8 @@ namespace Konclude {
 
 				class CEmbeddedOntologyLoader;
 				class CEmbeddedQueryManager;
+				class CEmbeddedChainedOntologyLoader;
+				class CEmbeddedChainedQueryManager;
 
 				/*!
 				 *		\class		CEmbeddedReasoner
@@ -101,6 +103,25 @@ namespace Konclude {
 						//! assertClassFact(). Requires beginNewState() to have been called
 						//! first.
 						bool assertClassFact(const QString& individualIRI, const QString& classIRI);
+
+						//! Correctness-experiment counterpart to beginNewState()/
+						//! assertClassFact()/executeConjunctiveQuery(), delegating to the
+						//! separate CEmbeddedChainedOntologyLoader/CEmbeddedChainedQueryManager
+						//! pair instead -- kept fully independent of mOntologyLoader/
+						//! mQueryManager's state so this never touches the production Tell/
+						//! query path. See CEmbeddedChainedOntologyLoader's class doc comment
+						//! for what these do differently and why
+						//! (docs/EMBEDDED_STATE_ISOLATION_BUG.md).
+						bool beginNewChainedState();
+						bool assertClassFactChained(const QString& individualIRI, const QString& classIRI);
+						bool retractClassFactChained(const QString& individualIRI, const QString& classIRI);
+						bool executeChainedConjunctiveQuery(const QString& sparqlSelectQuery);
+						int getChainedQueryResultRowCount();
+						int getChainedQueryResultVariableCount();
+						//! UTF-8 pointer valid until the next call on this instance.
+						const char* getChainedQueryResultVariableNameCStr(int varIndex);
+						//! UTF-8 pointer valid until the next call on this instance.
+						const char* getChainedQueryResultBindingCStr(int row, int varIndex);
 
 						//! Runs a single-BGP SPARQL SELECT conjunctive query against the
 						//! current state -- see CEmbeddedQueryManager::
@@ -175,6 +196,12 @@ namespace Konclude {
 						//! infrastructure above failed to set up -- see isReady()); see
 						//! CEmbeddedQueryManager.
 						CEmbeddedQueryManager* mQueryManager;
+						//! Correctness-experiment collaborators -- see
+						//! CEmbeddedChainedOntologyLoader's class doc comment. Always
+						//! constructed alongside mOntologyLoader/mQueryManager above, but
+						//! share no state with them.
+						CEmbeddedChainedOntologyLoader* mChainedOntologyLoader;
+						CEmbeddedChainedQueryManager* mChainedQueryManager;
 
 						QString mLastError;
 						QByteArray mLastErrorUtf8;

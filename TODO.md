@@ -1,2 +1,1 @@
-- [ ] Use CQuery instead of SPARQL
-- [ ] Use CConcreteOntology instead of OWL XML
+- [ ] Use the cache of the builder, maybe have to persist? Look up!

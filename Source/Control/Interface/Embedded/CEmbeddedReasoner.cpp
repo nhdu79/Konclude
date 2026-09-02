@@ -38,6 +38,8 @@
 #include "CEmbeddedOWLlinkProcessor.h"
 #include "CEmbeddedOntologyLoader.h"
 #include "CEmbeddedQueryManager.h"
+#include "CEmbeddedChainedOntologyLoader.h"
+#include "CEmbeddedChainedQueryManager.h"
 
 using namespace Konclude::Utilities;
 
@@ -88,7 +90,8 @@ void CEmbeddedReasoner::ensureQCoreApplication() {
 CEmbeddedReasoner::CEmbeddedReasoner()
     : mConfig(nullptr), mReasonerCommander(nullptr),
       mPreconditionSynchronizer(nullptr), mOwlLinkProcessor(nullptr),
-      mOntologyLoader(nullptr), mQueryManager(nullptr) {
+      mOntologyLoader(nullptr), mQueryManager(nullptr),
+      mChainedOntologyLoader(nullptr), mChainedQueryManager(nullptr) {
   ensureQCoreApplication();
 
   CLogger::getInstance()->addLogObserver(this, 70.0);
@@ -223,6 +226,12 @@ CEmbeddedReasoner::CEmbeddedReasoner()
   // the single null check this replaces).
   mOntologyLoader = new CEmbeddedOntologyLoader(this);
   mQueryManager = new CEmbeddedQueryManager(this, mOntologyLoader);
+
+  // Correctness-experiment collaborators -- see CEmbeddedChainedOntologyLoader's
+  // class doc comment (docs/EMBEDDED_STATE_ISOLATION_BUG.md). Deliberately
+  // separate objects, sharing no state with mOntologyLoader/mQueryManager.
+  mChainedOntologyLoader = new CEmbeddedChainedOntologyLoader(this);
+  mChainedQueryManager = new CEmbeddedChainedQueryManager(this, mChainedOntologyLoader);
 }
 
 CEmbeddedReasoner::~CEmbeddedReasoner() {
@@ -234,6 +243,8 @@ CEmbeddedReasoner::~CEmbeddedReasoner() {
   // process exit reclaim everything. This relies on CCommanderManager's
   // virtual destructor alone. Flagged for the phase 7 stress test
   // (repeated create/use/destroy in a loop) rather than assumed safe.
+  delete mChainedQueryManager;
+  delete mChainedOntologyLoader;
   delete mQueryManager;
   delete mOntologyLoader;
   delete mOwlLinkProcessor;
@@ -303,6 +314,53 @@ bool CEmbeddedReasoner::beginNewState() {
 bool CEmbeddedReasoner::assertClassFact(const QString &individualIRI,
                                         const QString &classIRI) {
   return mOntologyLoader->assertClassFact(individualIRI, classIRI);
+}
+
+bool CEmbeddedReasoner::beginNewChainedState() {
+  mChainedQueryManager->resetForNewState();
+  return mChainedOntologyLoader->beginNewChainedState();
+}
+
+bool CEmbeddedReasoner::assertClassFactChained(const QString &individualIRI,
+                                               const QString &classIRI) {
+  bool ok = mChainedOntologyLoader->assertClassFactChained(individualIRI, classIRI);
+  if (ok) {
+    // Mirrors COWLlinkProcessor's lastGetCurrKBRevC reset on any SPARQL
+    // update op -- force the next query to build a fresh layer on the
+    // newly-installed head rather than reuse one built against a stale
+    // installed revision.
+    mChainedQueryManager->resetForNewState();
+  }
+  return ok;
+}
+
+bool CEmbeddedReasoner::retractClassFactChained(const QString &individualIRI,
+                                                const QString &classIRI) {
+  bool ok = mChainedOntologyLoader->retractClassFactChained(individualIRI, classIRI);
+  if (ok) {
+    mChainedQueryManager->resetForNewState();
+  }
+  return ok;
+}
+
+bool CEmbeddedReasoner::executeChainedConjunctiveQuery(const QString &sparqlSelectQuery) {
+  return mChainedQueryManager->executeConjunctiveQuery(sparqlSelectQuery);
+}
+
+int CEmbeddedReasoner::getChainedQueryResultRowCount() {
+  return mChainedQueryManager->getLastQueryResultRowCount();
+}
+
+int CEmbeddedReasoner::getChainedQueryResultVariableCount() {
+  return mChainedQueryManager->getLastQueryResultVariableCount();
+}
+
+const char *CEmbeddedReasoner::getChainedQueryResultVariableNameCStr(int varIndex) {
+  return mChainedQueryManager->getLastQueryResultVariableNameCStr(varIndex);
+}
+
+const char *CEmbeddedReasoner::getChainedQueryResultBindingCStr(int row, int varIndex) {
+  return mChainedQueryManager->getLastQueryResultBindingCStr(row, varIndex);
 }
 
 bool CEmbeddedReasoner::executeConjunctiveQuery(

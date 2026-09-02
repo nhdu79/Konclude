@@ -26,5 +26,13 @@ OBJECTS_DIR += releaseembedded
 UI_DIR += ./GeneratedFiles
 RCC_DIR += ./GeneratedFiles
 
+# macOS: qmake's default -install_name is a bare filename (e.g.
+# "libKonclude.1.dylib"), which dyld only resolves via the system library
+# paths -- an rpath baked into a consuming binary (as Tools/EmbeddedDriver's
+# rebuild.sh does) is silently ignored unless the dependency itself is
+# recorded as @rpath/-relative. Without this, every driver fails at startup
+# with "Library not loaded: libKonclude.1.dylib".
+macx: QMAKE_LFLAGS_SONAME = -Wl,-install_name,@rpath/
+
 #Include file(s)
 include(Konclude.pri)

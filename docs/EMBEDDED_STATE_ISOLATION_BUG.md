@@ -249,6 +249,41 @@ tradeoff to take before touching `Reasoner/Revision/` or
   batch is fix option 1 (reuse the predecessor's `ontologyID`) or the
   other two options, all of which touch `Reasoner/Revision/`/
   `Reasoner/Kernel/Cache/`/`Reasoner/Realizer/` directly.
+- **Second-generation experiment: also install/adopt the QUERY revision
+  itself as the chain head, and never reset "current" at a state boundary**
+  — added `CEmbeddedPersistentChainedOntologyLoader`/
+  `CEmbeddedPersistentChainedQueryManager` (own class/file pair, alongside
+  not instead of `CEmbeddedChained*` above; wired into `CEmbeddedReasoner`
+  and `konclude_embedded.h` as the `*_persistent_chained` C API functions;
+  left in the tree, unlike the entry above's temporary plumbing) and a
+  matching driver
+  (`Tools/EmbeddedDriver/embedded_state_isolation_persistent_chained_probe.cpp`).
+  Two changes from the first-generation chained pair: (1)
+  `beginOrContinuePersistentChainedState()` never discards the current
+  chain-head revision — a "new state" is a no-op once the chain has a head;
+  (2) `executeConjunctiveQuery()` no longer builds a disposable,
+  never-installed overlay reused across calls — every query call itself
+  constructs a new revision layered on the current head, installs it
+  immediately, queries it, and adopts it as the new chain head, exactly the
+  same Create→Install→adopt-as-current mechanic `assertClassFactChained()`/
+  `retractClassFactChained()` already use. **Result: identical failure,
+  confirming this doesn't dodge "Root cause" either** — run against the same
+  repro: state 1 (`a0`) → query `[a0]`; "state 2" (begin is a no-op; re-tell
+  `a0` + tell `a1`) → query returns **`[a1]` only, `a0` dropped again**; a
+  later no-op-begin "state 4" (tell `a0`+`a1`+`a2` on top of whatever was
+  already installed) → query returns **`[a2]` only** — this time *both*
+  `a0` and the just-retracted-then-untouched `a1` are dropped, not just the
+  originally-reused name, consistent with "Root cause" step 5's "only
+  individuals with something newly relevant this revision get an entry":
+  installing a query's own revision doesn't make an unrelated individual's
+  node newly relevant to the tableau, so it still never gets dispatched
+  into that revision's backend-cache array. Confirms the bug is entirely
+  about what the tableau/saturation layer chooses to (re-)verify per
+  `ontologyID`, not about which Control-layer object initiates the install
+  or when "state" boundaries nominally occur — no combination of
+  install-immediately/install-the-query-revision/never-reset at the
+  `Control::Interface::Embedded` layer can dodge this without one of the
+  three structural fixes listed above.
 - **Confirmed empirically: the real `COWLlinkProcessor.cpp` Tell/Install
   pattern IS subject to this bug too** (settling the "implied but not
   verified" hedge in the entry above). Added temporary
@@ -297,3 +332,83 @@ tradeoff to take before touching `Reasoner/Revision/` or
      for this isolation-bug test; would need its own dedicated look at
      `Control/Command` dispatch or `Reasoner/Revision` under rapid
      sequential installs).
+- **Attempted: run the repro through the actual `sparqlfile` CLI (not a
+  mirror of `COWLlinkProcessor.cpp`'s pattern via the embedded interface,
+  the real interface itself) — inconclusive, blocked by two other bugs
+  found along the way, both distinct from this one.** Built
+  `KoncludeWithoutRedland.pro`'s CLI binary and wrote
+  `Tools/EmbeddedDriver/sparql_isolation_probe.sparql` (left in the tree) to
+  run: `INSERT GRAPH <kb> { a0 rdf:type Father }` → `SELECT` → `INSERT GRAPH
+  <kb> { a0 rdf:type Father . a1 rdf:type Father }` → `SELECT`, all against
+  one explicitly-named graph, via `./Release/Konclude sparqlfile -w 2 -s
+  Tools/EmbeddedDriver/sparql_isolation_probe.sparql -o OUT -c
+  Configs/querying-config.xml`. Confirmed via direct code reading (not
+  needing to run anything) that this CLI path is mechanically identical to
+  what the chained probe above already tested: `COWLlinkProcessor.cpp`'s
+  `SPARQL_UPDATE_MODIFY` branch (~line 1133-1150) issues the exact same
+  `CCreateKnowledgeBaseRevisionUpdateCommand` → Tell →
+  `CInstallKnowledgeBaseRevisionUpdateCommand` sequence, landing in the same
+  `CSPOntologyRevisionManager::createNewOntologyRevision()` with its
+  unconditional `nextOntologyID++` (`.cpp:483`) — so the reused-individual
+  drop this doc describes is expected to reproduce here too. Getting an
+  actual *live* result to confirm/refute that turned out to require working
+  around, then getting blocked by, two separate issues:
+  1. **`CSPARQLKnowledgeBaseSplittingOperationParser`'s graph-name
+     resolution is fragile for anything beyond simple LOAD-then-SELECT**
+     (`Source/Parser/CSPARQLKnowledgeBaseSplittingOperationParser.cpp`).
+     `INSERT`/`DELETE` resolve their target graph via a *direct* token
+     reference (`getGraphName(...,directGraphReference=true)`, `.cpp:214`)
+     instead of requiring a `FROM`/`INTO`/`GRAPH` keyword the way `SELECT`
+     does — so a bare `INSERT { ... }` with no graph clause at all
+     misreads the opening `{` itself as a candidate graph IRI, silently
+     creating and populating a bogus knowledge base literally named `{`
+     confirmed by the log: `Preprocessing ontology '{'`). Separately, `LOAD
+     <file> INTO <iri>` does NOT auto-create `<iri>` if it doesn't already
+     exist — only resolving to the built-in
+     `"$LastCreatedKnowledgeBase..."` sentinel does that
+     (`CSPOntologyRevisionManager::createNewOntologyRevision()`,
+     `.cpp:462-467`) — a `LOAD ... INTO <not-yet-existing-iri>` hits
+     `"KnowledgeBase '...' does not exist."` instead. Worked around by
+     issuing an explicit `CREATE GRAPH <iri>` first, then naming that same
+     `<iri>` explicitly on every subsequent `LOAD`/`INSERT`/`SELECT`. Minor,
+     narrow parser gap — not investigated further, out of scope for this
+     task (reported here per `CLAUDE.md`'s Task Scope convention).
+  2. **A second, unrelated per-`ontologyID` cache — not the one this doc
+     otherwise describes — makes CQ answering spuriously report *any*
+     brand-new revision's query as unsatisfiable, confirmed by temporary
+     debug instrumentation (reverted, not left in the tree) in
+     `COptimizedComplexExpressionAnsweringHandler::identifyNonInstantiation()`
+     (`Source/Reasoner/Answerer/COptimizedComplexExpressionAnsweringHandler.cpp:2942-3002`,
+     called from `initializeQueryProcessing()` at `.cpp:1988-1994`, gated by
+     config `Konclude.Answering.UnsatisfiableNonInstanceStatisticsChecking`,
+     default `true`).** It looks up
+     `COccurrenceStatisticsCacheReader::getAccummulatedConceptDataOccurrenceStatistics(ontologyId,
+     conceptTag)` — `ontologyId` again being
+     `mOntoAnsweringItem->getOntology()->getOntologyID()`, the same
+     never-reused counter from "Root cause" step 1 — and if both its
+     existential- and individual-instance counts are `<= 0`, treats the
+     query as trivially unsatisfiable *before ever consulting the ABox*.
+     Debug print confirmed this reads `existCount=0 indiCount=0` for
+     **every** ontologyId tested, including the very first query against
+     the very first freshly-installed revision (`ontologyId=2`, with `a0`
+     genuinely told and installed, no reuse involved at all) — so this
+     shortcut isn't specific to reused individuals, it empties every single
+     query result through this CLI path regardless. Forcing the config flag
+     false (temporarily, in-process, since a `-c` config file's `<Set>` for
+     this same key had no observable effect — config-loading-order issue
+     not run down) got past this shortcut but then the real answering path
+     hung during realization under both `-w 2` and `-w 4` before completing
+     — a third, distinct issue, not investigated further.
+
+  **Net result: inconclusive at the live-CLI level** — never got a clean
+  before/after query-result comparison through `sparqlfile` itself, so this
+  entry does NOT independently confirm the reused-individual drop the way
+  the chained-probe entry above does. The static code-path identity
+  argument above stands on its own regardless (same commands, same
+  `createNewOntologyRevision()` call, same unconditional fresh
+  `ontologyID`), so the reused-individual bug is still expected to affect
+  the real SPARQL/OWLlink server — just not re-confirmed by an end-to-end
+  run this time. A follow-up attempt should expect to need to work around
+  both issues above (or use `owllinkserver`/`sparqlserver` with a real
+  client instead of the `sparqlfile` batch-splitting parser, which may not
+  share issue 1) before a live before/after comparison is possible.

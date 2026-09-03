@@ -23,8 +23,8 @@
 
 #include "CEmbeddedQueryManager.h"
 
-#include "CEmbeddedReasoner.h"
 #include "CEmbeddedOntologyLoader.h"
+#include "CEmbeddedReasoner.h"
 
 #include "Control/Command/CCommandExecutedBlocker.h"
 #include "Control/Command/CPreconditionSynchronizer.h"
@@ -81,24 +81,27 @@ CEmbeddedQueryManager::~CEmbeddedQueryManager() {
 }
 
 void CEmbeddedQueryManager::resetForNewState() {
-  delete mCurrentQueryRevision;
-  mCurrentQueryRevision = nullptr;
+  // delete mCurrentQueryRevision;
+  // mCurrentQueryRevision = nullptr;
 }
 
 bool CEmbeddedQueryManager::extractBooleanResult(
     CKnowledgeBaseQueryCommand *command, bool *resultOut) {
   if (!command || !resultOut) {
-    mInstanceManager->setLastError("Internal error: missing command or output pointer.");
+    mInstanceManager->setLastError(
+        "Internal error: missing command or output pointer.");
     return false;
   }
   CCalculateQueryCommand *calcCommand = command->getCalculateQueryCommand();
   if (!calcCommand) {
-    mInstanceManager->setLastError("Query produced no calculate-query sub-command.");
+    mInstanceManager->setLastError(
+        "Query produced no calculate-query sub-command.");
     return false;
   }
   CQuery *query = calcCommand->getQuery();
   if (!query) {
-    mInstanceManager->setLastError("Query object missing from calculate-query command.");
+    mInstanceManager->setLastError(
+        "Query object missing from calculate-query command.");
     return false;
   }
   CQueryResult *result = query->getQueryResult();
@@ -147,7 +150,8 @@ bool CEmbeddedQueryManager::executeConjunctiveQuery(
     return false;
   }
   if (!mOntologyLoader->hasCurrentState()) {
-    mInstanceManager->setLastError("No current state; call beginNewState() first.");
+    mInstanceManager->setLastError(
+        "No current state; call beginNewState() first.");
     return false;
   }
 
@@ -177,7 +181,8 @@ bool CEmbeddedQueryManager::executeConjunctiveQuery(
     CCreateKnowledgeBaseRevisionUpdateCommand *createRevCommand =
         new CCreateKnowledgeBaseRevisionUpdateCommand(
             mInstanceManager->getKnowledgeBaseName());
-    mInstanceManager->getPreconditionSynchronizer()->delegateCommand(createRevCommand);
+    mInstanceManager->getPreconditionSynchronizer()->delegateCommand(
+        createRevCommand);
     CCommandExecutedBlocker::waitExecutedCommand(createRevCommand);
     mCurrentQueryRevision = createRevCommand->getOntologyRevision();
     delete createRevCommand;
@@ -243,12 +248,14 @@ bool CEmbeddedQueryManager::executeConjunctiveQuery(
   // PSCOMPLETELYYPROCESSED/PSSUCESSFULL for this ontology).
   CPreprocessKnowledgeBaseRequirementsForQueryCommand *prepQueryCommand =
       new CPreprocessKnowledgeBaseRequirementsForQueryCommand(onto);
-  mInstanceManager->getPreconditionSynchronizer()->delegateCommand(prepQueryCommand);
+  mInstanceManager->getPreconditionSynchronizer()->delegateCommand(
+      prepQueryCommand);
   CCommandExecutedBlocker::waitExecutedCommand(prepQueryCommand);
   delete prepQueryCommand;
 
   CCalculateQueryCommand *calcQueryCommand = new CCalculateQueryCommand(query);
-  mInstanceManager->getPreconditionSynchronizer()->delegateCommand(calcQueryCommand);
+  mInstanceManager->getPreconditionSynchronizer()->delegateCommand(
+      calcQueryCommand);
   CCommandExecutedBlocker::waitExecutedCommand(calcQueryCommand);
   delete calcQueryCommand;
 
@@ -262,7 +269,8 @@ bool CEmbeddedQueryManager::executeConjunctiveQuery(
   CVariableBindingsAnswersResult *varBindAnsRes =
       dynamic_cast<CVariableBindingsAnswersResult *>(result);
   if (!varBindAnsRes) {
-    mInstanceManager->setLastError("Query did not produce a variable-bindings result.");
+    mInstanceManager->setLastError(
+        "Query did not produce a variable-bindings result.");
     delete query;
     return false;
   }
@@ -314,7 +322,7 @@ CEmbeddedQueryManager::getLastQueryResultVariableNameCStr(int varIndex) {
 }
 
 const char *CEmbeddedQueryManager::getLastQueryResultBindingCStr(int row,
-                                                                  int varIndex) {
+                                                                 int varIndex) {
   if (row < 0 || row >= mLastQueryResultRows.size() || varIndex < 0 ||
       varIndex >= mLastQueryResultRows.at(row).size()) {
     mLastQueryResultStringUtf8 = QByteArray();

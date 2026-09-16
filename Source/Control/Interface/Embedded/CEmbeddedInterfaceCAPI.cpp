@@ -75,19 +75,27 @@ extern "C" {
 		return ok ? 1 : 0;
 	}
 
-	int konclude_state_begin(KoncludeReasonerHandle handle) {
+	int konclude_tell_and_retract_axioms(KoncludeReasonerHandle handle, const KoncludeClassAssertion* tellAssertions, int tellAssertionCount, const KoncludeClassAssertion* retractAssertions, int retractAssertionCount) {
 		if (!handle) {
 			return 0;
 		}
-		bool ok = static_cast<CEmbeddedReasoner*>(handle)->beginNewState();
-		return ok ? 1 : 0;
-	}
-
-	int konclude_state_assert_class_fact(KoncludeReasonerHandle handle, const char* individualIRI, const char* classIRI) {
-		if (!handle || !individualIRI || !classIRI) {
+		if (tellAssertionCount < 0 || retractAssertionCount < 0) {
 			return 0;
 		}
-		bool ok = static_cast<CEmbeddedReasoner*>(handle)->assertClassFact(QString::fromUtf8(individualIRI), QString::fromUtf8(classIRI));
+		if ((tellAssertionCount > 0 && !tellAssertions) || (retractAssertionCount > 0 && !retractAssertions)) {
+			return 0;
+		}
+		for (int i = 0; i < tellAssertionCount; ++i) {
+			if (!tellAssertions[i].individualIRI || !tellAssertions[i].classIRI) {
+				return 0;
+			}
+		}
+		for (int i = 0; i < retractAssertionCount; ++i) {
+			if (!retractAssertions[i].individualIRI || !retractAssertions[i].classIRI) {
+				return 0;
+			}
+		}
+		bool ok = static_cast<CEmbeddedReasoner*>(handle)->tellAndRetractAxioms(tellAssertionCount, retractAssertionCount);
 		return ok ? 1 : 0;
 	}
 

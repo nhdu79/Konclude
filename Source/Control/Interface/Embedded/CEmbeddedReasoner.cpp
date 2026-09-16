@@ -290,24 +290,24 @@ bool CEmbeddedReasoner::checkSatisfiability(const QString &classIRI,
   return mQueryManager->checkSatisfiability(classIRI, satisfiableOut);
 }
 
-bool CEmbeddedReasoner::beginNewState() {
-  // The previous state's query-layer revision (see CEmbeddedQueryManager::
-  // executeConjunctiveQuery()) and its scratch ABox revision (see
-  // CEmbeddedOntologyLoader::beginNewState()) are independent objects with
-  // no data dependency on each other -- which collaborator resets first
-  // does not matter, only that both happen every time this is called.
-  mQueryManager->resetForNewState();
-  return mOntologyLoader->beginNewState();
-}
-
-bool CEmbeddedReasoner::assertClassFact(const QString &individualIRI,
-                                        const QString &classIRI) {
-  return mOntologyLoader->assertClassFact(individualIRI, classIRI);
+bool CEmbeddedReasoner::tellAndRetractAxioms(int tellAssertionCount,
+                                             int retractAssertionCount) {
+  // STUB -- see header comment. Argument-level validation (null handle,
+  // negative counts, null IRI strings) already happened in the C API shim
+  // (CEmbeddedInterfaceCAPI.cpp) before this was called.
+  Q_UNUSED(tellAssertionCount);
+  Q_UNUSED(retractAssertionCount);
+  return true;
 }
 
 bool CEmbeddedReasoner::executeConjunctiveQuery(
     const QString &sparqlSelectQuery) {
-  return mQueryManager->executeConjunctiveQuery(sparqlSelectQuery);
+  // STUB -- see header comment.
+  if (sparqlSelectQuery.trimmed().isEmpty()) {
+    setLastError("Empty SPARQL query text.");
+    return false;
+  }
+  return true;
 }
 
 int CEmbeddedReasoner::getLastQueryResultRowCount() {

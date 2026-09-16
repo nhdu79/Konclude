@@ -47,6 +47,11 @@ namespace Konclude {
 
 			namespace Embedded {
 
+        struct ClassAssertionFact {
+          QString individualIRI;
+          QString classIRI;
+        };
+
 				class CEmbeddedReasoner;
 
 				/*!
@@ -73,24 +78,7 @@ namespace Konclude {
 
 						bool loadOntologyFile(const QString& filePath);
 
-						//! Starts a new FD "state": discards whatever scratch ABox revision
-						//! was current (see docs/EMBEDDED_HIGH_VOLUME_CQ_OPTIMIZATION.md's
-						//! Decision 2 -- never installed, so a plain delete is the whole
-						//! cleanup) and creates a fresh one layered on the loaded/classified
-						//! base ontology via CCreateKnowledgeBaseRevisionUpdateCommand. Call
-						//! this once per FD state, before asserting that state's ABox facts.
-						bool beginNewState();
-
-						//! Asserts one ClassAssertion(individualIRI, classIRI) ground fact
-						//! into the current state's scratch revision (see beginNewState()),
-						//! via the same CConcreteOntologyUpdateCollectorBuilder/
-						//! tellOntologyAxiom mechanism every file-based ontology loader in
-						//! this codebase uses -- not a preset CConcreteOntology handed in
-						//! from outside (see CCreateKnowledgeBaseRevisionUpdateCommand's
-						//! ABox/query constructor -- unused anywhere in this codebase and,
-						//! per createNewOntologyRevision's presetOntology handling, untested).
-						//! Requires beginNewState() to have been called first.
-						bool assertClassFact(const QString& individualIRI, const QString& classIRI);
+						bool tellAndRetractAssertions(const ClassAssertionFact* tellAssertions, int tellAssertionCount, const ClassAssertionFact* retractAssertions, int retractAssertionCount);
 
 						//! Correctness probe for docs/EMBEDDED_HIGH_VOLUME_CQ_OPTIMIZATION.md's
 						//! Decision 4 open item: repeatedly builds a scratch knowledge-base
@@ -107,7 +95,7 @@ namespace Konclude {
 						int probeScratchRevisionCycles(int iterations);
 
 						bool isOntologyLoaded() const;
-						bool hasCurrentState() const;
+						// bool hasCurrentState() const;
 
 						//! Installs the current state's revision the first time this is
 						//! called for it (idempotent thereafter), and returns it. Required
@@ -116,7 +104,7 @@ namespace Konclude {
 						//! query processing directly on a never-installed revision looked
 						//! plausible but empirically corrupted query results, including for
 						//! content that predates any Tell into this state).
-						Reasoner::Revision::COntologyRevision* ensureCurrentStateInstalled();
+						// Reasoner::Revision::COntologyRevision* ensureCurrentStateInstalled();
 
 					// private variables
 					private:
@@ -132,7 +120,7 @@ namespace Konclude {
 						//! destructor UNLESS installed, in which case
 						//! CSPOntologyRevisionManager's onRevContainer owns it instead. Null
 						//! until the first beginNewState() call.
-						Reasoner::Revision::COntologyRevision* mCurrentStateRevision;
+						// Reasoner::Revision::COntologyRevision* mCurrentStateRevision;
 						//! Whether mCurrentStateRevision has been installed yet. Reset to
 						//! false by beginNewState(). Installing turns out to be required,
 						//! not optional, for facts asserted into mCurrentStateRevision to be
@@ -140,7 +128,7 @@ namespace Konclude {
 						//! codebase (COWLlinkProcessor.cpp's SPARQL UPDATE MODIFY handling)
 						//! installs before any query ever touches the Told revision;
 						//! nothing in the codebase does otherwise.
-						bool mCurrentStateInstalled;
+						// bool mCurrentStateInstalled;
 
 						//! One CConcreteOntologyUpdateCollectorBuilder per current state,
 						//! tied to mCurrentStateRevision's ontology and reused across every
@@ -152,7 +140,7 @@ namespace Konclude {
 						//! successive assert calls regardless of builder object identity.
 						//! Rebuilt by beginNewState() (whose new state has a different
 						//! ontology) and freed by the destructor.
-						Reasoner::Generator::CConcreteOntologyUpdateCollectorBuilder* mCurrentStateBuilder;
+						// Reasoner::Generator::CConcreteOntologyUpdateCollectorBuilder* mCurrentStateBuilder;
 				};
 
 			}; // end namespace Embedded

@@ -149,55 +149,28 @@ bool CEmbeddedQueryManager::executeConjunctiveQuery(
     mInstanceManager->setLastError("No ontology loaded.");
     return false;
   }
-  if (!mOntologyLoader->hasCurrentState()) {
-    mInstanceManager->setLastError(
-        "No current state; call beginNewState() first.");
-    return false;
-  }
+  // if (!mOntologyLoader->hasCurrentState()) {
+  //   mInstanceManager->setLastError(
+  //       "No current state; call beginNewState() first.");
+  //   return false;
+  // }
 
   // See CEmbeddedOntologyLoader::ensureCurrentStateInstalled() for why this
   // lazy, once-per-state install is NOT optional.
-  mOntologyLoader->ensureCurrentStateInstalled();
+  // mOntologyLoader->ensureCurrentStateInstalled();
 
-  // Create a query-layer revision on top of the now-installed state ONCE
-  // per FD state, on the first query, and REUSE it for every subsequent
-  // query against the same state -- mirrors COWLlinkProcessor::
-  // processCustomsEvents' CParseProcessSPARQLTextCommand handling, which
-  // does exactly this: `lastGetCurrKBRevC` (the fresh revision) is created
-  // once and shared across every consecutive SPARQL_QUERY operation in a
-  // batch, only reset on an intervening update. Querying the installed
-  // state revision directly, with no extra layer at all, does NOT work:
-  // confirmed empirically -- pre-existing ABox content resolves fine that
-  // way, but facts asserted via CEmbeddedOntologyLoader::assertClassFact()
-  // in the same session silently return zero rows (the historical bug this
-  // comment used to describe, but now proven to be about newly-Told content
-  // specifically, not about install status, which the loader's
-  // ensureCurrentStateInstalled() already covers). A layer is required; it
-  // just does not need to be a NEW one per query. See
-  // docs/EMBEDDED_HIGH_VOLUME_CQ_OPTIMIZATION.md's Decision 5 for why
-  // per-query layers were expensive enough to matter (one leaked
-  // CRealizerThread per query) and Decision 6 for this fix.
-  if (!mCurrentQueryRevision) {
-    CCreateKnowledgeBaseRevisionUpdateCommand *createRevCommand =
-        new CCreateKnowledgeBaseRevisionUpdateCommand(
-            mInstanceManager->getKnowledgeBaseName());
-    mInstanceManager->getPreconditionSynchronizer()->delegateCommand(
-        createRevCommand);
-    CCommandExecutedBlocker::waitExecutedCommand(createRevCommand);
-    mCurrentQueryRevision = createRevCommand->getOntologyRevision();
-    delete createRevCommand;
-    if (!mCurrentQueryRevision) {
-      mInstanceManager->setLastError(
-          "Failed to create a new knowledge base revision for querying.");
-      return false;
-    }
-  }
-  COntologyRevision *ontRev = mCurrentQueryRevision;
-  CConcreteOntology *onto = ontRev->getOntology();
-  COntologyRevision *prevOntRev = ontRev->getPreviousOntologyRevision();
-  CConcreteOntology *baseOnt = prevOntRev ? prevOntRev->getOntology() : onto;
+  CCreateKnowledgeBaseRevisionUpdateCommand *updateCommand =
+    new CCreateKnowledgeBaseRevisionUpdateCommand(
+        mInstanceManager->getKnowledgeBaseName());
+  mInstanceManager->getPreconditionSynchronizer()->delegateCommand(updateCommand);
+  CCommandExecutedBlocker::waitExecutedCommand(updateCommand);
+
+  COntologyRevision *newQueryRev = updateCommand->getOntologyRevision();
+  CConcreteOntology *onto = newQueryRev->getOntology();
+  COntologyRevision *prevOntRev = newQueryRev->getPreviousOntologyRevision();
+  CConcreteOntology *baseOnt = prevOntRev->getOntology();
   COntologyConfigurationExtension *ontConfig =
-      ontRev->getOntologyConfiguration();
+      newQueryRev->getOntologyConfiguration();
 
   // Build the CQuery* once via the exact same non-Rasqal, single-BGP
   // SPARQL engine sparqlfile/sparqlserver use (see

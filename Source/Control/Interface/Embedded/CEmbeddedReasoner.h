@@ -89,24 +89,22 @@ namespace Konclude {
 						bool checkConsistency(bool* consistentOut);
 						bool checkSatisfiability(const QString& classIRI, bool* satisfiableOut);
 
-						//! Starts a new FD "state" -- see CEmbeddedOntologyLoader::
-						//! beginNewState() for the ontology-loader-side details, and
-						//! CEmbeddedQueryManager::resetForNewState() for the query-manager
-						//! side. Call this once per FD state, before asserting that state's
-						//! ABox facts.
-						bool beginNewState();
+						//! STUB: validates the tell/retract counts and reports success
+						//! without applying anything to the reasoning pipeline. There is
+						//! no separate "begin state" step -- each call is meant to both
+						//! transition to a new FD state and apply that state's
+						//! tells/retracts in one go once this is wired up for real. See
+						//! CEmbeddedOntologyLoader::tellAndRetractAssertions() for the
+						//! real (currently unwired) implementation this will delegate to.
+						bool tellAndRetractAxioms(int tellAssertionCount, int retractAssertionCount);
 
-						//! Asserts one ClassAssertion(individualIRI, classIRI) ground fact
-						//! into the current state -- see CEmbeddedOntologyLoader::
-						//! assertClassFact(). Requires beginNewState() to have been called
-						//! first.
-						bool assertClassFact(const QString& individualIRI, const QString& classIRI);
-
-						//! Runs a single-BGP SPARQL SELECT conjunctive query against the
-						//! current state -- see CEmbeddedQueryManager::
-						//! executeConjunctiveQuery(). Requires beginNewState() to have been
-						//! called first. Results are captured and retrievable via the
-						//! getLastQueryResult* accessors below until the next call.
+						//! STUB: validates the query text and reports success with an
+						//! empty result set, without running anything against the
+						//! reasoning pipeline. See CEmbeddedQueryManager::
+						//! executeConjunctiveQuery() for the real (currently unwired)
+						//! implementation this will delegate to. Results are retrievable
+						//! via the getLastQueryResult* accessors below (always empty for
+						//! now) until the next call.
 						bool executeConjunctiveQuery(const QString& sparqlSelectQuery);
 
 						//! Correctness probe -- see CEmbeddedOntologyLoader::

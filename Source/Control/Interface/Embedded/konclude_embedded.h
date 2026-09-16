@@ -44,6 +44,11 @@ extern "C" {
 
 typedef void* KoncludeReasonerHandle;
 
+typedef struct {
+  const char* individualIRI;
+  const char* classIRI;
+} KoncludeClassAssertion;
+
 /*
  * Creates a new reasoner instance. Internally forces >=2 processing
  * threads to avoid a known deadlock in Konclude's startup synchronization
@@ -81,37 +86,28 @@ int konclude_check_consistency(KoncludeReasonerHandle handle, int* outConsistent
 int konclude_check_satisfiability(KoncludeReasonerHandle handle, const char* classIRI, int* outSatisfiable);
 
 /*
- * Starts a new FD "state": discards whatever scratch ABox revision was
- * current (a plain in-process free -- it was never installed, see
- * docs/EMBEDDED_HIGH_VOLUME_CQ_OPTIMIZATION.md's Decision 2) and creates a
- * fresh one layered on the loaded/classified base ontology. Call this once
- * per FD state, before asserting that state's ABox facts via
- * konclude_state_assert_class_fact. Requires an ontology already loaded via
- * konclude_load_ontology_file. Returns 1 on success, 0 on failure (see
- * konclude_last_error).
+ * STUB: validates arguments (non-null handle, non-negative counts, no null
+ * IRI strings within the arrays) and reports success -- does not yet apply
+ * the ClassAssertion(individualIRI, classIRI) tells/retracts to the
+ * reasoning pipeline. There is no separate "begin state" call -- each call
+ * is meant to both transition to a new FD state and apply that state's
+ * tells/retracts in one go once this is wired up for real. Placeholder
+ * entry point for FastDownward integration to link and call against while
+ * the real tell/retract wiring (see CEmbeddedOntologyLoader::
+ * tellAndRetractAssertions(), not yet reachable from this C API) is
+ * finished separately. individualIRI/classIRI must be fully-qualified IRI
+ * strings. Returns 1 on success, 0 on failure (see konclude_last_error).
  */
-int konclude_state_begin(KoncludeReasonerHandle handle);
+int konclude_tell_and_retract_axioms(KoncludeReasonerHandle handle, const KoncludeClassAssertion* tellAssertions, int tellAssertionCount, const KoncludeClassAssertion* retractAssertions, int retractAssertionCount);
 
 /*
- * Asserts one ClassAssertion(individualIRI, classIRI) ground fact into the
- * current state (see konclude_state_begin). individualIRI/classIRI must be
- * fully-qualified IRI strings. Requires konclude_state_begin to have been
- * called first. Returns 1 on success, 0 on failure (see konclude_last_error).
- */
-int konclude_state_assert_class_fact(KoncludeReasonerHandle handle, const char* individualIRI, const char* classIRI);
-
-/*
- * Runs a SPARQL SELECT conjunctive query (single basic graph pattern --
- * several atoms joined by shared variables; OPTIONAL/UNION/nested SELECT
- * are not supported, see docs/CONJUNCTIVE_QUERY_PIPELINE.md) against the
- * current state (see konclude_state_begin/konclude_state_assert_class_fact
- * -- multiple queries against the same state see each other and every
- * asserted fact), using the same non-Rasqal query engine as Konclude's
- * `sparqlfile`/`sparqlserver` CLI commands. Requires konclude_state_begin
- * to have been called first. Returns 1 on success, 0 on failure (see
- * konclude_last_error). On success, the result rows are retrievable via
- * the konclude_query_result_* functions below until the next call to this
- * function on the same handle.
+ * STUB: validates arguments and reports success with an empty result set
+ * (0 rows, 0 variables) -- does not yet run the query against the
+ * reasoning pipeline. Placeholder entry point for FastDownward integration
+ * to link and call against while the real conjunctive-query wiring (see
+ * CEmbeddedQueryManager::executeConjunctiveQuery(), not yet reachable from
+ * this C API) is finished separately. Returns 1 on success (non-empty
+ * query text), 0 on failure (see konclude_last_error).
  */
 int konclude_execute_conjunctive_query(KoncludeReasonerHandle handle, const char* sparqlSelectQuery);
 

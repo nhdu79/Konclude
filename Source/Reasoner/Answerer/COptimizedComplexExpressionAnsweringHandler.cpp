@@ -8500,7 +8500,14 @@ namespace Konclude {
 					}
 					propItemIndexMapping->insert(newIdx, otherExp);
 
-					varExpVarComItemHash->value(otherExp)->insert(varRolePropItem);
+					// otherExp may not have any item yet (e.g., ?y in "?x p ?y" without a type atom for ?y), when the
+					// propagation item is reused from an earlier query
+					QSet<COptimizedComplexVariableCompositionItem*>* otherVarItemSet = varExpVarComItemHash->value(otherExp);
+					if (!otherVarItemSet) {
+						otherVarItemSet = new QSet<COptimizedComplexVariableCompositionItem*>();
+						varExpVarComItemHash->insert(otherExp, otherVarItemSet);
+					}
+					otherVarItemSet->insert(varRolePropItem);
 					buildingVarItem->updateLastHandledVariableItemAssociation(otherExp, varRolePropItem);
 
 

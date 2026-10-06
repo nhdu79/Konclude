@@ -37,6 +37,7 @@ namespace Konclude {
 
 					mSlotLinker = nullptr;
 					mLastUpdatedSlotLinker = nullptr;
+					mRetainedWriteMemoryPools = nullptr;
 					mReaderLinker = nullptr;
 
 					mNextIndiUpdateId = 1;
@@ -141,6 +142,73 @@ namespace Konclude {
 
 
 				CBackendRepresentativeMemoryCache::~CBackendRepresentativeMemoryCache() {
+					// The thread must be stopped. The cached data is in pools of separate containers (data versions, ontology
+					// contexts, individual association contexts, reader slots), which point into each other: collect all of
+					// them first, then release their pools. What is allocated directly from mContext is freed with it.
+					QSet<CBackendRepresentativeMemoryCacheOntologyData*> ontologyDataSet;
+					for (CBackendRepresentativeMemoryCacheOntologyData* ontologyData : *mOntologyIdentifierDataHash) {
+						ontologyDataSet.insert(ontologyData);
+					}
+					for (CBackendRepresentativeMemoryCacheOntologyData* ontologyData : mFixedOntologyIdentifierDataHash) {
+						ontologyDataSet.insert(ontologyData);
+					}
+					QList<CBackendRepresentativeMemoryCacheSlotItem*> slotList;
+					for (CBackendRepresentativeMemoryCacheSlotItem* slotLinkerIt = mSlotLinker; slotLinkerIt; slotLinkerIt = slotLinkerIt->getNext()) {
+						slotList.append(slotLinkerIt);
+						for (CBackendRepresentativeMemoryCacheOntologyData* ontologyData : *slotLinkerIt->getOntologyIdentifierDataHash()) {
+							ontologyDataSet.insert(ontologyData);
+						}
+					}
+					ontologyDataSet.remove(nullptr);
+
+					QSet<CBackendRepresentativeMemoryCacheOntologyContext*> ontologyContextSet;
+					for (CBackendRepresentativeMemoryCacheOntologyContext* ontologyContext : mReleasedOntologyContextHash) {
+						ontologyContextSet.insert(ontologyContext);
+					}
+					QSet<CBackendRepresentativeMemoryCacheIndividualAssociationContext*> indiAssContextSet;
+					for (CBackendRepresentativeMemoryCacheOntologyData* ontologyData : ontologyDataSet) {
+						ontologyContextSet.insert(ontologyData->getOntologyContext());
+						CBackendRepresentativeMemoryCacheIndividualAssociationData** indiIdAssoDataVector = ontologyData->getIndividualIdAssoiationDataVector();
+						for (cint64 i = 0; indiIdAssoDataVector && i < ontologyData->getIndividualIdAssoiationDataVectorSize(); ++i) {
+							if (indiIdAssoDataVector[i]) {
+								indiAssContextSet.insert(indiIdAssoDataVector[i]->getIndividualAssociationMemoryContext());
+							}
+						}
+						for (CBackendRepresentativeMemoryCacheIndividualAssociationContext* contextIt = ontologyData->getReleaseQueuedIndividualAssociationContextLinker(); contextIt; contextIt = contextIt->getNext()) {
+							indiAssContextSet.insert(contextIt);
+						}
+						CCACHINGMAP<cint64, CBackendRepresentativeMemoryCacheIndividualAssociationContext*>* releasingContextMap = ontologyData->getRecomputationIdReleasingIndividualAssociationContextMap();
+						if (releasingContextMap) {
+							for (CBackendRepresentativeMemoryCacheIndividualAssociationContext* contextLinker : *releasingContextMap) {
+								for (CBackendRepresentativeMemoryCacheIndividualAssociationContext* contextIt = contextLinker; contextIt; contextIt = contextIt->getNext()) {
+									indiAssContextSet.insert(contextIt);
+								}
+							}
+						}
+					}
+					ontologyContextSet.remove(nullptr);
+					indiAssContextSet.remove(nullptr);
+
+					CMemoryPoolAllocationManager* memMan = mContext.getMemoryPoolAllocationManager();
+					for (CBackendRepresentativeMemoryCacheIndividualAssociationContext* indiAssContext : indiAssContextSet) {
+						// the context object itself is allocated from mContext
+						memMan->releaseTemporaryMemoryPools(indiAssContext->getMemoryPoolContainer()->takeMemoryPools());
+					}
+					for (CBackendRepresentativeMemoryCacheOntologyData* ontologyData : ontologyDataSet) {
+						memMan->releaseTemporaryMemoryPools(ontologyData->getTemporaryContext()->getMemoryPoolContainer()->takeMemoryPools());
+						delete ontologyData->getRecomputationReferenceLinker();
+						delete ontologyData;
+					}
+					for (CBackendRepresentativeMemoryCacheOntologyContext* ontologyContext : ontologyContextSet) {
+						memMan->releaseTemporaryMemoryPools(ontologyContext->getMemoryPoolContainer()->takeMemoryPools());
+						delete ontologyContext;
+					}
+					for (CBackendRepresentativeMemoryCacheSlotItem* slot : slotList) {
+						// the slot is allocated in its own pools
+						memMan->releaseTemporaryMemoryPools(slot->takeMemoryPools());
+					}
+					memMan->releaseTemporaryMemoryPools(mRetainedWriteMemoryPools);
+					mRetainedWriteMemoryPools = nullptr;
 				}
 
 
@@ -4023,6 +4091,10 @@ namespace Konclude {
 
 
 						//mContext.releaseTemporaryMemoryPools(memoryPools);
+						// the installed data may still refer to the written data, so its pools are only released with the cache
+						if (memoryPools) {
+							mRetainedWriteMemoryPools = memoryPools->append(mRetainedWriteMemoryPools);
+						}
 						mCacheStat.setMemoryConsumption(mContext.getMemoryConsumption());
 
 						//if (ontologyData->isFirstIncompletelyHandledIndividualsRetrieved() && (mWriteDataCount % 50 == 0)) {

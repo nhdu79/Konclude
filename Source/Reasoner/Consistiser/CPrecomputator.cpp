@@ -31,6 +31,9 @@ namespace Konclude {
 			CPrecomputator::CPrecomputator() {
 			}
 
+			CPrecomputator::~CPrecomputator() {
+			}
+
 
 			bool CPrecomputator::releaseOntology(CConcreteOntology* ontology, CCallbackData* callback) {
 				if (callback) {

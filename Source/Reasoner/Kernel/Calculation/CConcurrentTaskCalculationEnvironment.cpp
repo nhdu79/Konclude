@@ -45,8 +45,22 @@ namespace Konclude {
 				}
 
 				CConcurrentTaskCalculationEnvironment::~CConcurrentTaskCalculationEnvironment() {
+					// the processor threads communicate with each other, so all are stopped before any is deleted
+					for (CTaskProcessorThreadBase* threadUnit : mThreadUnitList) {
+						threadUnit->stopProcessing();
+					}
+					for (CTaskProcessorThreadBase* threadUnit : mThreadUnitList) {
+						threadUnit->stopThread(true);
+					}
+					mThreadUnitList.clear();
+					if (mProcessUnit) {
+						mProcessUnit->stopThread(true);
+					}
 					qDeleteAll(mProcessorUnitList);
 					mProcessorUnitList.clear();
+					delete mCallbackExecuter;
+					delete mStatusPropagator;
+					delete mAllocationLimitation;
 				}
 
 

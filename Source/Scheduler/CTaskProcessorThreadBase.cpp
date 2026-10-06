@@ -82,7 +82,21 @@ namespace Konclude {
 			mLastProcessedEvent = nullptr;
 		}
 
+		void CTaskProcessorThreadBase::releaseRetainedTasks(CMemoryPoolProvider* memoryPoolProvider) {
+			for (CTask* task : mRetainedTaskList) {
+				for (CDeletionLinker* deletionLinkerIt = task->takeDeletionLinker(); deletionLinkerIt; deletionLinkerIt = deletionLinkerIt->getNext()) {
+					deletionLinkerIt->deleteObject();
+				}
+				memoryPoolProvider->releaseMemoryPool(task->takeMemoryPools());
+			}
+			mRetainedTaskList.clear();
+		}
+
 		CTaskProcessorThreadBase::~CTaskProcessorThreadBase() {
+			// the task handle algorithm is created for this unit only (see CConfigDependedCalculationEnvironmentFactory)
+			delete mTaskHandleAlgo;
+			delete mEventHandlerLinker;
+			delete mEventHandler;
 		}
 
 

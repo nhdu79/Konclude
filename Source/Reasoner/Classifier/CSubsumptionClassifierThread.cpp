@@ -43,6 +43,10 @@ namespace Konclude {
 
 			CSubsumptionClassifierThread::~CSubsumptionClassifierThread() {
 				stopThread();
+				// the items of the ontologies that were not released before
+				QSet<COntologyClassificationItem*> itemSet = QSet<COntologyClassificationItem*>::fromList(ontItemHash.values());
+				itemSet.unite(QSet<COntologyClassificationItem*>::fromList(ontItemList)).unite(QSet<COntologyClassificationItem*>::fromList(processingOntItemList));
+				qDeleteAll(itemSet);
 			}
 
 

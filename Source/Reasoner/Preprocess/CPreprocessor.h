@@ -66,6 +66,9 @@ namespace Konclude {
 					//! Constructor
 					CPreprocessor();
 
+					//! Destructor
+					virtual ~CPreprocessor();
+
 					virtual bool preprocess(CConcreteOntology* ontology, CConfigurationBase* config, const QList<COntologyProcessingRequirement*>& requirementList, CCallbackData* callback) = 0;
 					virtual bool preprocess(CConcreteOntology* ontology, CConfigurationBase* config, const QList<COntologyProcessingRequirement*>& requirementList) = 0;
 					virtual bool callbackPreprocessed(CConcreteOntology* ontology, CCallbackData* callback) = 0;

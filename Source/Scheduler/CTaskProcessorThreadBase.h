@@ -84,6 +84,9 @@ namespace Konclude {
 				//! Destructor
 				virtual ~CTaskProcessorThreadBase();
 
+				//! Releases the memory of the completed tasks that were kept (not memory releaseable) to the given provider.
+				void releaseRetainedTasks(CMemoryPoolProvider* memoryPoolProvider);
+
 				CTaskProcessingStatistics* getTaskProcessingStatistics();
 
 				virtual CThreadActivator* signalizeEvent();
@@ -158,6 +161,8 @@ namespace Konclude {
 				CTaskProcessorContext *mTaskProcessorContext;
 				CTaskHandleMemoryAllocationManager *mMemoryAllocator;
 				CTaskHandleAlgorithm* mTaskHandleAlgo;
+				//! Completed tasks whose memory is kept, e.g., for consistency or saturation models.
+				QList<CTask*> mRetainedTaskList;
 				CTaskStatusPropagator* mTaskStatusPropagator;
 				CTaskCallbackExecuter* mCallbackExecuter;
 				CQueuedLinkedEventHandler* mEventHandler;

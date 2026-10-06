@@ -231,13 +231,11 @@ CEmbeddedReasoner::CEmbeddedReasoner()
 CEmbeddedReasoner::~CEmbeddedReasoner() {
   CLogger::getInstance()->removeObserverFromAllDomains(this);
 
-  // NOTE: there is no proven precedent anywhere in Konclude's existing
-  // code paths for tearing down a CCommanderManager while the process
-  // keeps running -- the CLI/OWLlink loaders only ever run once and let
-  // process exit reclaim everything. This relies on CCommanderManager's
-  // virtual destructor alone; repeated create/use/destroy in a loop is
-  // untested (and leaks realizer threads, see
-  // docs/INCREMENTAL_REASONING.md §4).
+  // Deleting the commander stops and deletes all of this handle's threads
+  // and reasoning data (CCommanderManagerThread / CReasonerManagerThread
+  // teardown). Memory that state changes leak is not reachable from here and
+  // is only freed at process exit (docs/INCREMENTAL_WORK_LOG.md, Task 5c);
+  // Tools/KoncludeWorker/ bounds it by restarting a worker process.
   delete mQueryManager;
   delete mOntologyLoader;
   delete mOwlLinkProcessor;

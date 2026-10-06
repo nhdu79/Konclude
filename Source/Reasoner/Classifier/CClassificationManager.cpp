@@ -33,6 +33,16 @@ namespace Konclude {
 
 
 			CClassificationManager::~CClassificationManager() {
+				// the factory shares its classifiers across ontologies, all of them are in mOntoClassifierSet
+				QSet<CSubsumptionClassifier*> classifierSet = mOntoClassifierSet;
+				classifierSet.remove(nullptr);
+				for (CSubsumptionClassifier* classifier : classifierSet) {
+					CThread* thread = dynamic_cast<CThread*>(classifier);
+					if (thread) {
+						thread->stopThread(true);
+					}
+					delete classifier;
+				}
 				if (mClassifierFac) {
 					delete mClassifierFac;
 				}

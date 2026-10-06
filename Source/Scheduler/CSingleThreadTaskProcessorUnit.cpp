@@ -64,6 +64,21 @@ namespace Konclude {
 		}
 
 		CSingleThreadTaskProcessorUnit::~CSingleThreadTaskProcessorUnit() {
+			for (CTask* task : mRetainedTaskList) {
+				for (CDeletionLinker* deletionLinkerIt = task->takeDeletionLinker(); deletionLinkerIt; deletionLinkerIt = deletionLinkerIt->getNext()) {
+					deletionLinkerIt->deleteObject();
+				}
+				mMemoryPoolProvider->releaseMemoryPool(task->takeMemoryPools());
+			}
+			mRetainedTaskList.clear();
+			// releases the reserve of free memory pools to the provider, which this unit owns
+			delete mTaskProcessorContext;
+			delete mMemoryAllocator;
+			delete mMemoryPoolProvider;
+			// the task handle algorithm is created for this unit only (see CConfigDependedCalculationEnvironmentFactory)
+			delete mTaskHandleAlgo;
+			delete mEventHandlerLinker;
+			delete mEventHandler;
 		}
 
 
@@ -566,6 +581,9 @@ namespace Konclude {
 							deletionLinkerIt->deleteObject();
 						}
 						mMemoryAllocator->releaseMemoryPoolContainer(completionTask);
+					} else {
+						// kept as a model (see CTaskStatus::setMemoryReleaseable()), released with this unit
+						mRetainedTaskList.append(completionTask);
 					}
 					completedCount++;
 				}				

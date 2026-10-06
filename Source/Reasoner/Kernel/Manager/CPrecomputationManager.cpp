@@ -42,6 +42,16 @@ namespace Konclude {
 
 
 				CPrecomputationManager::~CPrecomputationManager() {
+					QSet<CPrecomputator*> precomputatorSet = QSet<CPrecomputator*>::fromList(mOntoPrecomputatorHash.values());
+					precomputatorSet << mSharedIncrementalPrecomputator << mSharedTotallyPrecomputator;
+					precomputatorSet.remove(nullptr);
+					for (CPrecomputator* precomputator : precomputatorSet) {
+						CThread* thread = dynamic_cast<CThread*>(precomputator);
+						if (thread) {
+							thread->stopThread(true);
+						}
+						delete precomputator;
+					}
 				}
 
 				CPrecomputator* CPrecomputationManager::getPrecomputator(CConcreteOntology *ontology, CConfigurationBase *config) {

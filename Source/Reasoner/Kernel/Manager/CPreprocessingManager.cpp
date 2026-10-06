@@ -40,6 +40,16 @@ namespace Konclude {
 
 
 				CPreprocessingManager::~CPreprocessingManager() {
+					QSet<CPreprocessor*> preprocessorSet = QSet<CPreprocessor*>::fromList(mOntoPreprocessHash.values());
+					preprocessorSet << mSharedPreprocessor;
+					preprocessorSet.remove(nullptr);
+					for (CPreprocessor* preprocessor : preprocessorSet) {
+						CThread* thread = dynamic_cast<CThread*>(preprocessor);
+						if (thread) {
+							thread->stopThread(true);
+						}
+						delete preprocessor;
+					}
 				}
 
 				CPreprocessor* CPreprocessingManager::getPreprocessor(CConcreteOntology *ontology, CConfigurationBase *config) {

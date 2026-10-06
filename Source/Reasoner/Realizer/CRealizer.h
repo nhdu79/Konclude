@@ -67,6 +67,9 @@ namespace Konclude {
 					//! Constructor
 					CRealizer();
 
+					//! Destructor
+					virtual ~CRealizer();
+
 					virtual bool realize(CConcreteOntology* ontology, CConfigurationBase* config, const QList<COntologyProcessingRequirement*>& requirementList, CCallbackData* callback) = 0;
 					virtual bool realize(CConcreteOntology* ontology, CConfigurationBase* config, const QList<COntologyProcessingRequirement*>& requirementList) = 0;
 					virtual bool callbackRealized(CConcreteOntology* ontology, CCallbackData* callback) = 0;

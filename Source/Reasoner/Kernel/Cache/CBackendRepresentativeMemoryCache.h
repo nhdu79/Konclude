@@ -254,6 +254,8 @@ namespace Konclude {
 						QReadWriteLock mFixedOntologyIdentifierDataHashLock;
 						//! Ontology contexts of released ontology identifiers, deleted once no reader slot refers to data of their identifier.
 						QHash<cint64, CBackendRepresentativeMemoryCacheOntologyContext*> mReleasedOntologyContextHash;
+						//! Memory pools of written data (installed data may refer to them), released with the cache.
+						CMemoryPool* mRetainedWriteMemoryPools;
 
 
 						//CCACHINGHASH<cint64,CBackendRepresentativeMemoryLabelSignatureResolveCacheItem>* mSigLabelItemHash[CBackendRepresentativeMemoryLabelCacheItem::LABEL_CACHE_ITEM_TYPE_COUNT];

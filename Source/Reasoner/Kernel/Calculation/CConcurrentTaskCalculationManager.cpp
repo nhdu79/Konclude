@@ -37,6 +37,11 @@ namespace Konclude {
 					mTemMemMan = nullptr;
 				}
 
+				CConcurrentTaskCalculationManager::~CConcurrentTaskCalculationManager() {
+					delete calcContext;
+					delete mGenTaskHandleContext;
+				}
+
 				CCalculationManager *CConcurrentTaskCalculationManager::calculateTask(CSatisfiableCalculationTask* task) {
 					if (mTaskCalcEn) {
 						CTaskEventCommunicator::postSendTaskScheduleEvent(mTaskCalcEn->getSchedulerTaskProcessorUnit()->getEventHandler(),task,mTemMemMan);

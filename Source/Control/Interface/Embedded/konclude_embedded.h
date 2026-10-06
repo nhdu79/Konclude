@@ -60,11 +60,18 @@ typedef struct {
  * threads to avoid a known deadlock in Konclude's startup synchronization
  * that is triggered by single-threaded configuration -- never exposed as
  * a caller-settable option. Returns NULL on failure.
+ *
+ * At most one instance may be alive at a time: two live instances share the
+ * commander registered in Konclude's process-wide configuration and can
+ * deadlock. To replace an instance, destroy the old one first.
  */
 KoncludeReasonerHandle konclude_create_reasoner(void);
 
 /*
- * Destroys a reasoner instance created by konclude_create_reasoner.
+ * Destroys a reasoner instance created by konclude_create_reasoner: stops
+ * its threads and frees its reasoning data. Memory leaked by state changes
+ * is only freed at process exit; to bound it, run Konclude in a worker
+ * process that is restarted (Tools/KoncludeWorker/ in the Konclude repo).
  * Passing NULL is a no-op.
  */
 void konclude_destroy_reasoner(KoncludeReasonerHandle handle);

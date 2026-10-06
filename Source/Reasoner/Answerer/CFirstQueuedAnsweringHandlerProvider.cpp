@@ -33,6 +33,15 @@ namespace Konclude {
 
 
 			CFirstQueuedAnsweringHandlerProvider::~CFirstQueuedAnsweringHandlerProvider() {
+				// the answerer threads are stopped, so no handler is still processing
+				for (CAnsweringHandlerData* handlerData : mOntoloyHandlerDataHash) {
+					qDeleteAll(handlerData->mQueuedHandlerList);
+					qDeleteAll(handlerData->mProcessingHandlerSet);
+					delete handlerData->mCollectedStats;
+					delete handlerData;
+				}
+				// owned: created for this provider (see CAnsweringManagerThread)
+				delete mAnsweringHandlerFactory;
 			}
 			
 

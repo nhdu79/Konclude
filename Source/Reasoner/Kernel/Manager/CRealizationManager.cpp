@@ -42,6 +42,17 @@ namespace Konclude {
 
 
 				CRealizationManager::~CRealizationManager() {
+					QSet<CRealizer*> realizerSet = mRealizerSet;
+					realizerSet.unite(QSet<CRealizer*>::fromList(mOntoRealizerHash.values()));
+					realizerSet << mSharedRealizer << mSharedIncrementalRealizer;
+					realizerSet.remove(nullptr);
+					for (CRealizer* realizer : realizerSet) {
+						CThread* thread = dynamic_cast<CThread*>(realizer);
+						if (thread) {
+							thread->stopThread(true);
+						}
+						delete realizer;
+					}
 				}
 
 				CRealizer* CRealizationManager::getRealizer(CConcreteOntology *ontology, CConfigurationBase *config) {

@@ -158,6 +158,8 @@ namespace Konclude {
 				CTaskProcessorContext *mTaskProcessorContext;
 				CTaskHandleMemoryAllocationManager *mMemoryAllocator;
 				CTaskHandleAlgorithm* mTaskHandleAlgo;
+				//! Completed tasks whose memory is kept, e.g., for consistency or saturation models.
+				QList<CTask*> mRetainedTaskList;
 				CQueuedLinkedEventHandler* mEventHandler;
 				CTaskStatusPropagator* mTaskStatusPropagator;
 				CTaskCallbackExecuter* mCallbackExecuter;

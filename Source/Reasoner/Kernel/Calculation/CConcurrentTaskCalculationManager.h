@@ -66,6 +66,9 @@ namespace Konclude {
 						//! Constructor
 						CConcurrentTaskCalculationManager(CWatchDog *watchDog = 0);
 
+						//! Destructor
+						virtual ~CConcurrentTaskCalculationManager();
+
 						virtual CCalculationManager *calculateJobs(const QList< QPair<CCalculationJob*,CCallbackData*> >& jobCallbackList);
 						virtual CCalculationManager *calculateJob(CCalculationJob* job, CCallbackData* callbackData = nullptr);
 						virtual CCalculationManager *calculateTask(CSatisfiableCalculationTask* task);

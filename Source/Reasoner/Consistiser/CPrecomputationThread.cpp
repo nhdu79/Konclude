@@ -42,6 +42,10 @@ namespace Konclude {
 
 			CPrecomputationThread::~CPrecomputationThread() {
 				stopThread();
+				// the items of the ontologies that were not released before
+				QSet<COntologyPrecomputationItem*> itemSet = QSet<COntologyPrecomputationItem*>::fromList(mOntItemHash.values());
+				itemSet.unite(mActiveOntItemSet).unite(mInactiveOntItemSet).unite(QSet<COntologyPrecomputationItem*>::fromList(mProcessingOntItemList));
+				qDeleteAll(itemSet);
 			}
 
 

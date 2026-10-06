@@ -39,14 +39,16 @@ namespace Konclude {
 
 
 			CCommanderManagerThread::~CCommanderManagerThread() {
+				stopThread(true);
+				// the classifiers (stopped by the classification manager) issue calculations to the reasoner manager
+				if (classificationMan) {
+					delete classificationMan;
+				}
 				if (reasonerManager) {
 					delete reasonerManager;
 				}
 				if (configurationProvider) {
 					delete configurationProvider;
-				}
-				if (classificationMan) {
-					delete classificationMan;
 				}
 				if (ontoRevMan) {
 					delete ontoRevMan;

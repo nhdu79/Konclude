@@ -47,7 +47,11 @@ namespace Konclude {
 
 
 			CAnsweringManagerThread::~CAnsweringManagerThread() {
-				stopThread();
+				stopThread(true);
+				for (CAnswererThread* answererThread : mAnswererThreadContainer) {
+					answererThread->stopThread(true);
+					delete answererThread;
+				}
 			}
 
 

@@ -114,6 +114,9 @@ namespace Konclude {
 					mSatExpCache = 0;
 					mReuseCompGraphCache = 0;
 					mSatNodeExpCache = 0;
+					mCompConsCache = 0;
+					mBackendAssCache = 0;
+					mOccStatsCache = 0;
 					//}
 					mPrecomputationManager = new CPrecomputationManager(this);
 					mPreprocessingManager = new CPreprocessingManager(this);
@@ -316,10 +319,15 @@ namespace Konclude {
 
 					//QThread::msleep(50);
 
-					delete mCalculationManager;
+					// first the components that issue calculations (each stops its threads), then the calculation
+					// manager, then the caches the calculations use
+					delete mAnswererManager;
+					mAnswererManager = nullptr;
+					delete mRealizationManager;
 					delete mPrecomputationManager;
 					delete mPreprocessingManager;
-					delete mRealizationManager;
+					delete mCalculationManager;
+					delete mRequirementExpander;
 
 					if (unsatCache) {
 						unsatCache->stopThread(true);
@@ -336,6 +344,18 @@ namespace Konclude {
 					if (mSatNodeExpCache) {
 						mSatNodeExpCache->stopThread(true);
 						delete mSatNodeExpCache;
+					}
+					if (mCompConsCache) {
+						mCompConsCache->stopThread(true);
+						delete mCompConsCache;
+					}
+					if (mBackendAssCache) {
+						mBackendAssCache->stopThread(true);
+						delete mBackendAssCache;
+					}
+					if (mOccStatsCache) {
+						mOccStatsCache->stopThread(true);
+						delete mOccStatsCache;
 					}
 
 					if (mBlockThreadPoolThreadCount > 0) {

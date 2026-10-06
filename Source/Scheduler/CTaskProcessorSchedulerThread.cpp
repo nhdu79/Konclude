@@ -60,6 +60,20 @@ namespace Konclude {
 		}
 
 		CTaskProcessorSchedulerThread::~CTaskProcessorSchedulerThread() {
+			releaseRetainedTasks(mMemoryPoolProvider);
+			delete mTaskReserveQueue;
+			while (mSchedulerCommunicatorLinker) {
+				CXLinker<CConcreteTaskSchedulerCommunicator*>* communicatorLinker = mSchedulerCommunicatorLinker;
+				mSchedulerCommunicatorLinker = mSchedulerCommunicatorLinker->getNext();
+				delete communicatorLinker->getData();
+				delete communicatorLinker;
+			}
+			// releases the reserve of free memory pools to the provider, which this unit owns
+			delete mTaskProcessorContext;
+			delete mMemoryAllocator;
+			delete mMemoryPoolReleaser;
+			delete mDistributorCompletorCommunicator;
+			delete mMemoryPoolProvider;
 		}
 
 		bool CTaskProcessorSchedulerThread::requiresSchedulingTasks() {
@@ -472,6 +486,9 @@ namespace Konclude {
 								deletionLinkerIt->deleteObject();
 							}
 							mMemoryAllocator->releaseMemoryPoolContainer(completionTask);
+						} else {
+							// kept as a model (see CTaskStatus::setMemoryReleaseable()), released with this unit
+							mRetainedTaskList.append(completionTask);
 						}
 #endif
 						completedCount++;

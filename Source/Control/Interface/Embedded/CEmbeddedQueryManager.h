@@ -83,23 +83,17 @@ namespace Konclude {
 						bool checkSatisfiability(const QString& classIRI, bool* satisfiableOut);
 
 						//! Runs a single-BGP SPARQL SELECT conjunctive query against the
-						//! ontology loader's current state (see CEmbeddedOntologyLoader::
-						//! beginNewState()/assertClassFact() -- this reuses one query-layer
-						//! revision across every consecutive query against the same state,
-						//! so multiple queries against the same asserted ABox see each other
-						//! and the asserted facts; see docs/CONJUNCTIVE_QUERY_PIPELINE.md for
-						//! the query engine this uses -- the same non-Rasqal path as
-						//! sparqlfile/sparqlserver, since Rasqal is never linked into
-						//! KoncludeEmbedded.pro). Requires CEmbeddedOntologyLoader::
-						//! beginNewState() to have been called first. Results are captured
-						//! and retrievable via the getLastQueryResult* accessors below until
-						//! the next call.
+						//! knowledge base's currently installed state (see
+						//! CEmbeddedOntologyLoader::tellAndRetractAssertions()), via the
+						//! same non-Rasqal query engine as sparqlfile/sparqlserver (see
+						//! docs/CONJUNCTIVE_QUERY_PIPELINE.md). Results are retrievable via
+						//! the getLastQueryResult* accessors below until the next call.
 						bool executeConjunctiveQuery(const QString& sparqlSelectQuery);
 
-						//! Drops the query-layer revision built for the previous state --
-						//! called by CEmbeddedReasoner::beginNewState() alongside
-						//! CEmbeddedOntologyLoader::beginNewState(). Safe to call even if no
-						//! query has run yet (mCurrentQueryRevision is then already null).
+						//! Drops the query-layer revision built on the previous state --
+						//! must be called after every state change, since that revision's
+						//! predecessor is then no longer the installed state. Safe to call
+						//! when no query has run yet.
 						void resetForNewState();
 
 						int getLastQueryResultRowCount();
@@ -118,12 +112,11 @@ namespace Konclude {
 						CEmbeddedReasoner* mInstanceManager;
 						CEmbeddedOntologyLoader* mOntologyLoader;
 
-						//! A revision layered on top of the ontology loader's current state
-						//! revision, created lazily by the first executeConjunctiveQuery()
-						//! call for this state and REUSED for every subsequent query against
-						//! the same state (matches COWLlinkProcessor's own SPARQL_QUERY
-						//! batching behaviour, which shares one such layer across
-						//! consecutive queries too). Never installed; owned here; freed by
+						//! A revision layered on top of the installed state, created lazily
+						//! by the first executeConjunctiveQuery() call for this state and
+						//! reused for every later query against it (COWLlinkProcessor's
+						//! SPARQL_QUERY batching shares one such layer across consecutive
+						//! queries too). Never installed; owned here; freed by
 						//! resetForNewState() and the destructor.
 						Reasoner::Revision::COntologyRevision* mCurrentQueryRevision;
 

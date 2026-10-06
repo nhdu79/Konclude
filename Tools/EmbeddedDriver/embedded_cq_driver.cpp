@@ -73,7 +73,7 @@ std::set<StringPair> loadExpectedAnswers(const std::string &path) {
 
 int main(int argc, char **argv) {
   // Defaults mirror the exact fixture pair documented in
-  // docs/EMBEDDED_CQ_DRIVER.md, so the driver still runs with no
+  // docs/EMBEDDED_INTERFACE.md §4, so the driver still runs with no
   // command-line arguments at all -- e.g. under a debugger where
   // configuring `args` is an easy step to forget. Pass two arguments to
   // override.
@@ -98,13 +98,6 @@ int main(int argc, char **argv) {
   std::cout << "Loading ontology..." << std::endl;
   if (!konclude_load_ontology_file(handle, ontologyPath.c_str())) {
     std::cerr << "konclude_load_ontology_file failed: "
-              << konclude_last_error(handle) << std::endl;
-    konclude_destroy_reasoner(handle);
-    return 1;
-  }
-
-  if (!konclude_state_begin(handle)) {
-    std::cerr << "konclude_state_begin failed: "
               << konclude_last_error(handle) << std::endl;
     konclude_destroy_reasoner(handle);
     return 1;

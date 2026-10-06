@@ -61,7 +61,7 @@ namespace Konclude {
 
 			namespace {
 				// Same fixed >=2 workaround for the -w 1 startup deadlock
-				// CEmbeddedReasoner uses -- see docs/FASTDOWNWARD_EMBEDDING.md phase 4.
+				// CEmbeddedReasoner uses -- see docs/EMBEDDED_INTERFACE.md.
 				const char* cMinimumProcessorCountString = "2";
 
 				const qint64 cIterationCount = 20000;
@@ -110,10 +110,9 @@ namespace Konclude {
 				// first real reasoning command past KB creation -- every time it was
 				// actually run, never just on construction/linking. This is a real,
 				// newly-discovered finding about CEmbeddedReasoner's own untested
-				// pattern (docs/FASTDOWNWARD_EMBEDDING.md already flagged "No smoke
-				// test yet confirming the facade works end-to-end" -- this benchmark
-				// pass is exactly that smoke test, applied to the same pattern, and it
-				// fails). See docs/FASTDOWNWARD_EMBEDDING.md for the writeup.
+				// pattern at the time. Root cause, since fixed in CEmbeddedReasoner:
+				// commands only COWLlinkProcessor handles were never routed to one
+				// (see docs/EMBEDDED_INTERFACE.md §2).
 				//
 				// This loader instead requires being chained after "-DefaultReasonerLoader"
 				// on the command line (proven working -- it's what every CLI
@@ -128,7 +127,7 @@ namespace Konclude {
 				mKnowledgeBaseName = QString("http://konclude.com/embeddedscratchbenchmark/kb");
 
 				// Hard-enforce >=2 processing threads -- the documented -w 1 startup
-				// deadlock (docs/FASTDOWNWARD_EMBEDDING.md phase 4) is not hypothetical:
+				// deadlock (docs/EMBEDDED_INTERFACE.md) is not hypothetical:
 				// running this benchmark without this override reproduces it every time
 				// (confirmed by direct reproduction, both via this loader and via the
 				// plain "classification" CLI command with no "-w" flag -- the default is
@@ -176,11 +175,10 @@ namespace Konclude {
 					return this;
 				}
 
-				cout << "Embedded scratch-ontology benchmark (see docs/FASTDOWNWARD_EMBEDDING.md,\n";
-				cout << "\"Design revision: snapshot-per-state ABox\").\n";
+				cout << "Embedded scratch-ontology benchmark (see docs/EMBEDDED_INTERFACE.md, section 3).\n";
 				cout << "----------------------\n";
 
-				// NOTE (scope limitation, see docs/FASTDOWNWARD_EMBEDDING.md for the
+				// NOTE (scope limitation, see docs/EMBEDDED_INTERFACE.md for the
 				// full writeup): loading Tests/roberts-family-full-D.owl.xml via
 				// CLoadKnowledgeBaseOWLAutoOntologyCommand through this minimal
 				// command-dispatch harness reproducibly hangs indefinitely (confirmed

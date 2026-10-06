@@ -10,7 +10,7 @@
 # Regenerates MakefileEmbedded itself (via qmake) the first time, and again
 # whenever KoncludeEmbedded.pro/Konclude.pri change -- no manual qmake step
 # needed. Requires Qt 5 specifically: Qt 6 removed QLinkedList, which this
-# codebase still uses throughout (see docs/FASTDOWNWARD_EMBEDDING.md). Picks
+# codebase still uses throughout (see docs/EMBEDDED_INTERFACE.md). Picks
 # a Qt5 qmake automatically -- set QMAKE to force a specific binary.
 set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")/../.."

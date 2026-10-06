@@ -54,6 +54,7 @@ namespace Konclude {
 
 				class CEmbeddedOntologyLoader;
 				class CEmbeddedQueryManager;
+				struct ClassAssertionFact;
 
 				/*!
 				 *		\class		CEmbeddedReasoner
@@ -61,7 +62,7 @@ namespace Konclude {
 				 *					CCommanderManager instance (own worker threads, own
 				 *					knowledge base namespace) behind a synchronous, blocking
 				 *					call interface, for use behind the konclude_embedded.h C
-				 *					API. See docs/FASTDOWNWARD_EMBEDDING.md for the design this
+				 *					API. See docs/EMBEDDED_INTERFACE.md for the design this
 				 *					mirrors from the JNI/CLI code paths.
 				 *
 				 *					Owns the shared instance infrastructure -- configuration,
@@ -71,9 +72,8 @@ namespace Konclude {
 				 *					constructed against it: CEmbeddedOntologyLoader (ontology
 				 *					loading and FD-state/ABox building) and
 				 *					CEmbeddedQueryManager (consistency/satisfiability/
-				 *					conjunctive-query execution). Public method signatures are
-				 *					unchanged from before that split -- this class remains the
-				 *					sole type the konclude_embedded.h C API shim
+				 *					conjunctive-query execution). This class is the sole type
+				 *					the konclude_embedded.h C API shim
 				 *					(CEmbeddedInterfaceCAPI.cpp) talks to.
 				 *
 				 *					Not safe to call concurrently from multiple threads on the
@@ -89,22 +89,15 @@ namespace Konclude {
 						bool checkConsistency(bool* consistentOut);
 						bool checkSatisfiability(const QString& classIRI, bool* satisfiableOut);
 
-						//! STUB: validates the tell/retract counts and reports success
-						//! without applying anything to the reasoning pipeline. There is
-						//! no separate "begin state" step -- each call is meant to both
-						//! transition to a new FD state and apply that state's
-						//! tells/retracts in one go once this is wired up for real. See
-						//! CEmbeddedOntologyLoader::tellAndRetractAssertions() for the
-						//! real (currently unwired) implementation this will delegate to.
-						bool tellAndRetractAxioms(int tellAssertionCount, int retractAssertionCount);
+						//! Moves to the next state: retracts retractAssertions, tells
+						//! tellAssertions (one new installed revision, see
+						//! CEmbeddedOntologyLoader::tellAndRetractAssertions()), and drops
+						//! the query layer built on the previous state.
+						bool tellAndRetractAxioms(const ClassAssertionFact* tellAssertions, int tellAssertionCount, const ClassAssertionFact* retractAssertions, int retractAssertionCount);
 
-						//! STUB: validates the query text and reports success with an
-						//! empty result set, without running anything against the
-						//! reasoning pipeline. See CEmbeddedQueryManager::
-						//! executeConjunctiveQuery() for the real (currently unwired)
-						//! implementation this will delegate to. Results are retrievable
-						//! via the getLastQueryResult* accessors below (always empty for
-						//! now) until the next call.
+						//! See CEmbeddedQueryManager::executeConjunctiveQuery(). Results
+						//! are retrievable via the getLastQueryResult* accessors below
+						//! until the next call.
 						bool executeConjunctiveQuery(const QString& sparqlSelectQuery);
 
 						//! Correctness probe -- see CEmbeddedOntologyLoader::

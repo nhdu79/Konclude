@@ -23,7 +23,7 @@
  * (KoncludeEmbedded.pro, KONCLUDE_COMPILE_EMBEDDED_INTERFACE). Deliberately
  * a plain C surface -- no Qt types, no C++ types -- so it stays ABI-stable
  * across compilers/toolchains for callers linking libKonclude.so/.dylib
- * dynamically. See docs/FASTDOWNWARD_EMBEDDING.md for the design rationale.
+ * dynamically. See docs/EMBEDDED_INTERFACE.md for the design rationale.
  *
  * Thread-safety: a single KoncludeReasonerHandle is NOT safe to call from
  * multiple threads concurrently. Sequential use of separate handles, one
@@ -31,8 +31,7 @@
  * Genuinely concurrent, simultaneously-alive handles are NOT yet verified
  * safe -- the CCommanderManager wiring goes through a process-wide shared
  * config slot internally (see CEmbeddedReasoner.cpp for detail) -- so
- * don't rely on that until it's been tested (tracked as a phase 7 item in
- * docs/FASTDOWNWARD_EMBEDDING.md).
+ * don't rely on that until it's been tested.
  */
 
 #ifndef KONCLUDE_EMBEDDED_H
@@ -86,36 +85,35 @@ int konclude_check_consistency(KoncludeReasonerHandle handle, int* outConsistent
 int konclude_check_satisfiability(KoncludeReasonerHandle handle, const char* classIRI, int* outSatisfiable);
 
 /*
- * STUB: validates arguments (non-null handle, non-negative counts, no null
- * IRI strings within the arrays) and reports success -- does not yet apply
- * the ClassAssertion(individualIRI, classIRI) tells/retracts to the
- * reasoning pipeline. There is no separate "begin state" call -- each call
- * is meant to both transition to a new FD state and apply that state's
- * tells/retracts in one go once this is wired up for real. Placeholder
- * entry point for FastDownward integration to link and call against while
- * the real tell/retract wiring (see CEmbeddedOntologyLoader::
- * tellAndRetractAssertions(), not yet reachable from this C API) is
- * finished separately. individualIRI/classIRI must be fully-qualified IRI
- * strings. Returns 1 on success, 0 on failure (see konclude_last_error).
+ * Moves the knowledge base to the next state: retracts every
+ * ClassAssertion(individualIRI, classIRI) in retractAssertions, then tells
+ * every one in tellAssertions (so a fact in both ends up told), as one
+ * incremental revision -- the same thing an OWLlink <Retract>+<Tell>
+ * request does. Pass only the diff between the previous and the next
+ * state; retracting a fact that is not asserted is a no-op. Reasoning is
+ * lazy: nothing is computed until the next query. IRIs must be
+ * fully-qualified. Returns 1 on success, 0 on failure (see
+ * konclude_last_error).
+ *
+ * Memory note: every call that changes something keeps one more revision
+ * alive inside Konclude (revision cleanup is not implemented), so memory
+ * grows with the number of state changes.
  */
 int konclude_tell_and_retract_axioms(KoncludeReasonerHandle handle, const KoncludeClassAssertion* tellAssertions, int tellAssertionCount, const KoncludeClassAssertion* retractAssertions, int retractAssertionCount);
 
 /*
- * STUB: validates arguments and reports success with an empty result set
- * (0 rows, 0 variables) -- does not yet run the query against the
- * reasoning pipeline. Placeholder entry point for FastDownward integration
- * to link and call against while the real conjunctive-query wiring (see
- * CEmbeddedQueryManager::executeConjunctiveQuery(), not yet reachable from
- * this C API) is finished separately. Returns 1 on success (non-empty
- * query text), 0 on failure (see konclude_last_error).
+ * Runs a SPARQL SELECT query with a single basic graph pattern (the
+ * non-Rasqal query engine, see docs/CONJUNCTIVE_QUERY_PIPELINE.md) against
+ * the current state. Results are readable via konclude_query_result_*
+ * until the next call. Returns 1 on success, 0 on failure (see
+ * konclude_last_error).
  */
 int konclude_execute_conjunctive_query(KoncludeReasonerHandle handle, const char* sparqlSelectQuery);
 
 /*
  * Diagnostic probe, not part of the stable API surface: repeatedly builds
  * a scratch knowledge-base revision and immediately discards it without
- * ever installing it (see docs/EMBEDDED_HIGH_VOLUME_CQ_OPTIMIZATION.md's
- * Decision 2/Decision 4). Prints one progress line per iteration to
+ * ever installing it (see docs/EMBEDDED_INTERFACE.md §4). Prints one progress line per iteration to
  * stderr. Returns the number of iterations that completed; run this under
  * a shell-level timeout when checking for a hang, since a hung call never
  * returns at all. Requires an ontology already loaded via

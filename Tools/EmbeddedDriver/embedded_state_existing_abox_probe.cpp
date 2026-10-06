@@ -1,4 +1,4 @@
-// One-off debugging probe: does konclude_state_assert_class_fact work when
+// One-off debugging probe: does konclude_tell_and_retract_axioms work when
 // the BASE ontology already has ABox individuals/indices built (unlike
 // embedded_state_driver.cpp's TBox-only fixture, which has zero
 // individuals at all)? Isolates whether the "new fact invisible to CQ"
@@ -14,16 +14,12 @@ int main() {
     std::fprintf(stderr, "load failed: %s\n", konclude_last_error(handle));
     return 1;
   }
-  if (!konclude_state_begin(handle)) {
-    std::fprintf(stderr, "state_begin failed: %s\n",
-                 konclude_last_error(handle));
-    return 1;
-  }
   const char *newIndi =
       "http://www.co-ode.org/roberts/family-tree.owl#ZZZNewFather";
   const char *fatherClass =
       "http://www.co-ode.org/roberts/family-tree.owl#Father";
-  if (!konclude_state_assert_class_fact(handle, newIndi, fatherClass)) {
+  KoncludeClassAssertion fact = {newIndi, fatherClass};
+  if (!konclude_tell_and_retract_axioms(handle, &fact, 1, nullptr, 0)) {
     std::fprintf(stderr, "assert failed: %s\n", konclude_last_error(handle));
     return 1;
   }

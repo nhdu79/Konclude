@@ -53,7 +53,7 @@ namespace {
 // The QCoreApplication instance is process-global (Konclude requires
 // exactly one per process) -- guard it so repeated CEmbeddedReasoner
 // create/destroy cycles within one process don't try to construct a
-// second one. See docs/FASTDOWNWARD_EMBEDDING.md phase 3.
+// second one. See docs/EMBEDDED_INTERFACE.md.
 QCoreApplication *gEmbeddedQtApp = nullptr;
 
 // The known startup deadlock is triggered by exactly 1 processing
@@ -77,8 +77,8 @@ void CEmbeddedReasoner::ensureQCoreApplication() {
     static int argc = 1;
     static char appName[] = "Konclude";
     static char *argv[] = {appName, nullptr};
-    // Deliberately never call exec() -- see docs/FASTDOWNWARD_EMBEDDING.md
-    // phase 3: the JNI interface already proves Konclude's synchronous
+    // Deliberately never call exec() -- see docs/EMBEDDED_INTERFACE.md
+    // §1: the JNI interface already proves Konclude's synchronous
     // command completion (CBlockingCallbackData / CCommandExecutedBlocker)
     // does not depend on a running Qt event loop.
     gEmbeddedQtApp = new QCoreApplication(argc, argv);
@@ -161,8 +161,8 @@ CEmbeddedReasoner::CEmbeddedReasoner()
   // into mReasonerCommander immediately, used via direct method calls
   // afterward, not re-resolved through config). Genuinely concurrent,
   // simultaneously-alive instances are NOT proven safe by this
-  // mechanism and need verification before being relied on -- flagged
-  // for the phase 7 stress test, and the public header's claim about
+  // mechanism and need verification before being relied on (untested),
+  // and the public header's claim about
   // independent handles has been narrowed until that's verified.
   CCommanderManagerThread *commanderThread = new CCommanderManagerThread();
   CConfigData *commanderConfigData =
@@ -232,8 +232,9 @@ CEmbeddedReasoner::~CEmbeddedReasoner() {
   // code paths for tearing down a CCommanderManager while the process
   // keeps running -- the CLI/OWLlink loaders only ever run once and let
   // process exit reclaim everything. This relies on CCommanderManager's
-  // virtual destructor alone. Flagged for the phase 7 stress test
-  // (repeated create/use/destroy in a loop) rather than assumed safe.
+  // virtual destructor alone; repeated create/use/destroy in a loop is
+  // untested (and leaks realizer threads, see
+  // docs/INCREMENTAL_REASONING.md §4).
   delete mQueryManager;
   delete mOntologyLoader;
   delete mOwlLinkProcessor;
@@ -290,24 +291,21 @@ bool CEmbeddedReasoner::checkSatisfiability(const QString &classIRI,
   return mQueryManager->checkSatisfiability(classIRI, satisfiableOut);
 }
 
-bool CEmbeddedReasoner::tellAndRetractAxioms(int tellAssertionCount,
-                                             int retractAssertionCount) {
-  // STUB -- see header comment. Argument-level validation (null handle,
-  // negative counts, null IRI strings) already happened in the C API shim
-  // (CEmbeddedInterfaceCAPI.cpp) before this was called.
-  Q_UNUSED(tellAssertionCount);
-  Q_UNUSED(retractAssertionCount);
-  return true;
+bool CEmbeddedReasoner::tellAndRetractAxioms(
+    const ClassAssertionFact *tellAssertions, int tellAssertionCount,
+    const ClassAssertionFact *retractAssertions, int retractAssertionCount) {
+  bool ok = mOntologyLoader->tellAndRetractAssertions(
+      tellAssertions, tellAssertionCount, retractAssertions,
+      retractAssertionCount);
+  if (ok) {
+    mQueryManager->resetForNewState();
+  }
+  return ok;
 }
 
 bool CEmbeddedReasoner::executeConjunctiveQuery(
     const QString &sparqlSelectQuery) {
-  // STUB -- see header comment.
-  if (sparqlSelectQuery.trimmed().isEmpty()) {
-    setLastError("Empty SPARQL query text.");
-    return false;
-  }
-  return true;
+  return mQueryManager->executeConjunctiveQuery(sparqlSelectQuery);
 }
 
 int CEmbeddedReasoner::getLastQueryResultRowCount() {

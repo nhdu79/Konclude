@@ -1,9 +1,7 @@
-// Correctness probe for docs/EMBEDDED_HIGH_VOLUME_CQ_OPTIMIZATION.md's
-// Decision 4 open item: does repeatedly building a scratch knowledge-base
+// Hang probe (see docs/EMBEDDED_INTERFACE.md §4): does repeatedly building a scratch knowledge-base
 // revision via CCreateKnowledgeBaseRevisionUpdateCommand -- WITHOUT ever
 // installing it -- hang under CEmbeddedReasoner's current dispatch wiring?
-// docs/FASTDOWNWARD_EMBEDDING.md records this exact command sequence
-// hanging in an earlier pass of this project; this probe checks whether
+// This exact command sequence hung in an earlier pass of this project; this probe checks whether
 // this session's CEmbeddedOWLlinkProcessor fix (which resolved a related
 // hang in loadOntologyFile/checkConsistency/checkSatisfiability) also
 // resolved it here, or whether it's a separate, still-open bug.

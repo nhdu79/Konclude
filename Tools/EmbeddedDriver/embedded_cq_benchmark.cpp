@@ -41,7 +41,7 @@
 namespace {
 
 // Roberts family tree: Father(x), hasChild(x,y) -- 314 expected (x,y) pairs,
-// see docs/EMBEDDED_CQ_DRIVER.md / Tests/roberts-family-simple-cq-test.sparql.
+// see docs/EMBEDDED_INTERFACE.md §4 / Tests/roberts-family-simple-cq-test.sparql.
 const char *kRobertsOntologyPath = "Tests/roberts-family-full-D.owl.xml";
 const char *kRobertsQuery =
     "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
@@ -127,16 +127,6 @@ bool runScenario(const char *scenarioName, const std::string &ontologyPath,
       continue;
     }
 
-    // konclude_execute_conjunctive_query() requires a current state (see
-    // konclude_embedded.h) -- konclude_state_begin() with no asserted facts
-    // just wraps the loaded ontology as-is, matching this benchmark's
-    // "query the ABox as loaded" scenarios.
-    if (!konclude_state_begin(handle)) {
-      std::fprintf(stderr, "%s iteration %d: state_begin failed: %s\n", scenarioName, i, konclude_last_error(handle));
-      konclude_destroy_reasoner(handle);
-      ++failures;
-      continue;
-    }
     Clock::time_point t2 = Clock::now();
 
     if (!konclude_execute_conjunctive_query(handle, query)) {

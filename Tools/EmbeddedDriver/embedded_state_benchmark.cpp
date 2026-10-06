@@ -1,16 +1,14 @@
 // Benchmark driver for the embedded C API's "state" support (see
 // Source/Control/Interface/Embedded/konclude_embedded.h,
 // Tools/EmbeddedDriver/embedded_state_driver.cpp -- the correctness-focused
-// sibling of this file -- and docs/EMBEDDED_HIGH_VOLUME_CQ_OPTIMIZATION.md's
-// Decision 2).
+// sibling of this file -- and docs/EMBEDDED_INTERFACE.md §3).
 //
 // Measures how state-assertion and CQ-answering costs scale with the number
-// of facts asserted into a single FD "state" (konclude_state_begin -> N x
-// konclude_state_assert_class_fact -> M x
-// konclude_execute_conjunctive_query), which is the actual FD usage shape:
-// one reasoner instance, one TBox load, then repeatedly begin a state,
-// assert its facts, and answer several CQs against that state before moving
-// on to the next one. Unlike embedded_cq_benchmark.cpp (which measures N
+// of facts per FD "state" (one konclude_tell_and_retract_axioms call that
+// retracts the previous state's N facts and tells the next state's N facts
+// -> M x konclude_execute_conjunctive_query), which is the actual FD usage
+// shape: one reasoner instance, one TBox load, then repeatedly switch
+// state and answer several CQs against it before moving on. Unlike embedded_cq_benchmark.cpp (which measures N
 // independent fresh-instance load+query cycles), this benchmark keeps ONE
 // handle and ONE TBox load for the whole run and varies the number of facts
 // per state.
@@ -31,13 +29,14 @@
 //
 // For each fact count in step, 2*step, ..., maxFacts, and for each of
 // `repeats` iterations:
-//   - State A: begin a fresh state, assert factCount ClassAssertion(a<i>,
+//   - State A: switch to a state with factCount ClassAssertion(a<i>,
 //     Father) facts (timed into assertStats), then run queriesPerState CQs
 //     against it (alternating Father/Person), verifying each result set is
 //     exactly the "a" individuals. The first such query's timing is kept
-//     separate (firstQueryStats) since it includes the lazy Install cost
-//     (see Decision 2); the rest go into repeatQueryStats.
-//   - State B: begin ANOTHER fresh state, assert factCount
+//     separate (firstQueryStats) since it includes building the query
+//     layer and the lazy reasoning for the new state; the rest go into
+//     repeatQueryStats.
+//   - State B: switch to ANOTHER state with factCount
 //     ClassAssertion(b<i>, Person) facts -- a disjoint individual namespace,
 //     and never Father -- then run queriesPerState CQs verifying the Father
 //     query is empty (no leak from State A) and the Person query is exactly
@@ -121,22 +120,39 @@ struct Stats {
   double meanMs() const { return count > 0 ? totalMs / count : 0.0; }
 };
 
-// Asserts factCount ClassAssertion(individualIri(prefix,i), className)
-// facts into the current (already-begun) state, timed as one batch into
-// assertStats.
+// Facts of the current state, retracted by the next assertFacts() call.
+std::vector<std::string> gCurrentIndividuals;
+std::string gCurrentClass;
+
+// Switches to the state with factCount ClassAssertion(individualIri(prefix,
+// i), className) facts: one tell/retract call that retracts the previous
+// state's facts, timed as one batch into assertStats.
 bool assertFacts(KoncludeReasonerHandle handle, const char *prefix,
                   const char *className, int factCount, Stats &assertStats,
                   const char *stateLabel) {
-  Clock::time_point t0 = Clock::now();
+  std::vector<std::string> individuals;
   for (int i = 0; i < factCount; ++i) {
-    if (!konclude_state_assert_class_fact(
-            handle, individualIri(prefix, i).c_str(), className)) {
-      std::fprintf(stderr, "%s: assert %d failed: %s\n", stateLabel, i,
-                   konclude_last_error(handle));
-      return false;
-    }
+    individuals.push_back(individualIri(prefix, i));
   }
+  std::vector<KoncludeClassAssertion> tell, retract;
+  for (const std::string &indi : individuals) {
+    tell.push_back({indi.c_str(), className});
+  }
+  for (const std::string &indi : gCurrentIndividuals) {
+    retract.push_back({indi.c_str(), gCurrentClass.c_str()});
+  }
+  Clock::time_point t0 = Clock::now();
+  bool ok = konclude_tell_and_retract_axioms(
+      handle, tell.data(), static_cast<int>(tell.size()), retract.data(),
+      static_cast<int>(retract.size()));
   Clock::time_point t1 = Clock::now();
+  if (!ok) {
+    std::fprintf(stderr, "%s: tell/retract failed: %s\n", stateLabel,
+                 konclude_last_error(handle));
+    return false;
+  }
+  gCurrentIndividuals = individuals;
+  gCurrentClass = className;
   assertStats.add(elapsedMs(t0, t1));
   return true;
 }
@@ -231,11 +247,6 @@ int runStatePair(KoncludeReasonerHandle handle, int factCount, int repeatIdx,
   int problems = 0;
 
   // ---- State A: factCount "a<i>" individuals asserted as Father. ----
-  if (!konclude_state_begin(handle)) {
-    std::fprintf(stderr, "facts=%d repeat=%d state A: state_begin failed: %s\n",
-                 factCount, repeatIdx, konclude_last_error(handle));
-    return problems + 1;
-  }
   if (!assertFacts(handle, "a", kClassFather, factCount, assertStats,
                     "state A")) {
     return problems + 1;
@@ -251,11 +262,6 @@ int runStatePair(KoncludeReasonerHandle handle, int factCount, int repeatIdx,
   // ---- State B: fresh state, disjoint "b<i>" individuals, Person only. ----
   // Never asserts Father, so any Father-query hit here -- especially any
   // "a" individual -- proves State A's facts leaked forward.
-  if (!konclude_state_begin(handle)) {
-    std::fprintf(stderr, "facts=%d repeat=%d state B: state_begin failed: %s\n",
-                 factCount, repeatIdx, konclude_last_error(handle));
-    return problems + 1;
-  }
   if (!assertFacts(handle, "b", kClassPerson, factCount, assertStats,
                     "state B")) {
     return problems + 1;

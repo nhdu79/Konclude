@@ -27,7 +27,7 @@ make -j$(sysctl -n hw.ncpu)
 
 The build produces `Release/Konclude.app/Contents/MacOS/Konclude` on macOS (a `.app` bundle even though it's a console tool), or `Release/Konclude` / `Release/Konclude.exe` on Linux/Windows. The `Scripts/Konclude(.sh|.bat)` wrapper scripts point at that binary.
 
-There's also `KoncludeEmbedded.pro`, which builds Konclude as a shared library (`libKonclude.so`/`.dylib`, no `main()`) exposing a plain C `extern "C"` facade for in-process embedding into other applications — see `docs/FASTDOWNWARD_EMBEDDING.md` for the design and `Source/Control/Interface/Embedded/` for the facade itself:
+There's also `KoncludeEmbedded.pro`, which builds Konclude as a shared library (`libKonclude.so`/`.dylib`, no `main()`) exposing a plain C `extern "C"` facade for in-process embedding into other applications — see `docs/EMBEDDED_INTERFACE.md` (design, build, linking) and `docs/INCREMENTAL_REASONING.md` (status, next tasks); the facade itself is in `Source/Control/Interface/Embedded/`:
 
 ```sh
 qmake -o MakefileEmbedded KoncludeEmbedded.pro

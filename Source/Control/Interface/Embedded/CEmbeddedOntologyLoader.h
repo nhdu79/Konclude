@@ -31,10 +31,6 @@ namespace Konclude {
 
 	namespace Reasoner {
 
-		namespace Revision {
-			class COntologyRevision;
-		}; // end namespace Revision
-
 		namespace Generator {
 			class CConcreteOntologyUpdateCollectorBuilder;
 		}; // end namespace Generator
@@ -47,24 +43,25 @@ namespace Konclude {
 
 			namespace Embedded {
 
-        struct ClassAssertionFact {
-          QString individualIRI;
-          QString classIRI;
-        };
+				//! Qt-side copy of the C API's KoncludeClassAssertion.
+				struct ClassAssertionFact {
+					QString individualIRI;
+					QString classIRI;
+				};
 
 				class CEmbeddedReasoner;
 
 				/*!
 				 *		\class		CEmbeddedOntologyLoader
 				 *		\brief		Ontology loader/builder collaborator of CEmbeddedReasoner:
-				 *					loads the base ontology once, and owns the current FD
-				 *					"state" -- a scratch ABox revision layered on top of the
-				 *					loaded/classified base ontology, into which ground facts
-				 *					are asserted one at a time. See CEmbeddedReasoner for the
-				 *					shared instance infrastructure (config, command delegation,
-				 *					error reporting) this is constructed against, and
-				 *					CEmbeddedQueryManager for the collaborator that queries the
-				 *					state this class builds.
+				 *					loads the base ontology once, then applies each FD state
+				 *					transition as an incremental Tell/Retract on the single
+				 *					knowledge base -- one new, installed revision per
+				 *					tellAndRetractAssertions() call, exactly like an OWLlink
+				 *					<Tell>/<Retract> request (COWLlinkProcessor.cpp, the
+				 *					CTellKnowledgeBaseOWL2XMLNodeCommand branch). See
+				 *					CEmbeddedReasoner for the shared instance infrastructure
+				 *					and CEmbeddedQueryManager for querying the installed state.
 				 *
 				 *					Not safe to call concurrently from multiple threads; owned
 				 *					exclusively by, and only ever accessed through, its
@@ -78,69 +75,34 @@ namespace Konclude {
 
 						bool loadOntologyFile(const QString& filePath);
 
+						//! Moves the knowledge base to the next state: retracts
+						//! retractAssertions, then tells tellAssertions, in one new
+						//! revision, and installs it as the knowledge base's current
+						//! revision (so every later query sees it). Retracting a fact that
+						//! is not currently asserted is a silent no-op (builder semantics,
+						//! CConcreteOntologyUpdateCollectorBuilder::retractOntologyAxiom()).
+						//! A call with no tells and no retracts changes nothing. Installed
+						//! revisions are retained by CSPOntologyRevisionManager and never
+						//! freed (see docs/INCREMENTAL_REASONING.md §4).
 						bool tellAndRetractAssertions(const ClassAssertionFact* tellAssertions, int tellAssertionCount, const ClassAssertionFact* retractAssertions, int retractAssertionCount);
 
-						//! Correctness probe for docs/EMBEDDED_HIGH_VOLUME_CQ_OPTIMIZATION.md's
-						//! Decision 4 open item: repeatedly builds a scratch knowledge-base
-						//! revision via CCreateKnowledgeBaseRevisionUpdateCommand -- WITHOUT
-						//! ever installing it -- and immediately deletes it again, asserting
-						//! no facts. Prints one progress line per iteration to stderr, so
-						//! that running this under a shell-level timeout (e.g. `timeout 30`)
-						//! still shows how many iterations completed before a hang, if the
-						//! CPreconditionSynchronizer dispatch bug documented in
-						//! docs/FASTDOWNWARD_EMBEDDING.md reproduces for this exact command
-						//! sequence. Returns the number of iterations that completed; a hang
-						//! never returns at all, by definition, so a short return count with
-						//! no crash/error message means "it hung," not "it failed".
+						//! Diagnostic probe: repeatedly creates a scratch revision and
+						//! deletes it again without installing it. Prints one progress line
+						//! per iteration to stderr; returns the number of completed
+						//! iterations (a hang never returns, so run under `timeout`).
 						int probeScratchRevisionCycles(int iterations);
 
 						bool isOntologyLoaded() const;
-						// bool hasCurrentState() const;
 
-						//! Installs the current state's revision the first time this is
-						//! called for it (idempotent thereafter), and returns it. Required
-						//! before the state can be queried -- see CEmbeddedQueryManager::
-						//! executeConjunctiveQuery() for why this is NOT optional (forcing
-						//! query processing directly on a never-installed revision looked
-						//! plausible but empirically corrupted query results, including for
-						//! content that predates any Tell into this state).
-						// Reasoner::Revision::COntologyRevision* ensureCurrentStateInstalled();
+					// private methods
+					private:
+						bool addAssertionAxioms(Reasoner::Generator::CConcreteOntologyUpdateCollectorBuilder* builder, const ClassAssertionFact* assertions, int assertionCount, bool tell);
 
 					// private variables
 					private:
 						CEmbeddedReasoner* mInstanceManager;
 
 						bool mOntologyLoaded;
-
-						//! The current FD state's ABox revision. Starts out never-installed
-						//! but gets installed lazily, once, by the first
-						//! ensureCurrentStateInstalled() call for this state -- see
-						//! mCurrentStateInstalled below for why. Owned here; freed
-						//! explicitly by beginNewState() (on the next state) and the
-						//! destructor UNLESS installed, in which case
-						//! CSPOntologyRevisionManager's onRevContainer owns it instead. Null
-						//! until the first beginNewState() call.
-						// Reasoner::Revision::COntologyRevision* mCurrentStateRevision;
-						//! Whether mCurrentStateRevision has been installed yet. Reset to
-						//! false by beginNewState(). Installing turns out to be required,
-						//! not optional, for facts asserted into mCurrentStateRevision to be
-						//! visible to any query at all. Every existing Tell path in this
-						//! codebase (COWLlinkProcessor.cpp's SPARQL UPDATE MODIFY handling)
-						//! installs before any query ever touches the Told revision;
-						//! nothing in the codebase does otherwise.
-						// bool mCurrentStateInstalled;
-
-						//! One CConcreteOntologyUpdateCollectorBuilder per current state,
-						//! tied to mCurrentStateRevision's ontology and reused across every
-						//! assertClassFact() call for that state instead of allocating a
-						//! fresh builder per fact -- safe because initializeBuilding()/
-						//! completeBuilding() fully re-sync the builder's working sets
-						//! (including the entity/axiom-number counters) from/to the shared
-						//! ontology's build data on every call, so no state leaks between
-						//! successive assert calls regardless of builder object identity.
-						//! Rebuilt by beginNewState() (whose new state has a different
-						//! ontology) and freed by the destructor.
-						// Reasoner::Generator::CConcreteOntologyUpdateCollectorBuilder* mCurrentStateBuilder;
 				};
 
 			}; // end namespace Embedded

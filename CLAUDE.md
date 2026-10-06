@@ -19,7 +19,7 @@ make
 - Requires Qt 5.11+ (`xml network concurrent` modules) and a C++11 compiler.
 - `Konclude.pro` links against the bundled Redland/Raptor2/Rasqal/libxml2 static libs under `External/librdf/<Platform>/<Arch>/lib/`. If these paths don't match your platform, either fix them in `Konclude.pro` or build `KoncludeWithoutRedland.pro` instead (this is what CI uses — see `.github/workflows/build-without-redland.yml`).
 - `KoncludeLIB.pro` builds Konclude as a library with a JNI interface (`KONCLUDE_COMPILE_JNI_INTERFACE`, requires `JAVA_HOME`) instead of the standalone `main()` in `Source/mainLoader.cpp`.
-- `KoncludeEmbedded.pro` builds Konclude as a shared library with a plain `extern "C"` facade (`KONCLUDE_COMPILE_EMBEDDED_INTERFACE`, no JNI/Java dependency) for in-process embedding into other applications — see `Source/Control/Interface/Embedded/` and `docs/FASTDOWNWARD_EMBEDDING.md`.
+- `KoncludeEmbedded.pro` builds Konclude as a shared library (`ReleaseEmbedded/libKonclude.so`) with a plain `extern "C"` facade (`KONCLUDE_COMPILE_EMBEDDED_INTERFACE`, no JNI/Java dependency) for in-process embedding — see `Source/Control/Interface/Embedded/` and the "Current focus" section below. `Tools/EmbeddedDriver/rebuild.sh` (run from repo root) regenerates `MakefileEmbedded` if needed, rebuilds the library, and relinks every `Tools/EmbeddedDriver/*.cpp` driver into a same-named binary at the repo root.
 - A `gitbuild` pre-target runs `UnixGitBuildScript.sh` / `WinGitBuildScript.bat` to stamp the build with git revision info into `revision-git.h` before compiling — don't hand-edit `revision-git.h`.
 - Output binary goes to `./Release/Konclude`. Wrapper scripts `Scripts/Konclude` / `Scripts/Konclude.sh` / `Scripts/Konclude.bat` invoke it.
 - Docker builds are available via the separate `KoncludeDocker` repo (`./build_release.sh` there produces a statically linked binary); useful when local Qt/Redland setup is painful.
@@ -28,7 +28,7 @@ There is no CMake, no package.json, no separate lint step — treat qmake/make a
 
 ## Running / manual verification
 
-There is no unit test runner in the usual sense; verification is done by running the compiled binary against ontology/request fixtures in `Tests/`.
+There is no unit test runner in the usual sense; verification is done by running the compiled binary against ontology/request fixtures in `Tests/`. For the embedded interface, the drivers built by `Tools/EmbeddedDriver/rebuild.sh` are the tests (`embedded_state_driver`, `embedded_cq_driver`, `embedded_state_benchmark`, …; exit code 0 = pass).
 
 ```
 ./Konclude classification -i Tests/roberts-family-full-D.owl.xml -o out.owl.xml
@@ -71,6 +71,15 @@ Everything lives under `Source/`, organized by layer:
 - **`Network/`** — HTTP client/server plumbing (`Network/HTTP/`) used by the OWLlink/SPARQL servers.
 - **`Logger/`** — the `CLogger` singleton + `LOG(LEVEL, domain, message, code)` macro used throughout instead of ad-hoc logging; multiple pluggable log observers (console, Qt debug, configurable).
 - **`Utilities/`** — foundational data structures, including `Utilities/Container/` — **modified versions of Qt's `QMap`/`QHash`/`QList`** (`CQtManagedRestrictedModification*` files) that integrate with Konclude's own memory management. Use these container types rather than raw Qt containers in reasoning-hot-path code, consistent with existing surrounding code.
+
+## Current focus: incremental reasoning for Powerlifted
+
+The goal is to use Konclude from Powerlifted (`../powerlifted`, same parent folder) to reason over many search states (ABoxes) against one TBox, in-process, through `konclude_embedded.h`. **Read `docs/INCREMENTAL_REASONING.md` first.** It covers the Konclude author's guidance (e-mail in `TODO.md`), what the embedded API does today, the blocking reasoner-core bug, and the ordered task list for the next round. `docs/EMBEDDED_INTERFACE.md` covers how the interface works internally (command routing, revision layering, CQ pitfalls), plus how to build, debug and link it into Powerlifted.
+
+- One C API call is one state change: `konclude_tell_and_retract_axioms(tell[], retract[])` creates a revision, tells/retracts, and installs it, as an OWLlink `<Tell>`/`<Retract>` does. Queries (`konclude_execute_conjunctive_query`) run against the installed head.
+- Build native calls by creating the same command objects the OWLlink path creates (`COWLlinkQtXMLCommandParser` → `COWLlinkProcessor::processCustomsEvents`). Delegate them through `CPreconditionSynchronizer`; commands that only `COWLlinkProcessor` handles go through `CEmbeddedOWLlinkProcessor`. Don't hand-derive lower-level sequences.
+- The reasoner-core bug "answers contain only the individuals the newest revision touched" (individual-ID collisions during full rebuilds) is fixed in `CConcreteOntologyUpdateBuilder` (commit `b413d14d`); `docs/INCREMENTAL_WORK_LOG.md` holds short progress notes per roadmap task; add to it as you work. Regression fixtures: `Tests/incremental-*-request.xml` (`./Release/Konclude owllinkfile -w 2 -i … -o …`). Temporary debug lines are tagged `// KDBG-TEMP` by convention; `grep -rn KDBG-TEMP Source` must be empty before committing.
+- Keep the C API plain C and ABI-stable (Powerlifted's `src/search/konclude_reasoner.h` wraps it). Always use ≥2 worker threads (`-w 1` deadlocks).
 
 ## Task Scope
 

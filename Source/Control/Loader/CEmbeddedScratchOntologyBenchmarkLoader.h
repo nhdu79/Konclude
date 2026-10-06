@@ -50,7 +50,7 @@ namespace Konclude {
 			 *
 			 *		\class		CEmbeddedScratchOntologyBenchmarkLoader
 			 *		\brief		Standalone benchmark for the FD-embedding "snapshot-per-state
-			 *					ABox" design (see docs/FASTDOWNWARD_EMBEDDING.md). Loads and
+			 *					ABox" design (see docs/EMBEDDED_INTERFACE.md). Loads and
 			 *					classifies a fixture ontology once, then repeatedly builds an
 			 *					uninstalled scratch COntologyRevision on top of it via
 			 *					CCreateKnowledgeBaseRevisionUpdateCommand (never installing it),
@@ -81,9 +81,10 @@ namespace Konclude {
 			 *					work correctly when dispatched through COWLlinkProcessor's own
 			 *					delegateCommand() (Source/Control/Interface/OWLlink/
 			 *					COWLlinkProcessor.cpp:69-72), which every proven CLI/OWLlink path
-			 *					actually goes through. Not root-caused further in the pass that
-			 *					added this file -- see docs/FASTDOWNWARD_EMBEDDING.md for the
-			 *					full writeup and reproduction steps. Left in the repo as-is
+			 *					actually goes through. Root cause (since fixed in
+			 *					CEmbeddedReasoner): commands only COWLlinkProcessor handles
+			 *					were never routed to one -- see docs/EMBEDDED_INTERFACE.md
+			 *					§2. Left in the repo as-is
 			 *					(reproducing the bug on demand) rather than deleted, since it is
 			 *					itself the diagnostic artifact.
 			 */

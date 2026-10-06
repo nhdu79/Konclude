@@ -81,8 +81,8 @@ CEmbeddedQueryManager::~CEmbeddedQueryManager() {
 }
 
 void CEmbeddedQueryManager::resetForNewState() {
-  // delete mCurrentQueryRevision;
-  // mCurrentQueryRevision = nullptr;
+  delete mCurrentQueryRevision;
+  mCurrentQueryRevision = nullptr;
 }
 
 bool CEmbeddedQueryManager::extractBooleanResult(
@@ -149,28 +149,36 @@ bool CEmbeddedQueryManager::executeConjunctiveQuery(
     mInstanceManager->setLastError("No ontology loaded.");
     return false;
   }
-  // if (!mOntologyLoader->hasCurrentState()) {
-  //   mInstanceManager->setLastError(
-  //       "No current state; call beginNewState() first.");
-  //   return false;
-  // }
+  if (sparqlSelectQuery.trimmed().isEmpty()) {
+    mInstanceManager->setLastError("Empty SPARQL query text.");
+    return false;
+  }
 
-  // See CEmbeddedOntologyLoader::ensureCurrentStateInstalled() for why this
-  // lazy, once-per-state install is NOT optional.
-  // mOntologyLoader->ensureCurrentStateInstalled();
+  // Query-specific entities are built into a never-installed revision
+  // layered on top of the installed state (as COWLlinkProcessor's
+  // SPARQL_QUERY branch does), so the state itself stays untouched. It is
+  // created lazily and reused until the state changes (resetForNewState()).
+  if (!mCurrentQueryRevision) {
+    CCreateKnowledgeBaseRevisionUpdateCommand *updateCommand =
+        new CCreateKnowledgeBaseRevisionUpdateCommand(
+            mInstanceManager->getKnowledgeBaseName());
+    mInstanceManager->getPreconditionSynchronizer()->delegateCommand(
+        updateCommand);
+    CCommandExecutedBlocker::waitExecutedCommand(updateCommand);
+    mCurrentQueryRevision = updateCommand->getOntologyRevision();
+    delete updateCommand;
+    if (!mCurrentQueryRevision) {
+      mInstanceManager->setLastError(
+          "Failed to create the query-layer knowledge base revision.");
+      return false;
+    }
+  }
 
-  CCreateKnowledgeBaseRevisionUpdateCommand *updateCommand =
-    new CCreateKnowledgeBaseRevisionUpdateCommand(
-        mInstanceManager->getKnowledgeBaseName());
-  mInstanceManager->getPreconditionSynchronizer()->delegateCommand(updateCommand);
-  CCommandExecutedBlocker::waitExecutedCommand(updateCommand);
-
-  COntologyRevision *newQueryRev = updateCommand->getOntologyRevision();
-  CConcreteOntology *onto = newQueryRev->getOntology();
-  COntologyRevision *prevOntRev = newQueryRev->getPreviousOntologyRevision();
-  CConcreteOntology *baseOnt = prevOntRev->getOntology();
+  CConcreteOntology *onto = mCurrentQueryRevision->getOntology();
+  CConcreteOntology *baseOnt =
+      mCurrentQueryRevision->getPreviousOntologyRevision()->getOntology();
   COntologyConfigurationExtension *ontConfig =
-      newQueryRev->getOntologyConfiguration();
+      mCurrentQueryRevision->getOntologyConfiguration();
 
   // Build the CQuery* once via the exact same non-Rasqal, single-BGP
   // SPARQL engine sparqlfile/sparqlserver use (see
@@ -232,12 +240,9 @@ bool CEmbeddedQueryManager::executeConjunctiveQuery(
   CCommandExecutedBlocker::waitExecutedCommand(calcQueryCommand);
   delete calcQueryCommand;
 
-  // query itself (built fresh from the SPARQL text above, unlike
-  // mCurrentQueryRevision which is reused across calls) is deleted below,
-  // once its result has been copied out into plain Qt containers -- see
-  // CJNIQueryProcessor's queryOntology*() methods, which delete their own
-  // freshly-built CQuery-derived objects (e.g. `delete instancesQuery;`)
-  // the same way after extracting results via a visitor callback.
+  // query itself (unlike mCurrentQueryRevision) is deleted below, once its
+  // result has been copied out into plain Qt containers -- as
+  // CJNIQueryProcessor's queryOntology*() methods do.
   CQueryResult *result = query->getQueryResult();
   CVariableBindingsAnswersResult *varBindAnsRes =
       dynamic_cast<CVariableBindingsAnswersResult *>(result);
@@ -268,11 +273,6 @@ bool CEmbeddedQueryManager::executeConjunctiveQuery(
   delete rowIt;
   delete cellIt;
   delete query;
-
-  // ontRev (== mCurrentQueryRevision) is NOT deleted here -- it is reused
-  // for subsequent queries against this same state and only freed by
-  // resetForNewState()/the destructor.
-
   return true;
 }
 

@@ -32,8 +32,7 @@
 
 #include "Control/Command/Instructions/CCreateKnowledgeBaseCommand.h"
 #include "Control/Command/Instructions/CCreateKnowledgeBaseRevisionUpdateCommand.h"
-// #include
-// "Control/Command/Instructions/CInstallKnowledgeBaseRevisionUpdateCommand.h"
+#include "Control/Command/Instructions/CInstallKnowledgeBaseRevisionUpdateCommand.h"
 #include "Control/Command/Instructions/CLoadKnowledgeBaseOWLAutoOntologyCommand.h"
 
 #include "Reasoner/Revision/COntologyRevision.h"
@@ -64,20 +63,8 @@ namespace Embedded {
 CEmbeddedOntologyLoader::CEmbeddedOntologyLoader(
     CEmbeddedReasoner *instanceManager)
     : mInstanceManager(instanceManager), mOntologyLoaded(false) {}
-// mCurrentStateRevision(nullptr),
-// mCurrentStateInstalled(false),
-// mCurrentStateBuilder(nullptr)
 
-CEmbeddedOntologyLoader::~CEmbeddedOntologyLoader() {
-  // Only delete if never installed -- once installed,
-  // CSPOntologyRevisionManager's onRevContainer owns it and frees it itself
-  // (qDeleteAll in its own destructor, reached via the owning
-  // CEmbeddedReasoner's mReasonerCommander teardown); deleting it here too
-  // would be a double-free. if (!mCurrentStateInstalled) {
-  //   delete mCurrentStateRevision;
-  // }
-  // delete mCurrentStateBuilder;
-}
+CEmbeddedOntologyLoader::~CEmbeddedOntologyLoader() {}
 
 bool CEmbeddedOntologyLoader::loadOntologyFile(const QString &filePath) {
   if (!mInstanceManager->isReady()) {
@@ -118,7 +105,7 @@ bool CEmbeddedOntologyLoader::loadOntologyFile(const QString &filePath) {
   CCommandExecutedBlocker::waitExecutedCommand(loadKBCommand);
 
   // No structured success/failure signal exists on these commands (see
-  // docs/FASTDOWNWARD_EMBEDDING.md phase 2) -- failures surface only via
+  // docs/EMBEDDED_INTERFACE.md) -- failures surface only via
   // the ERROR-level log messages captured by
   // CEmbeddedReasoner::postLogMessage().
   mOntologyLoaded = true;
@@ -160,7 +147,7 @@ int CEmbeddedOntologyLoader::probeScratchRevisionCycles(int iterations) {
     // Never installed -- COntologyRevision::~COntologyRevision() deletes
     // its config and CConcreteOntology too (COntologyRevision.cpp:46-49),
     // so this is the whole cleanup, matching the design in
-    // docs/EMBEDDED_HIGH_VOLUME_CQ_OPTIMIZATION.md's Decision 2.
+    // docs/EMBEDDED_INTERFACE.md.
     delete scratchRev;
     ++completed;
 
@@ -170,53 +157,47 @@ int CEmbeddedOntologyLoader::probeScratchRevisionCycles(int iterations) {
   return completed;
 }
 
-// bool CEmbeddedOntologyLoader::beginNewState() {
-//   if (!mOntologyLoaded) {
-//     mInstanceManager->setLastError("No ontology loaded.");
-//     return false;
-//   }
-//
-//   // If the previous state was never queried, it was never installed either
-//   // (see ensureCurrentStateInstalled()) -- same never-install cleanup
-//   // probeScratchRevisionCycles() above exercises, a plain delete. If it WAS
-//   // installed, CSPOntologyRevisionManager's onRevContainer owns it now (see
-//   // the destructor) -- just drop our pointer to it, do not delete it here.
-//   if (mCurrentStateRevision && !mCurrentStateInstalled) {
-//     delete mCurrentStateRevision;
-//   }
-//   mCurrentStateRevision = nullptr;
-//   mCurrentStateInstalled = false;
-//
-//   // The previous state's builder is tied to that state's (now discarded)
-//   // ontology -- must not survive into the new state.
-//   delete mCurrentStateBuilder;
-//   mCurrentStateBuilder = nullptr;
-//
-//   CCreateKnowledgeBaseRevisionUpdateCommand *createRevCommand =
-//       new CCreateKnowledgeBaseRevisionUpdateCommand(
-//           mInstanceManager->getKnowledgeBaseName());
-//   mInstanceManager->getPreconditionSynchronizer()->delegateCommand(createRevCommand);
-//   CCommandExecutedBlocker::waitExecutedCommand(createRevCommand);
-//   COntologyRevision *ontRev = createRevCommand->getOntologyRevision();
-//   delete createRevCommand;
-//   if (!ontRev) {
-//     mInstanceManager->setLastError(
-//         "Failed to create a new state (scratch knowledge base revision).");
-//     return false;
-//   }
-//
-//   mCurrentStateRevision = ontRev;
-//   // One builder for this state's ontology, reused by every assertClassFact()
-//   // call below instead of allocating one per fact -- see
-//   mCurrentStateBuilder's
-//   // doc comment for why this is safe.
-//   mCurrentStateBuilder =
-//       new CConcreteOntologyUpdateCollectorBuilder(ontRev->getOntology());
-//   return true;
-// }
+bool CEmbeddedOntologyLoader::addAssertionAxioms(
+    CConcreteOntologyUpdateCollectorBuilder *builder,
+    const ClassAssertionFact *assertions, int assertionCount, bool tell) {
+  for (int i = 0; i < assertionCount; ++i) {
+    const ClassAssertionFact &fact = assertions[i];
+    CNamedIndividualExpression *indiExp =
+        builder->getNamedIndividual(fact.individualIRI);
+    CClassExpression *classExp = builder->getClass(fact.classIRI);
+    CClassAssertionExpression *axiom =
+        (indiExp && classExp) ? builder->getClassAssertion(indiExp, classExp)
+                              : nullptr;
+    if (!axiom) {
+      mInstanceManager->setLastError(
+          QString("Failed to build ClassAssertion(%1, %2).")
+              .arg(fact.individualIRI)
+              .arg(fact.classIRI));
+      return false;
+    }
+    if (tell) {
+      builder->tellOntologyAxiom(axiom);
+    } else {
+      builder->retractOntologyAxiom(axiom);
+    }
+  }
+  return true;
+}
 
-bool CEmbeddedOntologyLoader::tellAndRetractAssertions(const ClassAssertionFact *tellAssertions, int tellAssertionCount, const ClassAssertionFact *retractAssertions, int retractAssertionCount) {
+bool CEmbeddedOntologyLoader::tellAndRetractAssertions(
+    const ClassAssertionFact *tellAssertions, int tellAssertionCount,
+    const ClassAssertionFact *retractAssertions, int retractAssertionCount) {
+  if (!mOntologyLoaded) {
+    mInstanceManager->setLastError("No ontology loaded.");
+    return false;
+  }
+  if (tellAssertionCount == 0 && retractAssertionCount == 0) {
+    return true;
+  }
 
+  // Same sequence as an OWLlink <Tell>/<Retract> request
+  // (COWLlinkProcessor.cpp, CTellKnowledgeBaseOWL2XMLNodeCommand branch):
+  // 1. create a revision on top of the currently installed one,
   CCreateKnowledgeBaseRevisionUpdateCommand *createRevCommand =
       new CCreateKnowledgeBaseRevisionUpdateCommand(
           mInstanceManager->getKnowledgeBaseName());
@@ -227,90 +208,43 @@ bool CEmbeddedOntologyLoader::tellAndRetractAssertions(const ClassAssertionFact 
   delete createRevCommand;
   if (!ontRev) {
     mInstanceManager->setLastError(
-        "Failed to create a new state (scratch knowledge base revision).");
+        "Failed to create a new knowledge base revision.");
     return false;
   }
 
-  CConcreteOntology *onto = ontRev->getOntology();
+  // 2. build the changes into it (what CParseOWL2XMLOntologyCommand's
+  // handler does with the parsed axioms; retracts first, so a fact both
+  // retracted and told in one call ends up told),
   CConcreteOntologyUpdateCollectorBuilder *builder =
-      new CConcreteOntologyUpdateCollectorBuilder(onto);
-
+      new CConcreteOntologyUpdateCollectorBuilder(ontRev->getOntology());
   builder->initializeBuilding();
-
-  for (int i = 0; i < tellAssertionCount; ++i) {
-    const ClassAssertionFact &fact = tellAssertions[i];
-    const QString &individualIRI = fact.individualIRI;
-    const QString &classIRI = fact.classIRI;
-    CNamedIndividualExpression *indiExp =
-      builder->getNamedIndividual(individualIRI);
-    CClassExpression *classExp = builder->getClass(classIRI);
-    if (indiExp && classExp) {
-      CClassAssertionExpression *axiom = builder->getClassAssertion(indiExp, classExp);
-      if (axiom) {
-        builder->tellOntologyAxiom(axiom);
-      } else {
-        mInstanceManager->setLastError(
-            QString("Failed to build ClassAssertion(%1, %2).")
-            .arg(individualIRI)
-            .arg(classIRI));
-        return false;
-      }
-    } else {
-      mInstanceManager->setLastError(
-          QString("Failed to resolve individual '%1' or class '%2'.")
-          .arg(individualIRI)
-          .arg(classIRI));
-      return false;
-    }
-  }
-  // TODO(dnh): Handle retractions and properties
-
+  bool built =
+      addAssertionAxioms(builder, retractAssertions, retractAssertionCount,
+                         false) &&
+      addAssertionAxioms(builder, tellAssertions, tellAssertionCount, true);
   builder->completeBuilding();
-
   delete builder;
+  if (!built) {
+    // Never installed -- the revision (and its ontology) is still ours.
+    delete ontRev;
+    return false;
+  }
 
+  // 3. install it as the knowledge base's current revision. Reasoning is
+  // lazy: nothing is (re-)computed until the next query.
+  CInstallKnowledgeBaseRevisionUpdateCommand *installCommand =
+      new CInstallKnowledgeBaseRevisionUpdateCommand(
+          mInstanceManager->getKnowledgeBaseName(), ontRev);
+  mInstanceManager->getPreconditionSynchronizer()->delegateCommand(
+      installCommand);
+  CCommandExecutedBlocker::waitExecutedCommand(installCommand);
+  delete installCommand;
   return true;
 }
 
 bool CEmbeddedOntologyLoader::isOntologyLoaded() const {
   return mOntologyLoaded;
 }
-
-// bool CEmbeddedOntologyLoader::hasCurrentState() const {
-//   return mCurrentStateRevision != nullptr;
-// }
-
-// COntologyRevision *CEmbeddedOntologyLoader::ensureCurrentStateInstalled() {
-//   // Install the state's revision, lazily, the first time it's queried --
-//   // NOT optional. Every existing Tell path in this codebase (see
-//   // COWLlinkProcessor.cpp's SPARQL_UPDATE_MODIFY handling around line 1133:
-//   // CCreateKnowledgeBaseRevisionUpdateCommand -> Tell -> immediately
-//   // CInstallKnowledgeBaseRevisionUpdateCommand) installs a revision before
-//   // anything ever queries it; nothing in the codebase queries a Told,
-//   // never-installed revision directly. An earlier attempt at exactly that
-//   // (forcing OPSBUILD directly on mCurrentStateRevision without installing
-//   // it first) looked plausible but empirically returned zero rows even for
-//   // ABox content that predated the Tell -- installing first and then
-//   // querying via a fresh revision layered on top (see
-//   // CEmbeddedQueryManager::executeConjunctiveQuery(), which matches the
-//   // proven SPARQL_QUERY handling immediately below that same
-//   // COWLlinkProcessor.cpp branch) fixes it. This does reintroduce install's
-//   // costs (onRevContainer retention, O(N) referenceBuildData() copy) -- but
-//   // only once per FD state, not once per CQ call, which is the actual hot
-//   // path; see docs/EMBEDDED_HIGH_VOLUME_CQ_OPTIMIZATION.md's Decision 2 for
-//   // the fuller cost analysis and the still-open question of whether that
-//   // per-state cost is acceptable at FD's scale.
-//   if (!mCurrentStateInstalled) {
-//     CInstallKnowledgeBaseRevisionUpdateCommand *installCommand =
-//         new CInstallKnowledgeBaseRevisionUpdateCommand(
-//             mInstanceManager->getKnowledgeBaseName(), mCurrentStateRevision);
-//     mInstanceManager->getPreconditionSynchronizer()->delegateCommand(installCommand);
-//     CCommandExecutedBlocker::waitExecutedCommand(installCommand);
-//     delete installCommand;
-//     mCurrentStateInstalled = true;
-//   }
-//   return mCurrentStateRevision;
-// }
 
 }; // end namespace Embedded
 

@@ -66,8 +66,7 @@ unblocking `load()`, and (since `CloseAfterProcessedRequest=true`) calls
 `QCoreApplication::exit()` — this is why `mainLoader.cpp`'s `a.exec()` is
 needed for the CLI build specifically: `sparqlfile` mode relies on the real
 Qt event loop to actually terminate the process afterward, unlike the
-JNI/embedded synchronous-wait pattern (see `docs/FASTDOWNWARD_EMBEDDING.md`
-phase 3).
+JNI/embedded synchronous-wait pattern (see `docs/EMBEDDED_INTERFACE.md` §1).
 
 ## 3. `CParseProcessSPARQLTextCommand` → per-BGP command chain
 
@@ -261,13 +260,9 @@ above.
   known timing-dependent workaround for some ordering bug, not a real fix —
   worth revisiting if `-s` is ever pointed at a missing file under load.
 
-## Relevance to the embedded facade design
+## Relevance to the embedded interface
 
-`docs/FASTDOWNWARD_EMBEDDING.md`'s Phase 2 CQ design (`konclude_execute_sparql_query`)
-targets exactly the single-BGP case this pipeline's `CSPARQLSimpleQueryParser`
-path (§4) already supports without any Rasqal dependency — the scope match
-is not incidental, it's why that design is viable at all in
-`KoncludeEmbedded.pro`. The `expressionOntology`-is-the-live-revision finding
-in §4 is the same open risk already tracked there (does executing a query
-grow the KB's revision chain unboundedly at millions-of-calls scale) — not
-re-resolved by this pipeline trace, still open.
+The embedded CQ path (`docs/EMBEDDED_INTERFACE.md` §3) reuses §4's
+non-Rasqal `CSPARQLSimpleQueryParser` path. That is why
+`KoncludeEmbedded.pro` supports exactly the single-BGP subset described
+here.

@@ -24,14 +24,33 @@
 #include "CEmbeddedReasoner.h"
 
 #include <QString>
+#include <QVector>
+
+#include "CEmbeddedOntologyLoader.h"
 
 using namespace Konclude::Control::Interface::Embedded;
+
+
+namespace {
+
+	bool copyClassAssertions(const KoncludeClassAssertion* assertions, int count, QVector<ClassAssertionFact>& facts) {
+		for (int i = 0; i < count; ++i) {
+			if (!assertions[i].individualIRI || !assertions[i].classIRI) {
+				return false;
+			}
+			facts[i].individualIRI = QString::fromUtf8(assertions[i].individualIRI);
+			facts[i].classIRI = QString::fromUtf8(assertions[i].classIRI);
+		}
+		return true;
+	}
+
+}
 
 
 // Thin extern "C" shim: every function here just downcasts the opaque
 // handle and forwards to CEmbeddedReasoner. No Konclude/Qt types cross
 // this boundary -- see konclude_embedded.h for why (shared-library ABI
-// stability, docs/FASTDOWNWARD_EMBEDDING.md phase 2).
+// stability, docs/EMBEDDED_INTERFACE.md).
 
 extern "C" {
 
@@ -79,23 +98,18 @@ extern "C" {
 		if (!handle) {
 			return 0;
 		}
-		if (tellAssertionCount < 0 || retractAssertionCount < 0) {
+		CEmbeddedReasoner* reasoner = static_cast<CEmbeddedReasoner*>(handle);
+		if (tellAssertionCount < 0 || retractAssertionCount < 0 || (tellAssertionCount > 0 && !tellAssertions) || (retractAssertionCount > 0 && !retractAssertions)) {
+			reasoner->setLastError("Invalid tell/retract array arguments.");
 			return 0;
 		}
-		if ((tellAssertionCount > 0 && !tellAssertions) || (retractAssertionCount > 0 && !retractAssertions)) {
+		QVector<ClassAssertionFact> tellFacts(tellAssertionCount);
+		QVector<ClassAssertionFact> retractFacts(retractAssertionCount);
+		if (!copyClassAssertions(tellAssertions, tellAssertionCount, tellFacts) || !copyClassAssertions(retractAssertions, retractAssertionCount, retractFacts)) {
+			reasoner->setLastError("Null IRI string in tell/retract assertions.");
 			return 0;
 		}
-		for (int i = 0; i < tellAssertionCount; ++i) {
-			if (!tellAssertions[i].individualIRI || !tellAssertions[i].classIRI) {
-				return 0;
-			}
-		}
-		for (int i = 0; i < retractAssertionCount; ++i) {
-			if (!retractAssertions[i].individualIRI || !retractAssertions[i].classIRI) {
-				return 0;
-			}
-		}
-		bool ok = static_cast<CEmbeddedReasoner*>(handle)->tellAndRetractAxioms(tellAssertionCount, retractAssertionCount);
+		bool ok = reasoner->tellAndRetractAxioms(tellFacts.constData(), tellAssertionCount, retractFacts.constData(), retractAssertionCount);
 		return ok ? 1 : 0;
 	}
 

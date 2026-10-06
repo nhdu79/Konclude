@@ -33,13 +33,35 @@ using namespace Konclude::Control::Interface::Embedded;
 
 namespace {
 
+	// Copies a C array into Qt-side facts; false on a negative count, a missing
+	// array or a null IRI string.
 	bool copyClassAssertions(const KoncludeClassAssertion* assertions, int count, QVector<ClassAssertionFact>& facts) {
+		if (count < 0 || (count > 0 && !assertions)) {
+			return false;
+		}
+		facts.resize(count);
 		for (int i = 0; i < count; ++i) {
 			if (!assertions[i].individualIRI || !assertions[i].classIRI) {
 				return false;
 			}
 			facts[i].individualIRI = QString::fromUtf8(assertions[i].individualIRI);
 			facts[i].classIRI = QString::fromUtf8(assertions[i].classIRI);
+		}
+		return true;
+	}
+
+	bool copyObjectPropertyAssertions(const KoncludeObjectPropertyAssertion* assertions, int count, QVector<ObjectPropertyAssertionFact>& facts) {
+		if (count < 0 || (count > 0 && !assertions)) {
+			return false;
+		}
+		facts.resize(count);
+		for (int i = 0; i < count; ++i) {
+			if (!assertions[i].subjectIRI || !assertions[i].propertyIRI || !assertions[i].objectIRI) {
+				return false;
+			}
+			facts[i].subjectIRI = QString::fromUtf8(assertions[i].subjectIRI);
+			facts[i].propertyIRI = QString::fromUtf8(assertions[i].propertyIRI);
+			facts[i].objectIRI = QString::fromUtf8(assertions[i].objectIRI);
 		}
 		return true;
 	}
@@ -94,23 +116,29 @@ extern "C" {
 		return ok ? 1 : 0;
 	}
 
-	int konclude_tell_and_retract_axioms(KoncludeReasonerHandle handle, const KoncludeClassAssertion* tellAssertions, int tellAssertionCount, const KoncludeClassAssertion* retractAssertions, int retractAssertionCount) {
+	int konclude_tell_and_retract_assertions(KoncludeReasonerHandle handle,
+			const KoncludeClassAssertion* tellClassAssertions, int tellClassAssertionCount,
+			const KoncludeClassAssertion* retractClassAssertions, int retractClassAssertionCount,
+			const KoncludeObjectPropertyAssertion* tellObjectPropertyAssertions, int tellObjectPropertyAssertionCount,
+			const KoncludeObjectPropertyAssertion* retractObjectPropertyAssertions, int retractObjectPropertyAssertionCount) {
 		if (!handle) {
 			return 0;
 		}
 		CEmbeddedReasoner* reasoner = static_cast<CEmbeddedReasoner*>(handle);
-		if (tellAssertionCount < 0 || retractAssertionCount < 0 || (tellAssertionCount > 0 && !tellAssertions) || (retractAssertionCount > 0 && !retractAssertions)) {
-			reasoner->setLastError("Invalid tell/retract array arguments.");
+		AssertionChangeSet changes;
+		if (!copyClassAssertions(tellClassAssertions, tellClassAssertionCount, changes.tellClassAssertions) ||
+				!copyClassAssertions(retractClassAssertions, retractClassAssertionCount, changes.retractClassAssertions) ||
+				!copyObjectPropertyAssertions(tellObjectPropertyAssertions, tellObjectPropertyAssertionCount, changes.tellObjectPropertyAssertions) ||
+				!copyObjectPropertyAssertions(retractObjectPropertyAssertions, retractObjectPropertyAssertionCount, changes.retractObjectPropertyAssertions)) {
+			reasoner->setLastError("Invalid tell/retract arguments (negative count, missing array or null IRI string).");
 			return 0;
 		}
-		QVector<ClassAssertionFact> tellFacts(tellAssertionCount);
-		QVector<ClassAssertionFact> retractFacts(retractAssertionCount);
-		if (!copyClassAssertions(tellAssertions, tellAssertionCount, tellFacts) || !copyClassAssertions(retractAssertions, retractAssertionCount, retractFacts)) {
-			reasoner->setLastError("Null IRI string in tell/retract assertions.");
-			return 0;
-		}
-		bool ok = reasoner->tellAndRetractAxioms(tellFacts.constData(), tellAssertionCount, retractFacts.constData(), retractAssertionCount);
+		bool ok = reasoner->tellAndRetractAssertions(changes);
 		return ok ? 1 : 0;
+	}
+
+	int konclude_tell_and_retract_axioms(KoncludeReasonerHandle handle, const KoncludeClassAssertion* tellAssertions, int tellAssertionCount, const KoncludeClassAssertion* retractAssertions, int retractAssertionCount) {
+		return konclude_tell_and_retract_assertions(handle, tellAssertions, tellAssertionCount, retractAssertions, retractAssertionCount, nullptr, 0, nullptr, 0);
 	}
 
 	int konclude_execute_conjunctive_query(KoncludeReasonerHandle handle, const char* sparqlSelectQuery) {

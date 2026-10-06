@@ -23,7 +23,8 @@ How the interface works internally, and how to build, test and link it:
 |---|---|
 | `konclude_create_reasoner` / `konclude_destroy_reasoner` | One commander per handle; always ≥2 worker threads |
 | `konclude_load_ontology_file` | Load and install the TBox (+ any ABox); only once per handle |
-| `konclude_tell_and_retract_axioms(tell[], retract[])` | One state change: create a revision, retract then tell `ClassAssertion` facts, install it |
+| `konclude_tell_and_retract_assertions(classTell[], classRetract[], propTell[], propRetract[])` | One state change: create a revision, retract then tell `ClassAssertion` and `ObjectPropertyAssertion` facts, install it |
+| `konclude_tell_and_retract_axioms(tell[], retract[])` | Same, class assertions only (kept for existing callers) |
 | `konclude_execute_conjunctive_query(sparql)` + `konclude_query_result_*` | Single-BGP SPARQL SELECT against the installed head |
 | `konclude_check_consistency` / `konclude_check_satisfiability` | Boolean queries |
 
@@ -35,6 +36,7 @@ calls exactly these signatures. Driver results (`Tools/EmbeddedDriver/rebuild.sh
 | `embedded_cq_driver`, `embedded_state_existing_abox_probe`, `embedded_scratch_revision_probe` | PASS |
 | `embedded_state_driver` | PASS, 10/10 runs (since the §3 fix) |
 | `embedded_state_benchmark 50 10 5 5` | 0 problems over 50 state switches and 250 queries (since the §3 fix) |
+| `embedded_property_driver` | PASS, 10/10 runs: property tell/retract, reasoning via domain and `∃hasChild.Person`, invalid call rejected |
 
 ## 3. Fixed bug: answers went wrong after tell → query → tell → query
 
@@ -103,6 +105,15 @@ All are pre-existing and not fixed. They need their own tasks.
   classifier threads are now shared across ontologies; see
   `docs/INCREMENTAL_WORK_LOG.md`, Task 2. Their per-ontology items are still
   never freed (task 5).
+- **Stale role-assertion destinations after a rebuild. Fixed** (task 3, `a873242e`).
+  An individual found through the name map was used without a local copy
+  when it was only a role-assertion destination, so the assertion linked to
+  the previous revision's object. Property facts and inferences over them
+  became random after state changes. See `docs/INCREMENTAL_WORK_LOG.md`, Task 3.
+- **Answerer crash on a repeated property query. Fixed** (task 3, `160f90ae`).
+  `COptimizedComplexExpressionAnsweringHandler::tryReuseVariableRolePropagationItem`
+  dereferenced a missing item set (e.g. `?y` in `?x p ?y`) when reusing an
+  item from an earlier query.
 - **Revisions never freed.** `onRevContainer` is only cleared in
   `~CSPOntologyRevisionManager`. `CReleaseKnowledgeBaseCommand` only removes
   the name mapping.
@@ -135,10 +146,9 @@ Each task is its own change (see CLAUDE.md "Task Scope").
 2. **Fix the realizer use-after-free and the thread leak** (§4). **Done**
    (`89bfea6f`). The thread count is now flat; memory is still task 5.
 3. **More fact types and queries.**
-   - Add `ObjectPropertyAssertion`: build it with `getObjectPropertyAssertion(...)`
-     on the same builder (`Reasoner/Generator/CConcreteOntologyBuildDataUpdater.h`),
-     add a C struct, and add it to the tell/retract call.
-   - Optional: instance/type queries without SPARQL. Build what OWLlink
+   - `ObjectPropertyAssertion`: **Done** (`konclude_tell_and_retract_assertions`).
+     Along the way, two core bugs were fixed (§4).
+   - Not done (optional): instance/type queries without SPARQL. Build what OWLlink
      `GetInstances`/`IsInstanceOf` builds
      (`COWLlinkQtXMLCommandParser::parseProcessQueryNode` →
      `CProcessQueryOWL2XMLNodeCommand`, handled in

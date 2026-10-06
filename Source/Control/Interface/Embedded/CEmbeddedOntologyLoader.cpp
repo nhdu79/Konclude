@@ -42,6 +42,8 @@
 #include "Parser/Expressions/CClassAssertionExpression.h"
 #include "Parser/Expressions/CClassExpression.h"
 #include "Parser/Expressions/CNamedIndividualExpression.h"
+#include "Parser/Expressions/CObjectPropertyAssertionExpression.h"
+#include "Parser/Expressions/CObjectPropertyExpression.h"
 
 using namespace Konclude::Control::Command;
 using namespace Konclude::Control::Command::Instructions;
@@ -157,11 +159,10 @@ int CEmbeddedOntologyLoader::probeScratchRevisionCycles(int iterations) {
   return completed;
 }
 
-bool CEmbeddedOntologyLoader::addAssertionAxioms(
+bool CEmbeddedOntologyLoader::addClassAssertionAxioms(
     CConcreteOntologyUpdateCollectorBuilder *builder,
-    const ClassAssertionFact *assertions, int assertionCount, bool tell) {
-  for (int i = 0; i < assertionCount; ++i) {
-    const ClassAssertionFact &fact = assertions[i];
+    const QVector<ClassAssertionFact> &assertions, bool tell) {
+  for (const ClassAssertionFact &fact : assertions) {
     CNamedIndividualExpression *indiExp =
         builder->getNamedIndividual(fact.individualIRI);
     CClassExpression *classExp = builder->getClass(fact.classIRI);
@@ -171,8 +172,40 @@ bool CEmbeddedOntologyLoader::addAssertionAxioms(
     if (!axiom) {
       mInstanceManager->setLastError(
           QString("Failed to build ClassAssertion(%1, %2).")
-              .arg(fact.individualIRI)
-              .arg(fact.classIRI));
+              .arg(fact.classIRI)
+              .arg(fact.individualIRI));
+      return false;
+    }
+    if (tell) {
+      builder->tellOntologyAxiom(axiom);
+    } else {
+      builder->retractOntologyAxiom(axiom);
+    }
+  }
+  return true;
+}
+
+bool CEmbeddedOntologyLoader::addObjectPropertyAssertionAxioms(
+    CConcreteOntologyUpdateCollectorBuilder *builder,
+    const QVector<ObjectPropertyAssertionFact> &assertions, bool tell) {
+  for (const ObjectPropertyAssertionFact &fact : assertions) {
+    CNamedIndividualExpression *subjectExp =
+        builder->getNamedIndividual(fact.subjectIRI);
+    CNamedIndividualExpression *objectExp =
+        builder->getNamedIndividual(fact.objectIRI);
+    CObjectPropertyExpression *propertyExp =
+        builder->getObjectProberty(fact.propertyIRI);
+    CObjectPropertyAssertionExpression *axiom =
+        (subjectExp && objectExp && propertyExp)
+            ? builder->getObjectPropertyAssertion(subjectExp, objectExp,
+                                                  propertyExp)
+            : nullptr;
+    if (!axiom) {
+      mInstanceManager->setLastError(
+          QString("Failed to build ObjectPropertyAssertion(%1, %2, %3).")
+              .arg(fact.propertyIRI)
+              .arg(fact.subjectIRI)
+              .arg(fact.objectIRI));
       return false;
     }
     if (tell) {
@@ -185,13 +218,12 @@ bool CEmbeddedOntologyLoader::addAssertionAxioms(
 }
 
 bool CEmbeddedOntologyLoader::tellAndRetractAssertions(
-    const ClassAssertionFact *tellAssertions, int tellAssertionCount,
-    const ClassAssertionFact *retractAssertions, int retractAssertionCount) {
+    const AssertionChangeSet &changes) {
   if (!mOntologyLoaded) {
     mInstanceManager->setLastError("No ontology loaded.");
     return false;
   }
-  if (tellAssertionCount == 0 && retractAssertionCount == 0) {
+  if (changes.isEmpty()) {
     return true;
   }
 
@@ -219,9 +251,13 @@ bool CEmbeddedOntologyLoader::tellAndRetractAssertions(
       new CConcreteOntologyUpdateCollectorBuilder(ontRev->getOntology());
   builder->initializeBuilding();
   bool built =
-      addAssertionAxioms(builder, retractAssertions, retractAssertionCount,
-                         false) &&
-      addAssertionAxioms(builder, tellAssertions, tellAssertionCount, true);
+      addClassAssertionAxioms(builder, changes.retractClassAssertions,
+                              false) &&
+      addObjectPropertyAssertionAxioms(
+          builder, changes.retractObjectPropertyAssertions, false) &&
+      addClassAssertionAxioms(builder, changes.tellClassAssertions, true) &&
+      addObjectPropertyAssertionAxioms(
+          builder, changes.tellObjectPropertyAssertions, true);
   builder->completeBuilding();
   delete builder;
   if (!built) {

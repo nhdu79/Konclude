@@ -143,3 +143,81 @@ all ontologies. All of these threads already keep per-ontology items
   Committed as `89bfea6f` on `fix/incremental-reasoning`.
 - Thread and ontology items are still never freed, so memory grows with
   each revision. That is task 5.
+
+## Task 3: Object property assertions. Done
+
+**API.**
+
+- New `KoncludeObjectPropertyAssertion {subjectIRI, propertyIRI, objectIRI}`.
+- New `konclude_tell_and_retract_assertions(handle, classTell, classRetract,
+  propTell, propRetract)`: one call is one revision; retracts come before
+  tells; any array may be `NULL` when its count is 0; an invalid argument
+  changes nothing.
+- `konclude_tell_and_retract_axioms` stays as the class-only wrapper, so
+  Powerlifted's ABI is unchanged.
+- C++ side: `AssertionChangeSet` in `CEmbeddedOntologyLoader.h`; the builder
+  uses `getObjectProberty` (sic) + `getObjectPropertyAssertion(subject,
+  object, property)`.
+
+**Test.**
+
+- New fixture `Tests/embedded-state-tbox-roles.owl.xml`:
+  `ObjectPropertyDomain(hasChild, Person)`, `Parent ≡ ∃hasChild.Person`.
+- New driver `Tools/EmbeddedDriver/embedded_property_driver.cpp`: 4 states
+  plus an invalid call.
+
+**Bugs found by the driver (both pre-existing, outside the embedded layer).**
+
+1. **Crash on a repeated query `?x hasChild ?y`.**
+   - Where:
+     `COptimizedComplexExpressionAnsweringHandler::tryReuseVariableRolePropagationItem`
+     (`Reasoner/Answerer/…AnsweringHandler.cpp`, about line 8503).
+   - Cause: reusing a role-propagation item from an earlier query, it
+     inserted into `varExpVarComItemHash->value(otherExp)`, which is null
+     when `?y` has no item yet.
+   - Fix: create the set if it's missing, as the callers at lines 5492–5495
+     do.
+2. **Property facts and inferences random after a state change.**
+   - Symptom: in OWLlink and embedded runs, after any later tell or retract
+     (even of an unrelated individual), `Parent` and sometimes the asserted
+     `hasChild` pairs themselves came out wrong. Results varied run to run:
+     8 of 10 driver runs failed. The build without the task-1 fix failed
+     the same way.
+   - Cause: in a rebuild from the basement,
+     `CConcreteOntologyUpdateBuilder::setIndividualAssertionRoleFromObjectPropertyTerm()`
+     looks up the destination with `forceLocalisation = false`. If the
+     destination hasn't been built yet in this rebuild, the name-map hit
+     returns the **previous revision's** `CIndividual` without creating this
+     revision's copy, so the role assertion links to a stale object. Which
+     comes first depends on hash order, hence the randomness.
+   - Fix (`getIndividualForIndividualTerm`): an individual found by name
+     always needs localisation. Term-hash lookups are unchanged.
+
+**Decisions.**
+
+| Decision | Why |
+|---|---|
+| New function instead of changing `konclude_tell_and_retract_axioms` | Keeps Powerlifted's ABI; one call is still one revision |
+| `AssertionChangeSet` on the C++ side | Avoids passing 8 arguments through every layer |
+| Fix both core bugs here | Property support is unusable without them; each gets its own commit |
+| Skip SPARQL-free instance queries for now | Optional in the roadmap; SPARQL CQs already cover the need |
+
+**Results.**
+
+| Check | Result |
+|---|---|
+| `embedded_property_driver` ×10 | 10/10 PASS (was 2/10) ✓ |
+| `Tests/incremental-property-tell-query-tell-request.xml` (new) | Parent `{john, mary}` both times, every run ✓ (was random) |
+| `Tests/incremental-property-retract-request.xml` (new) | Parent `{john}` after the retract, every run ✓ |
+| Repeated `?x hasChild ?y` in one state | no crash ✓ |
+| Task-1 request files, `embedded_state_driver` ×10, `embedded_cq_driver`, probes, both benchmarks | unchanged, PASS ✓ |
+| classification roberts / galen | closure identical (481 / 30,795 pairs) ✓ |
+| realisation roberts | identical except the known-random `PersonWithManySibling` ✓ |
+
+**Open.**
+
+- Committed as three commits on `fix/incremental-reasoning`: builder
+  localisation fix + property request files (`a873242e`), answerer crash
+  fix (`160f90ae`), and the embedded API + driver + docs (the commit
+  following these).
+- SPARQL-free instance/type queries (optional).

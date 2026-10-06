@@ -25,6 +25,7 @@
 
 // Libraries includes
 #include <QString>
+#include <QVector>
 
 
 namespace Konclude {
@@ -47,6 +48,25 @@ namespace Konclude {
 				struct ClassAssertionFact {
 					QString individualIRI;
 					QString classIRI;
+				};
+
+				//! Qt-side copy of the C API's KoncludeObjectPropertyAssertion.
+				struct ObjectPropertyAssertionFact {
+					QString subjectIRI;
+					QString propertyIRI;
+					QString objectIRI;
+				};
+
+				//! All facts of one state change: applied as one revision.
+				struct AssertionChangeSet {
+					QVector<ClassAssertionFact> tellClassAssertions;
+					QVector<ClassAssertionFact> retractClassAssertions;
+					QVector<ObjectPropertyAssertionFact> tellObjectPropertyAssertions;
+					QVector<ObjectPropertyAssertionFact> retractObjectPropertyAssertions;
+
+					bool isEmpty() const {
+						return tellClassAssertions.isEmpty() && retractClassAssertions.isEmpty() && tellObjectPropertyAssertions.isEmpty() && retractObjectPropertyAssertions.isEmpty();
+					}
 				};
 
 				class CEmbeddedReasoner;
@@ -75,8 +95,8 @@ namespace Konclude {
 
 						bool loadOntologyFile(const QString& filePath);
 
-						//! Moves the knowledge base to the next state: retracts
-						//! retractAssertions, then tells tellAssertions, in one new
+						//! Moves the knowledge base to the next state: retracts all
+						//! retract* facts of changes, then tells all tell* facts, in one new
 						//! revision, and installs it as the knowledge base's current
 						//! revision (so every later query sees it). Retracting a fact that
 						//! is not currently asserted is a silent no-op (builder semantics,
@@ -84,7 +104,7 @@ namespace Konclude {
 						//! A call with no tells and no retracts changes nothing. Installed
 						//! revisions are retained by CSPOntologyRevisionManager and never
 						//! freed (see docs/INCREMENTAL_REASONING.md §4).
-						bool tellAndRetractAssertions(const ClassAssertionFact* tellAssertions, int tellAssertionCount, const ClassAssertionFact* retractAssertions, int retractAssertionCount);
+						bool tellAndRetractAssertions(const AssertionChangeSet& changes);
 
 						//! Diagnostic probe: repeatedly creates a scratch revision and
 						//! deletes it again without installing it. Prints one progress line
@@ -96,7 +116,8 @@ namespace Konclude {
 
 					// private methods
 					private:
-						bool addAssertionAxioms(Reasoner::Generator::CConcreteOntologyUpdateCollectorBuilder* builder, const ClassAssertionFact* assertions, int assertionCount, bool tell);
+						bool addClassAssertionAxioms(Reasoner::Generator::CConcreteOntologyUpdateCollectorBuilder* builder, const QVector<ClassAssertionFact>& assertions, bool tell);
+						bool addObjectPropertyAssertionAxioms(Reasoner::Generator::CConcreteOntologyUpdateCollectorBuilder* builder, const QVector<ObjectPropertyAssertionFact>& assertions, bool tell);
 
 					// private variables
 					private:

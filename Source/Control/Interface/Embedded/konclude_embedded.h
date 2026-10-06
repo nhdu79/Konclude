@@ -48,6 +48,13 @@ typedef struct {
   const char* classIRI;
 } KoncludeClassAssertion;
 
+/* ObjectPropertyAssertion(propertyIRI, subjectIRI, objectIRI). */
+typedef struct {
+  const char* subjectIRI;
+  const char* propertyIRI;
+  const char* objectIRI;
+} KoncludeObjectPropertyAssertion;
+
 /*
  * Creates a new reasoner instance. Internally forces >=2 processing
  * threads to avoid a known deadlock in Konclude's startup synchronization
@@ -85,19 +92,28 @@ int konclude_check_consistency(KoncludeReasonerHandle handle, int* outConsistent
 int konclude_check_satisfiability(KoncludeReasonerHandle handle, const char* classIRI, int* outSatisfiable);
 
 /*
- * Moves the knowledge base to the next state: retracts every
- * ClassAssertion(individualIRI, classIRI) in retractAssertions, then tells
- * every one in tellAssertions (so a fact in both ends up told), as one
- * incremental revision -- the same thing an OWLlink <Retract>+<Tell>
- * request does. Pass only the diff between the previous and the next
- * state; retracting a fact that is not asserted is a no-op. Reasoning is
- * lazy: nothing is computed until the next query. IRIs must be
- * fully-qualified. Returns 1 on success, 0 on failure (see
- * konclude_last_error).
+ * Moves the knowledge base to the next state: retracts every retract*
+ * assertion, then tells every tell* assertion (so a fact in both ends up
+ * told), as one incremental revision -- the same thing an OWLlink
+ * <Retract>+<Tell> request does. Pass only the diff between the previous
+ * and the next state; retracting a fact that is not asserted is a no-op.
+ * Any array may be NULL if its count is 0. Reasoning is lazy: nothing is
+ * computed until the next query. IRIs must be fully-qualified. Returns 1
+ * on success, 0 on failure (see konclude_last_error); on failure nothing
+ * is changed.
  *
  * Memory note: every call that changes something keeps one more revision
  * alive inside Konclude (revision cleanup is not implemented), so memory
  * grows with the number of state changes.
+ */
+int konclude_tell_and_retract_assertions(KoncludeReasonerHandle handle,
+    const KoncludeClassAssertion* tellClassAssertions, int tellClassAssertionCount,
+    const KoncludeClassAssertion* retractClassAssertions, int retractClassAssertionCount,
+    const KoncludeObjectPropertyAssertion* tellObjectPropertyAssertions, int tellObjectPropertyAssertionCount,
+    const KoncludeObjectPropertyAssertion* retractObjectPropertyAssertions, int retractObjectPropertyAssertionCount);
+
+/*
+ * Same as konclude_tell_and_retract_assertions with class assertions only.
  */
 int konclude_tell_and_retract_axioms(KoncludeReasonerHandle handle, const KoncludeClassAssertion* tellAssertions, int tellAssertionCount, const KoncludeClassAssertion* retractAssertions, int retractAssertionCount);
 

@@ -54,7 +54,7 @@ namespace Konclude {
 
 				class CEmbeddedOntologyLoader;
 				class CEmbeddedQueryManager;
-				struct ClassAssertionFact;
+				struct AssertionChangeSet;
 
 				/*!
 				 *		\class		CEmbeddedReasoner
@@ -89,11 +89,11 @@ namespace Konclude {
 						bool checkConsistency(bool* consistentOut);
 						bool checkSatisfiability(const QString& classIRI, bool* satisfiableOut);
 
-						//! Moves to the next state: retracts retractAssertions, tells
-						//! tellAssertions (one new installed revision, see
+						//! Moves to the next state: retracts, then tells the facts of changes
+						//! (one new installed revision, see
 						//! CEmbeddedOntologyLoader::tellAndRetractAssertions()), and drops
 						//! the query layer built on the previous state.
-						bool tellAndRetractAxioms(const ClassAssertionFact* tellAssertions, int tellAssertionCount, const ClassAssertionFact* retractAssertions, int retractAssertionCount);
+						bool tellAndRetractAssertions(const AssertionChangeSet& changes);
 
 						//! See CEmbeddedQueryManager::executeConjunctiveQuery(). Results
 						//! are retrievable via the getLastQueryResult* accessors below

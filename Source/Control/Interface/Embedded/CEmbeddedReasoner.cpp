@@ -291,12 +291,9 @@ bool CEmbeddedReasoner::checkSatisfiability(const QString &classIRI,
   return mQueryManager->checkSatisfiability(classIRI, satisfiableOut);
 }
 
-bool CEmbeddedReasoner::tellAndRetractAxioms(
-    const ClassAssertionFact *tellAssertions, int tellAssertionCount,
-    const ClassAssertionFact *retractAssertions, int retractAssertionCount) {
-  bool ok = mOntologyLoader->tellAndRetractAssertions(
-      tellAssertions, tellAssertionCount, retractAssertions,
-      retractAssertionCount);
+bool CEmbeddedReasoner::tellAndRetractAssertions(
+    const AssertionChangeSet &changes) {
+  bool ok = mOntologyLoader->tellAndRetractAssertions(changes);
   if (ok) {
     mQueryManager->resetForNewState();
   }

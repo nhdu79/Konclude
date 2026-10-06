@@ -60,7 +60,9 @@ matching OWLlink request, then follow how `COWLlinkProcessor` dispatches it.
       TBox/RBox/ABox vectors by pointer
       (`CDynamicReferenceVectorBase::referenceVector`), so this is O(1) in
       ontology size.
-   2. `CConcreteOntologyUpdateCollectorBuilder`: retracts, then tells.
+   2. `CConcreteOntologyUpdateCollectorBuilder`: retracts, then tells, for
+      `ClassAssertion` and `ObjectPropertyAssertion` facts (an
+      `AssertionChangeSet`).
       `retractOntologyAxiom` only removes axioms already in the inherited
       tell set.
    3. `CInstallKnowledgeBaseRevisionUpdateCommand`: becomes the head. Is
@@ -119,6 +121,7 @@ Drivers: run them from the repo root; exit code 0 means pass.
 |---|---|
 | `embedded_cq_driver` | 314 `(x,y)` rows for `Father(?x), hasChild(?x,?y)` on `Tests/roberts-family-full-D.owl.xml`, the same as `cq-answers.xml` from the CLI `sparqlfile` |
 | `embedded_state_driver` | tell/retract diffs across 4 states on `Tests/embedded-state-tbox-only.owl.xml` |
+| `embedded_property_driver` | property and class tell/retract across 4 states on `Tests/embedded-state-tbox-roles.owl.xml`, plus a rejected invalid call |
 | `embedded_state_benchmark [maxFacts step repeats queriesPerState]` | switches between states A and B, timing tell/retract and queries, and checking each answer set |
 | `embedded_cq_benchmark [iterations] [roberts-family\|robot-grid\|all]` | full create → load → query → destroy cycles. Measured earlier: roberts-family about 4.6 s/cycle (almost all query), robot-grid about 39 ms/cycle |
 | `embedded_state_existing_abox_probe`, `embedded_scratch_revision_probe` | a tell on top of an existing ABox; create/delete cycles of never-installed revisions (check for hangs; run under `timeout`) |

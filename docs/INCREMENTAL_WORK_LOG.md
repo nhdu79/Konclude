@@ -283,7 +283,7 @@ through states. Run: 500 states, 20 facts each, names drawn from a pool of
 3. **Recycling the handle doesn't help.** 10 × (create → load → 50 states →
    destroy): RSS grows +30 MB per cycle and doesn't drop at destroy, and +13
    threads stay alive per destroyed handle. `konclude_destroy_reasoner`
-   frees almost nothing.
+   frees almost nothing. (Fixed in task 5c.)
 
 **5b options (decision needed).**
 
@@ -561,3 +561,120 @@ after 2c).
   (`DefaultOOMPolicy=stop`) then stopped the whole tmux scope, including the
   shell. Run it with few iterations (e.g. `./embedded_cq_benchmark 5 all`)
   until handle destruction frees its data.
+
+## Task 5c: Freeing a handle (`konclude_destroy_reasoner`). Done, except the per-state leak
+
+**Goal.** Destroying a handle frees everything it created, so a caller can
+bound memory by recreating the handle every N states.
+
+**Measurement.** Two new drivers; both report RSS after `malloc_trim(0)`
+(glibc's `mallinfo2` only covers the main arena, Konclude's threads allocate
+from others).
+
+- `embedded_handle_cycle_benchmark [small|roberts] [cycles] [statesPerCycle]`:
+  create → load → use → destroy, repeated; RSS and threads after each destroy.
+- `embedded_incremental_growth_benchmark [states] [queriesPerState]
+  [reportEvery] [recreateEvery]`: one handle, each change tells 2 new facts
+  and retracts 1 every second step (state grows by 1–2 facts), 2 queries per
+  state; optionally destroys and recreates the handle (load + re-tell the
+  state) every `recreateEvery` states. Ends with `malloc_stats()`.
+
+**Teardown done so far** (ASan clean on handle cycles, small and roberts):
+
+1. *Threads.* The answering, realization, precomputation, preprocessing and
+   classification managers stop and delete their shared worker threads;
+   `CReasonerManagerThread::threadStopped` deletes them in order (issuers →
+   calculation manager → caches) and now also stops and deletes the
+   computed-consequences, backend and occurrence-statistics caches. The
+   commander stops itself and deletes the classification manager before the
+   reasoner manager. Worker interfaces got virtual destructors.
+2. *Calculation engine.* `CConcurrentTaskCalculationManager` deletes its
+   environment; the environment stops all processor threads before deleting
+   any; each processor unit frees its allocator (incl. its reserve of up to
+   80,000 free pools), context, releaser, communicators, pool provider and
+   task-handle algorithm; the scheduler also its task reserve queue.
+3. *Kept tasks.* Tasks kept as models (not memory releaseable: consistency,
+   saturation, classification) were never freed. Each unit now records them
+   when it completes them (`mRetainedTaskList`) and releases them in its
+   destructor. Safe only at teardown, when nothing reads them any more (see
+   2d for why per revision it is not). ~235 MB per roberts handle.
+4. *Backend cache.* The destructor frees all data versions, ontology
+   contexts, individual association contexts, reader slots, and the pools of
+   written data, which the cache keeps on purpose
+   (`//mContext.releaseTemporaryMemoryPools(memoryPools)` in the write
+   handler) and now collects in `mRetainedWriteMemoryPools`.
+5. *Saturation successor maps.* `CLinkedRoleSaturationSuccessorHash`
+   allocated `CLinkedRoleSaturationSuccessorData` without its process
+   context, so its map's nodes were plain mallocs and leaked whenever the
+   task memory was released (also during normal reasoning).
+6. *Items.* Worker threads and the answering handler provider delete their
+   remaining per-ontology items (and the provider its handler factory).
+
+| Workload (kept per destroyed handle) | Before | Now |
+|---|---|---|
+| roberts, 1 query | ~410 MB, 13 threads | ~13 MB RSS (~6 MB live heap), 0 threads |
+| small TBox, 10 states | ~8.8 MB, 13 threads | ~0.95 MB, 0 threads |
+
+The ~6 MB left on roberts is spread over ~30 sites below 0.6 MB each, mostly
+sub-structures of realizer/answering items whose destructors free only part
+of what they build.
+
+**Finding: the per-state cost is a leak that survives teardown.**
+`embedded_incremental_growth_benchmark 1000 2 100 <N>`:
+
+| state | facts | RSS (no recreate) | growth per state | time per state |
+|---|---|---|---|---|
+| 100 | 150 | 67 MB | 0.37 MB | 9 ms |
+| 500 | 750 | 461 MB | 1.37 MB | 16 ms |
+| 1000 | 1500 | 1.54 GB | 2.66 MB | 28 ms |
+
+- Each change costs ~1.8 kB per fact in the current state, so memory grows
+  quadratically with the number of changes on a growing state.
+- Recreating does not bound it. Final RSS after 1000 states with recreation
+  every 50 / 100 / 250 / 500 / never: 1.11 / 1.13 / 1.22 / 1.35 / 1.51 GB.
+- After destroying the handle, `malloc_stats()` shows ~1.1 GB still **in
+  use** (not just held), so it is a leak, not fragmentation. A fresh handle
+  with all 1,500 facts takes ~10 MB.
+- Live heap at exit (heap profiler): 9.9 MB after 100 states, 35.3 MB after
+  200. The surviving allocations are many small ones per revision: interned
+  IRI names (`CAbbreviatedIRIName::getIRIName`), query answer copies
+  (`CVariableBindingsListAnswerResult::getCopy`), builder names
+  (`CConcreteOntologyUpdateBuilder::updateName`), saturation job data,
+  backend-cache indexing. Likely cause (not confirmed per site): mallocs (e.g.
+  `QString`s) owned by objects that live in a revision's memory pools;
+  freeing the pools never runs those objects' destructors.
+- Recreating itself is cheap: destroy ~100 ms; create + load + re-tell 1,500
+  facts + first query ~25 ms.
+
+**Finding: two handles must not be alive at once.** Creating a handle before
+destroying the old one deadlocked in the new handle's first query (both
+handles share the commander registered in the process-wide config default,
+see the caveat in `CEmbeddedReasoner`). Recreate as destroy → create → load →
+re-tell.
+
+**Worker process prototype** (`Tools/KoncludeWorker/`, see its README).
+Konclude runs in a child process (`konclude_worker`, fork + exec, socket
+protocol); `KoncludeWorkerClient` tracks the current state and restarts the
+worker every N changes, re-telling the state. Process exit frees everything,
+leaks included.
+
+- Equivalence: 150 random class/property changes, restart every 7, worker
+  killed twice: answers identical to in-process.
+- Growth workload above, 1000 changes: max worker RSS 175 / 302 / 538 MB with
+  a restart every 50 / 100 / 200 changes (1.54 GB without), total time 17.7 /
+  18.8 / 19.1 s (20.6 s without).
+
+**Verified.**
+- ASan: handle cycles (small, roberts), both state drivers, 100-state memory
+  benchmark, 150-state growth benchmark with recreation every 40: 0 errors.
+- Normal build: state/property drivers ×3, `embedded_cq_driver`, both probes,
+  `embedded_state_benchmark`, `embedded_cq_benchmark 5 all`, memory benchmark
+  (255 kB/state, unchanged), handle cycles, worker equivalence test and growth
+  benchmark.
+- CLI vs a `HEAD` build: all 5 request files give identical responses;
+  classification closure identical (roberts, galen); realisation differs only
+  in the random `PersonWithManySibling`.
+
+**Status.** The `embedded_cq_benchmark` hazard above is gone (it now keeps
+~13 MB per cycle on roberts). Open: the per-revision mallocs (they are also
+most of the in-handle growth); until then, bound memory with the worker.

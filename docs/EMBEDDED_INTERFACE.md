@@ -125,6 +125,12 @@ Drivers: run them from the repo root; exit code 0 means pass.
 | `embedded_state_benchmark [maxFacts step repeats queriesPerState]` | switches between states A and B, timing tell/retract and queries, and checking each answer set |
 | `embedded_cq_benchmark [iterations] [roberts-family\|robot-grid\|all]` | full create → load → query → destroy cycles. Measured earlier: roberts-family about 4.6 s/cycle (almost all query), robot-grid about 39 ms/cycle |
 | `embedded_state_existing_abox_probe`, `embedded_scratch_revision_probe` | a tell on top of an existing ABox; create/delete cycles of never-installed revisions (check for hangs; run under `timeout`) |
+| `embedded_memory_benchmark [mode states factsPerState poolSize queriesPerState reportEvery]` | RSS and threads over many state changes on one handle (fixed-size states) |
+| `embedded_handle_cycle_benchmark [small\|roberts] [cycles] [statesPerCycle]` | create → load → use → destroy cycles; RSS (after `malloc_trim`) and threads kept per destroyed handle |
+| `embedded_incremental_growth_benchmark [states queriesPerState reportEvery recreateEvery]` | a state that grows by 1–2 facts per change; RSS and time per state, optional handle recreation, `malloc_stats` at the end |
+
+Konclude in a restartable worker process: `Tools/KoncludeWorker/README.md`
+(own build script and tests).
 
 Debug build notes:
 

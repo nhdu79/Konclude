@@ -118,7 +118,8 @@ All are pre-existing and not fixed. They need their own tasks.
   releases and deletes superseded revisions. Their precomputation saturation
   tasks stay (~150 kB/state), since later revisions share them through the
   TBox concepts. `CReleaseKnowledgeBaseCommand` still only removes the name
-  mapping, and `konclude_destroy_reasoner` frees almost nothing.
+  mapping. `konclude_destroy_reasoner` frees a handle's threads and
+  reasoning data (task 5c), but not what state changes leak.
 - **Nondeterministic realisation of `PersonWithManySibling`** (roberts-family,
   `realisation -w 2`). Which individuals get this type changes from run to
   run, with or without the §3 fix. It is the only nondeterministic
@@ -163,7 +164,15 @@ Each task is its own change (see CLAUDE.md "Task Scope").
      state (was ~1,300 and rising).
    - Left: the precomputation saturation tasks (~150 kB/state; freeing them
      needs a reachability analysis over saturation nodes shared through the
-     TBox concepts), and `konclude_destroy_reasoner` freeing a handle.
+     TBox concepts).
+   - 5c (Task 5c in the work log): `konclude_destroy_reasoner` now frees
+     almost all of a handle (threads, task memory, caches). But
+     each state change also leaks memory that survives destruction (~1.8 kB
+     per fact in the state), so recreating the handle does not yet bound
+     memory. Never keep two handles alive at once (deadlock).
+   - Bounding memory now: run Konclude in a worker process restarted every N
+     changes (`Tools/KoncludeWorker/`, prototype; 175 MB max at N = 50 on the
+     1000-change growth workload).
 6. **Powerlifted wiring** (1–3 are done): replace the smoke test in
    `../powerlifted/src/search/main.cc` (see `../powerlifted/TODO.md`).
    Consider caching answers on the Powerlifted side, since search revisits

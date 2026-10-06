@@ -221,3 +221,10 @@ all ontologies. All of these threads already keep per-ontology items
   fix (`160f90ae`), and the embedded API + driver + docs (the commit
   following these).
 - SPARQL-free instance/type queries (optional).
+
+## Task 4: Branching (Option B). Deferred
+
+Decision (2026-10-06): stay with Option A (incremental tell/retract on one
+KB) for now. Branching is kept as a possible later experiment in
+`docs/INCREMENTAL_REASONING.md` §6. Next: task 5 (memory cleanup) and task
+6 (Powerlifted wiring).

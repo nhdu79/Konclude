@@ -153,27 +153,46 @@ Each task is its own change (see CLAUDE.md "Task Scope").
      (`COWLlinkQtXMLCommandParser::parseProcessQueryNode` →
      `CProcessQueryOWL2XMLNodeCommand`, handled in
      `COWLlinkProcessor::processCustomsEvents`).
-4. **Branching (Option B).** The entry point is `Reasoner/Revision/CSPOntologyRevisionManager`.
-   - Existing pieces:
-     - `nameIDHash` maps a KB name to a revision path.
-     - `revisionHash` maps a revision path to its head.
-     - `onRevContainer` holds every installed revision.
-     - Each `COntologyRevision` knows its predecessor and its depth.
-   - API to add:
-     - `konclude_branch_create(base)`: register a new name/path whose head is
-       a revision on top of `base`. Prepare `base` once, after the TBox and
-       the shared facts are in.
-     - tell/retract/query on a branch.
-     - `konclude_branch_release(branch)`.
-   - Watch: install merges when `nextRevDepth > revDepth+1` (install branch
-     of `CSPOntologyRevisionManager.cpp`).
+4. **Branching (Option B). Deferred**: we use Option A for now. Kept as a
+   possible experiment in §6.
 5. **Memory cleanup.**
-   - When a branch or revision is released, free it from `onRevContainer`/
-     `revisionHash`, its items in the shared preprocessor/precomputator/
-     classifier/realizer threads (`mOntItemHash` etc.), and the cache data keyed by its
-     `ontologyID` (`Reasoner/Kernel/Cache/`, answering/realization items).
+   - Free revisions superseded by a later state change, and the query
+     layers built on them. That means dropping:
+     - the revision from `onRevContainer`/`revisionHash`;
+     - its items in the shared preprocessor, precomputator, classifier and
+       realizer threads (`mOntItemHash` etc.);
+     - the cache data keyed by its `ontologyID` (`Reasoner/Kernel/Cache/`,
+       answering/realization items).
    - Measure RSS per state with a long `embedded_state_benchmark` run.
-6. **Powerlifted wiring** (1–2 are done): replace the smoke test in
+6. **Powerlifted wiring** (1–3 are done): replace the smoke test in
    `../powerlifted/src/search/main.cc` (see `../powerlifted/TODO.md`).
    Consider caching answers on the Powerlifted side, since search revisits
    similar states.
+
+## 6. Later experiment: branching (Option B)
+
+Not planned now; worth trying if Option A's per-state cost or memory growth
+becomes the bottleneck.
+
+- **Idea.** Reason over the TBox and the shared facts once, then give each
+  state its own branch on top of that base instead of mutating one head.
+  Query the branch, then release it. This avoids retract diffs and the
+  revision chain growing per state.
+- **Entry point:** `Reasoner/Revision/CSPOntologyRevisionManager`.
+  - `nameIDHash` maps a KB name to a revision path.
+  - `revisionHash` maps a revision path to its head.
+  - `onRevContainer` holds every installed revision.
+  - Each `COntologyRevision` knows its predecessor and its depth.
+- **Possible API:**
+  - `konclude_branch_create(base)`: a new name/path whose head is a revision
+    on top of `base`;
+  - tell/retract/query on a branch;
+  - `konclude_branch_release(branch)`.
+- **Risks:**
+  - Install merges when `nextRevDepth > revDepth+1` (install branch of
+    `CSPOntologyRevisionManager.cpp`).
+  - `CReleaseKnowledgeBaseCommand` only removes the name mapping.
+  - Without task 5, released branches are never freed (the author's
+    warning).
+  - Branches would exercise the same rebuild paths fixed in tasks 1 and 3,
+    so rerun their request files.

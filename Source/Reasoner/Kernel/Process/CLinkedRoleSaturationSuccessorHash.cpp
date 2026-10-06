@@ -292,7 +292,8 @@ namespace Konclude {
 				CLinkedRoleSaturationSuccessorData*& CLinkedRoleSaturationSuccessorHash::getLinkedRoleSuccessorData(CRole* role, bool create) {
 					CLinkedRoleSaturationSuccessorData*& roleSuccData = mRoleSuccDataHash[role];
 					if (!roleSuccData) {
-						roleSuccData = CObjectAllocator<CLinkedRoleSaturationSuccessorData>::allocateAndConstruct(mContext->getUsedMemoryAllocationManager());
+						// with the context, its successor map allocates in the task memory instead of on the heap
+						roleSuccData = CObjectParameterizingAllocator<CLinkedRoleSaturationSuccessorData, CProcessContext*>::allocateAndConstructAndParameterize(mContext->getUsedMemoryAllocationManager(), mContext);
 					}
 					return roleSuccData;
 				}

@@ -62,6 +62,13 @@ namespace Konclude {
 			}
 
 			COptimizedKPSetRoleOntologyClassificationItem::~COptimizedKPSetRoleOntologyClassificationItem() {
+				if (mTmpRoleClassificationOnt) {
+					// the consistence is shared with (and deleted by) the classified ontology
+					mTmpRoleClassificationOnt->setConsistence(nullptr);
+					delete mTmpRoleClassificationOnt;
+				}
+				delete mTmpIndiPropagation;
+				delete mTmpIndiMarker;
 			}
 
 

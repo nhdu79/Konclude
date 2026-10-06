@@ -1291,6 +1291,10 @@ namespace Konclude {
 							counter->addPending();
 							mAnswererManager->releaseOntology(ontology,counter);
 						}
+						if (mBackendAssCache) {
+							counter->addPending();
+							mBackendAssCache->releaseOntologyData(ontology->getOntologyID(),counter);
+						}
 						counter->doCallback();
 						return true;
 

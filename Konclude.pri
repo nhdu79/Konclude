@@ -1245,6 +1245,7 @@ HEADERS += \
    ./Source\Reasoner\Kernel\Cache\Events\CInitializeIndividualAssociationsCacheEvent.h \
    ./Source\Reasoner\Kernel\Cache\Events\CRetrieveIncompletelyAssociationCachedEvent.h \
    ./Source\Reasoner\Kernel\Cache\Events\CReportMaximumHandledRecomputationIdsEvent.h \
+   ./Source\Reasoner\Kernel\Cache\Events\CReleaseOntologyDataCacheEvent.h \
    ./Source\Reasoner\Kernel\Calculation\CTaskHandleAlgorithmBuilder.h \
    ./Source\Reasoner\Kernel\Calculation\CConfigDependedCalculationFactory.h \
    ./Source\Reasoner\Kernel\Calculation\CConfigDependedCalculationEnvironmentFactory.h \
@@ -3882,6 +3883,7 @@ SOURCES += \
    ./Source/Reasoner/Kernel/Cache/Events/CInitializeIndividualAssociationsCacheEvent.cpp \
    ./Source/Reasoner/Kernel/Cache/Events/CRetrieveIncompletelyAssociationCachedEvent.cpp \
    ./Source/Reasoner/Kernel/Cache/Events/CReportMaximumHandledRecomputationIdsEvent.cpp \
+   ./Source/Reasoner/Kernel/Cache/Events/CReleaseOntologyDataCacheEvent.cpp \
    ./Source/Reasoner/Kernel/Calculation/CTaskHandleAlgorithmBuilder.cpp \
    ./Source/Reasoner/Kernel/Calculation/CConfigDependedCalculationFactory.cpp \
    ./Source/Reasoner/Kernel/Calculation/CConfigDependedCalculationEnvironmentFactory.cpp \

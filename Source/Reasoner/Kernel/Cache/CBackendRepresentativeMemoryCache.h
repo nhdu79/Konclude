@@ -59,6 +59,7 @@
 #include "Reasoner/Kernel/Cache/Events/CRetrieveIncompletelyAssociationCachedEvent.h"
 #include "Reasoner/Kernel/Cache/Events/CInitializeIndividualAssociationsCacheEvent.h"
 #include "Reasoner/Kernel/Cache/Events/CReportMaximumHandledRecomputationIdsEvent.h"
+#include "Reasoner/Kernel/Cache/Events/CReleaseOntologyDataCacheEvent.h"
 
 #include "Utilities/Memory/CObjectMemoryPoolAllocator.h"
 #include "Utilities/Memory/CObjectParameterizingAllocator.h"
@@ -123,6 +124,8 @@ namespace Konclude {
 						bool getIncompletlyAssociationCachedIndividuals(cint64 ontologyIdentifier, CBackendIndividualRetrievalComputationUpdateCoordinationHash* prevCoordHash, CBackendIndividualRetrievalComputationUpdateCoordinationHash* newCoordHash, bool allIndividualsAdded, bool refillRetrievalCoordHash, cint64 limit = -1, CCallbackData* callbackData = nullptr);
 						bool initializeIndividualsAssociationCaching(cint64 ontologyIdentifier, cint64 individualCount);
 						bool reportMaximumHandledRecomputationId(cint64 ontologyIdentifier, cint64 maximumRecomputationId);
+						//! Drops the data cached for an ontology that is about to be deleted (its readers must no longer be used), then calls back.
+						bool releaseOntologyData(cint64 ontologyIdentifier, CCallbackData* callbackData);
 
 						void writeStringifiedRepresentativeCacheToFile();
 
@@ -133,6 +136,8 @@ namespace Konclude {
 
 						void createReaderSlotUpdate(CBackendRepresentativeMemoryCacheOntologyData* ontologyData, CBackendRepresentativeMemoryCacheBaseContext* context);
 						void cleanUnusedSlots(CBackendRepresentativeMemoryCacheBaseContext* context);
+						void releaseOntologyIdentifierData(cint64 ontologyIdentifier);
+						void deleteUnreferredReleasedOntologyContexts();
 						
 						void deleteExpiredIndividualAssociationMemoryContexts(CBackendRepresentativeMemoryCacheOntologyData* ontologyData, CBackendRepresentativeMemoryCacheBaseContext* context);
 						void queueIndividualAssociationMemoryContextDeletion(CBackendRepresentativeMemoryCacheIndividualAssociationContext* indiAssMemContext, CBackendRepresentativeMemoryCacheOntologyData* ontologyData);
@@ -247,6 +252,8 @@ namespace Konclude {
 						CCACHINGHASH<cint64, CBackendRepresentativeMemoryCacheOntologyData*>* mOntologyIdentifierDataHash;
 						QHash<cint64, CBackendRepresentativeMemoryCacheOntologyData*> mFixedOntologyIdentifierDataHash;
 						QReadWriteLock mFixedOntologyIdentifierDataHashLock;
+						//! Ontology contexts of released ontology identifiers, deleted once no reader slot refers to data of their identifier.
+						QHash<cint64, CBackendRepresentativeMemoryCacheOntologyContext*> mReleasedOntologyContextHash;
 
 
 						//CCACHINGHASH<cint64,CBackendRepresentativeMemoryLabelSignatureResolveCacheItem>* mSigLabelItemHash[CBackendRepresentativeMemoryLabelCacheItem::LABEL_CACHE_ITEM_TYPE_COUNT];

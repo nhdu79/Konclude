@@ -124,6 +124,7 @@ namespace Konclude {
 				const QEvent::Type EVENTRETRIEVEINCOMPLETELYASSOCIATIONCACHED		= (QEvent::Type)2008;
 				const QEvent::Type EVENTINITIALIZEINDIVIDUALSASSOCIATIONSCACHE		= (QEvent::Type)2009;
 				const QEvent::Type EVENTREPORTMAXIMUMHANDLEDRECOMPUTATIONID			= (QEvent::Type)2010;
+				const QEvent::Type EVENTRELEASEONTOLOGYDATA						= (QEvent::Type)2011;
 
 
 				// defines

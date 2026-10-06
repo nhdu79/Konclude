@@ -504,6 +504,77 @@ namespace Konclude {
 						}
 						slotLinkerIt = nextSlotLinker;
 					}
+					if (!mReleasedOntologyContextHash.isEmpty()) {
+						deleteUnreferredReleasedOntologyContexts();
+					}
+				}
+
+
+
+				void CBackendRepresentativeMemoryCache::releaseOntologyIdentifierData(cint64 ontologyIdentifier) {
+					// the newest data version of the identifier and the (possibly older) one fixed for its realization
+					QSet<CBackendRepresentativeMemoryCacheOntologyData*> ontologyDataSet;
+					CBackendRepresentativeMemoryCacheOntologyData* ontologyData = mOntologyIdentifierDataHash->value(ontologyIdentifier);
+					if (ontologyData) {
+						ontologyDataSet.insert(ontologyData);
+						mOntologyIdentifierDataHash->remove(ontologyIdentifier);
+					}
+					mFixedOntologyIdentifierDataHashLock.lockForWrite();
+					CBackendRepresentativeMemoryCacheOntologyData* fixedOntologyData = mFixedOntologyIdentifierDataHash.take(ontologyIdentifier);
+					mFixedOntologyIdentifierDataHashLock.unlock();
+					if (fixedOntologyData) {
+						ontologyDataSet.insert(fixedOntologyData);
+					}
+					if (ontologyDataSet.isEmpty()) {
+						return;
+					}
+					mReleasedOntologyContextHash.insert(ontologyIdentifier, (*ontologyDataSet.constBegin())->getOntologyContext());
+
+					// only the references of reader slots remain, the ones of the hashes and of the fixed readers (used by the
+					// realization of the released ontology) are dropped
+					CMemoryPoolAllocationManager* memMan = mContext.getMemoryPoolAllocationManager();
+					for (CBackendRepresentativeMemoryCacheOntologyData* releasedOntologyData : ontologyDataSet) {
+						cint64 slotReferenceCount = 0;
+						for (CBackendRepresentativeMemoryCacheSlotItem* slotLinkerIt = mSlotLinker; slotLinkerIt; slotLinkerIt = slotLinkerIt->getNext()) {
+							if (slotLinkerIt->getOntologyData(ontologyIdentifier) == releasedOntologyData) {
+								++slotReferenceCount;
+							}
+						}
+						if (slotReferenceCount > 0) {
+							releasedOntologyData->decUsageCount(releasedOntologyData->getUsageCount() - slotReferenceCount);
+						} else {
+							++mOntologyDataReleasedCount;
+							releasedOntologyData->getRecomputationReferenceLinker()->setOntologyDataInactive();
+							CMemoryPool* memoryPools = releasedOntologyData->getTemporaryContext()->getMemoryPoolContainer()->getMemoryPools();
+							memMan->releaseTemporaryMemoryPools(memoryPools);
+							delete releasedOntologyData;
+						}
+					}
+					deleteUnreferredReleasedOntologyContexts();
+				}
+
+
+
+				void CBackendRepresentativeMemoryCache::deleteUnreferredReleasedOntologyContexts() {
+					CMemoryPoolAllocationManager* memMan = mContext.getMemoryPoolAllocationManager();
+					for (QHash<cint64, CBackendRepresentativeMemoryCacheOntologyContext*>::iterator it = mReleasedOntologyContextHash.begin(); it != mReleasedOntologyContextHash.end(); ) {
+						cint64 ontologyIdentifier = it.key();
+						bool slotReferred = false;
+						for (CBackendRepresentativeMemoryCacheSlotItem* slotLinkerIt = mSlotLinker; slotLinkerIt && !slotReferred; slotLinkerIt = slotLinkerIt->getNext()) {
+							slotReferred = slotLinkerIt->getOntologyData(ontologyIdentifier) != nullptr;
+						}
+						if (slotReferred) {
+							++it;
+						} else {
+							// all data versions of the identifier are deleted, which shared this context
+							CBackendRepresentativeMemoryCacheOntologyContext* ontologyContext = it.value();
+							if (ontologyContext) {
+								memMan->releaseTemporaryMemoryPools(ontologyContext->getMemoryPoolContainer()->takeMemoryPools());
+								delete ontologyContext;
+							}
+							it = mReleasedOntologyContextHash.erase(it);
+						}
+					}
 				}
 
 
@@ -3367,6 +3438,18 @@ namespace Konclude {
 					return true;
 				}
 
+				bool CBackendRepresentativeMemoryCache::releaseOntologyData(cint64 ontologyIdentifier, CCallbackData* callbackData) {
+					if (mConfDirectUpdateSynchronization) {
+						mDirectUpdateSyncMutex.lock();
+						CReleaseOntologyDataCacheEvent* procEvent = new CReleaseOntologyDataCacheEvent(ontologyIdentifier, callbackData);
+						processCustomsEvents(CReleaseOntologyDataCacheEvent::EVENTTYPE, procEvent);
+						mDirectUpdateSyncMutex.unlock();
+					} else {
+						postEvent(new CReleaseOntologyDataCacheEvent(ontologyIdentifier, callbackData));
+					}
+					return true;
+				}
+
 				bool CBackendRepresentativeMemoryCache::requiresIndividualAssociations(cint64 labelType) {
 					if (labelType == CBackendRepresentativeMemoryLabelCacheItem::FULL_CONCEPT_SET_LABEL || labelType == CBackendRepresentativeMemoryLabelCacheItem::NEIGHBOUR_INSTANTIATED_ROLE_SET_COMBINATION_LABEL || labelType == CBackendRepresentativeMemoryLabelCacheItem::DETERMINISTIC_COMBINED_EXISTENTIAL_INSTANTIATED_ROLE_SET_LABEL ||
 						labelType == CBackendRepresentativeMemoryLabelCacheItem::NONDETERMINISTIC_COMBINED_EXISTENTIAL_INSTANTIATED_ROLE_SET_LABEL || labelType == CBackendRepresentativeMemoryLabelCacheItem::DETERMINISTIC_SAME_INDIVIDUAL_SET_LABEL || labelType == CBackendRepresentativeMemoryLabelCacheItem::NONDETERMINISTIC_SAME_INDIVIDUAL_SET_LABEL ||
@@ -3483,6 +3566,16 @@ namespace Konclude {
 
 				bool CBackendRepresentativeMemoryCache::processCustomsEvents(QEvent::Type type, CCustomEvent *event) {
 					if (CThread::processCustomsEvents(type, event)) {
+						return true;
+
+					}
+					else if (type == CReleaseOntologyDataCacheEvent::EVENTTYPE) {
+						CReleaseOntologyDataCacheEvent* rodce = (CReleaseOntologyDataCacheEvent*)event;
+						releaseOntologyIdentifierData(rodce->getOntologyIdentifier());
+						CCallbackData* callbackData = rodce->getCallbackData();
+						if (callbackData) {
+							callbackData->doCallback();
+						}
 						return true;
 
 					}

@@ -36,11 +36,11 @@ namespace Konclude {
 				delete mInitRealizeProcessingStep;
 				delete mRealizeConceptProcessingStep;
 				delete mRealizeRoleProcessingStep;
-				if (mTempRoleRealizationOntology != mOntology) {
+				if (mTempRoleRealizationOntology && mTempRoleRealizationOntology != mOntology) {
 					mTempRoleRealizationOntology->setConsistence(nullptr);
 					delete mTempRoleRealizationOntology;
 				}
-				if (mTempSameRealizationOntology != mOntology) {
+				if (mTempSameRealizationOntology && mTempSameRealizationOntology != mOntology) {
 					mTempSameRealizationOntology->setConsistence(nullptr);
 					delete mTempSameRealizationOntology;
 				}

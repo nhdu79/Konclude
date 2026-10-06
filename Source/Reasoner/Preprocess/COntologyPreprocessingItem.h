@@ -68,6 +68,9 @@ namespace Konclude {
 					//! Constructor
 					COntologyPreprocessingItem();
 
+					//! Destructor
+					virtual ~COntologyPreprocessingItem();
+
 					COntologyPreprocessingItem* initPreprocessingItem(CConcreteOntology* ontology, CConfigurationBase* config);
 
 					virtual COntologyPreprocessingItem* addProcessingRequirement(COntologyProcessingRequirement* ontoRequirement);

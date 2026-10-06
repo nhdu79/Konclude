@@ -31,6 +31,9 @@ namespace Konclude {
 			COntologyPrecomputationItem::COntologyPrecomputationItem() {
 			}
 
+			COntologyPrecomputationItem::~COntologyPrecomputationItem() {
+			}
+
 			COntologyPrecomputationItem* COntologyPrecomputationItem::initPrecomputationItem(CConcreteOntology* ontology, CConfigurationBase* config) {
 				mOntology = ontology;
 				mConfig = config;

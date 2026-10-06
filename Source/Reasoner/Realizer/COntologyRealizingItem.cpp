@@ -32,6 +32,9 @@ namespace Konclude {
 				mTmpProcDataLinker = nullptr;
 			}
 
+			COntologyRealizingItem::~COntologyRealizingItem() {
+			}
+
 			COntologyRealizingItem* COntologyRealizingItem::initRealizingItem(CConcreteOntology* ontology, CConfigurationBase* config) {
 				mOntology = ontology;
 				mConfig = config;

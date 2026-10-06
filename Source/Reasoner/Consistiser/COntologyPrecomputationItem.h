@@ -76,6 +76,9 @@ namespace Konclude {
 					//! Constructor
 					COntologyPrecomputationItem();
 
+					//! Destructor
+					virtual ~COntologyPrecomputationItem();
+
 					COntologyPrecomputationItem* initPrecomputationItem(CConcreteOntology* ontology, CConfigurationBase* config);
 
 					virtual COntologyPrecomputationItem* addPrecomputationRequirement(COntologyProcessingRequirement* ontoRequirement);

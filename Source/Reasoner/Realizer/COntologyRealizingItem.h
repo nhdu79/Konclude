@@ -69,6 +69,9 @@ namespace Konclude {
 					//! Constructor
 					COntologyRealizingItem();
 
+					//! Destructor
+					virtual ~COntologyRealizingItem();
+
 					COntologyRealizingItem* initRealizingItem(CConcreteOntology* ontology, CConfigurationBase* config);
 
 					virtual COntologyRealizingItem* addProcessingRequirement(COntologyProcessingRequirement* ontoRequirement, COntologyRealizingDynamicRequirmentProcessingData* procData);

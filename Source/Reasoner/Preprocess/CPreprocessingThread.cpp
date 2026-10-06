@@ -57,6 +57,11 @@ namespace Konclude {
 				return true;
 			}
 
+			bool CPreprocessingThread::releaseOntology(CConcreteOntology* ontology, CCallbackData* callback) {
+				postEvent(new CReleasePreprocessingOntologyEvent(ontology,callback));
+				return true;
+			}
+
 			bool CPreprocessingThread::callbackPreprocessed(CConcreteOntology* ontology, CCallbackData* callback) {
 				bool callbackPreprocessedOnto = false;
 				CPreprocessing* preprocessing = ontology->getPreprocessing();
@@ -195,6 +200,27 @@ namespace Konclude {
 							installedCallbackData->setCallbackDataContext(callbackDataContext);
 							installedCallbackData->doCallback();
 						}						
+					}
+					return true;
+
+				} else if (type == CReleasePreprocessingOntologyEvent::EVENTTYPE) {
+					CReleasePreprocessingOntologyEvent* rpoe = (CReleasePreprocessingOntologyEvent*)event;
+					CConcreteOntology* ontology = rpoe->getOntology();
+					COntologyPreprocessingItem* item = mOntItemHash.value(ontology);
+					if (item) {
+						if (mActiveOntItemSet.contains(item) || !item->getPreprocessingTestingItemSet()->isEmpty()) {
+							// still in use, keep it (the ontology must then not be deleted)
+							LOG(WARN,"::Konclude::Reasoner::Preprocessor",logTr("Preprocessing of ontology '%1' is still running, its data is not released.").arg(ontology->getOntologyName()),this);
+						} else {
+							mOntItemHash.remove(ontology);
+							mInactiveOntItemSet.remove(item);
+							mProcessingOntItemList.removeAll(item);
+							delete item;
+						}
+					}
+					CCallbackData* callback = rpoe->getCallbackData();
+					if (callback) {
+						callback->doCallback();
 					}
 					return true;
 

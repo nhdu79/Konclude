@@ -35,6 +35,7 @@
 #include "Control/Command/Instructions/CKnowledgeBaseQueryCommand.h"
 #include "Control/Command/Instructions/CPreprocessKnowledgeBaseRequirementsForQueryCommand.h"
 #include "Control/Command/Instructions/CProcessClassNameSatisfiableQueryCommand.h"
+#include "Control/Command/Instructions/CReleaseOntologyCommand.h"
 
 #include "Control/Interface/OWLlink/COWLlinkProcessor.h"
 
@@ -81,6 +82,17 @@ CEmbeddedQueryManager::~CEmbeddedQueryManager() {
 }
 
 void CEmbeddedQueryManager::resetForNewState() {
+  if (mCurrentQueryRevision) {
+    // The reasoner keeps data for every ontology it has processed (keyed by
+    // the ontology pointer); release it before deleting the ontology, so no
+    // entry is left pointing at freed memory.
+    CReleaseOntologyCommand *releaseCommand =
+        new CReleaseOntologyCommand(mCurrentQueryRevision->getOntology());
+    mInstanceManager->getPreconditionSynchronizer()->delegateCommand(
+        releaseCommand);
+    CCommandExecutedBlocker::waitExecutedCommand(releaseCommand);
+    delete releaseCommand;
+  }
   delete mCurrentQueryRevision;
   mCurrentQueryRevision = nullptr;
 }

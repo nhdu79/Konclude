@@ -70,6 +70,10 @@ namespace Konclude {
 					virtual bool preprocess(CConcreteOntology* ontology, CConfigurationBase* config, const QList<COntologyProcessingRequirement*>& requirementList) = 0;
 					virtual bool callbackPreprocessed(CConcreteOntology* ontology, CCallbackData* callback) = 0;
 
+					//! Drops and deletes the item kept for the ontology (which is about to be deleted);
+					//! the callback is called when done. The default implementation just calls back.
+					virtual bool releaseOntology(CConcreteOntology* ontology, CCallbackData* callback);
+
 
 				// protected methods
 				protected:

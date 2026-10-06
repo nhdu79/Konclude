@@ -60,6 +60,7 @@ namespace Konclude {
 			const QEvent::Type EVENTPPREPROCESSONTOLOGY					= (QEvent::Type)2000;
 			const QEvent::Type EVENTCALLBACKPREPROCESSEDONTOLOGY		= (QEvent::Type)2001;
 			const QEvent::Type EVENTPREPROCESSINGCALCULATEDCALLBACK		= (QEvent::Type)2002;
+			const QEvent::Type EVENTRELEASEPREPROCESSINGONTOLOGY		= (QEvent::Type)2003;
 
 
 

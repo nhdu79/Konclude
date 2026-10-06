@@ -139,6 +139,12 @@ namespace Konclude {
 				}
 
 
+				CReasonerManager* CReasonerManagerThread::releaseOntology(CConcreteOntology* ontology, CCallbackData* callback) {
+					postEvent(new CReleaseOntologyEvent(ontology,callback));
+					return this;
+				}
+
+
 				CReasonerManager *CReasonerManagerThread::prepareOntology(CConcreteOntology* ontology, const QList<COntologyProcessingRequirement*>& reqList) {
 					CBlockingCallbackData callback;
 					postEvent(new CPrepareOntologyEvent(ontology,reqList,&callback));
@@ -1220,6 +1226,19 @@ namespace Konclude {
 
 						prepareOntologyReasoning(poe);	
 
+						return true;
+
+					} else if (type == CReleaseOntologyEvent::EVENTTYPE) {
+						CReleaseOntologyEvent* roe = static_cast<CReleaseOntologyEvent *>(event);
+						CConcreteOntology* ontology = roe->getOntology();
+						CCallbackData* callback = roe->getCallbackData();
+						// so far, only the preprocessing data is released
+						CPreprocessor* preprocessor = mPreprocessingManager->releaseOntology(ontology);
+						if (preprocessor) {
+							preprocessor->releaseOntology(ontology,callback);
+						} else if (callback) {
+							callback->doCallback();
+						}
 						return true;
 
 					} else if (type == CCalcedQueryEvent::EVENTTYPE) {

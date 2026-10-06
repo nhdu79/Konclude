@@ -233,6 +233,21 @@ namespace Konclude {
 										CFinishProcessCommandRecord::makeRecord(&commandRecordRouter);
 									}
 
+								} else if (dynamic_cast<CReleaseOntologyCommand *>(command)) {
+									CCommandRecordRouter commandRecordRouter(command,this);
+									CStartProcessCommandRecord::makeRecord(&commandRecordRouter);
+
+									CReleaseOntologyCommand* releaseOntoCommand = (CReleaseOntologyCommand*)command;
+									CConcreteOntology* ontology = releaseOntoCommand->getOntology();
+									if (reasonerManager && ontology) {
+										COntologyPreparedCallbackEvent *ontReleasedCE = new COntologyPreparedCallbackEvent(this,releaseOntoCommand);
+										reasonerManager->releaseOntology(ontology,ontReleasedCE);
+									} else {
+										CUnspecifiedMessageErrorRecord::makeRecord("Missing reasoner manager or ontology.",&commandRecordRouter);
+										CStopProcessCommandRecord::makeRecord(&commandRecordRouter);
+										CFinishProcessCommandRecord::makeRecord(&commandRecordRouter);
+									}
+
 								} else if (dynamic_cast<CSkipUnsupportedCommandCommand *>(command)) {
 									CCommandRecordRouter commandRecordRouter(command,this);
 									CStartProcessCommandRecord::makeRecord(&commandRecordRouter);
@@ -270,6 +285,13 @@ namespace Konclude {
 						if (command) {							
 							CCommandRecordRouter commandRecordRouter(command,this);
 							CUnspecifiedMessageInformationRecord::makeRecord("Ontology for reasoner manager prepared.",&commandRecordRouter);
+							CStopProcessCommandRecord::makeRecord(&commandRecordRouter);
+							CFinishProcessCommandRecord::makeRecord(&commandRecordRouter);
+						}
+						CReleaseOntologyCommand* releaseCommand = dynamic_cast<CReleaseOntologyCommand*>(ontPreparedCallbackEv->getCommand());
+						if (releaseCommand) {
+							CCommandRecordRouter commandRecordRouter(releaseCommand,this);
+							CUnspecifiedMessageInformationRecord::makeRecord("Ontology data released by reasoner manager.",&commandRecordRouter);
 							CStopProcessCommandRecord::makeRecord(&commandRecordRouter);
 							CFinishProcessCommandRecord::makeRecord(&commandRecordRouter);
 						}

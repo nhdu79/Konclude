@@ -55,6 +55,7 @@
 #include "Control/Command/Instructions/CSetKnowledgeBaseConfigCommand.h"
 #include "Control/Command/Instructions/CGetKnowledgeBaseSettingsCommand.h"
 #include "Control/Command/Instructions/CPreprocessKnowledgeBaseRequirementsForQueryCommand.h"
+#include "Control/Command/Instructions/CReleaseOntologyCommand.h"
 
 #include "Control/Command/Events/CCommandCalculatedQueryCallbackEvent.h"
 #include "Control/Command/Events/COntologyPreparedCallbackEvent.h"

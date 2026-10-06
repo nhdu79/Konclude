@@ -69,6 +69,7 @@ namespace Konclude {
 				const QEvent::Type EVENTQUERYJOBCALCULATEDSATISFIABLECALLBACK	= (QEvent::Type)2005;
 				const QEvent::Type EVENTREQUIREMENTPROCESSEDCALLBACK			= (QEvent::Type)2006;
 				const QEvent::Type EVENTPREPAREONTOLOGY							= (QEvent::Type)2007;
+				const QEvent::Type EVENTRELEASEONTOLOGY							= (QEvent::Type)2008;
 
 			}; // end namespace Manager
 

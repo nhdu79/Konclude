@@ -38,6 +38,14 @@ namespace Konclude {
 				}
 
 
+				CReasonerManager* CReasonerManager::releaseOntology(CConcreteOntology* ontology, CCallbackData* callback) {
+					if (callback) {
+						callback->doCallback();
+					}
+					return this;
+				}
+
+
 			}; // end namespace Manager
 
 		}; // end namespace Kernel

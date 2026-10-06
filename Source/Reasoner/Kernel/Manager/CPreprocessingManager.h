@@ -77,6 +77,10 @@ namespace Konclude {
 
 						virtual CPreprocessor* getPreprocessor(CConcreteOntology *ontology, CConfigurationBase *config);
 
+						//! Forgets the ontology and returns its preprocessor (or nullptr), which must then
+						//! release its item for the ontology.
+						virtual CPreprocessor* releaseOntology(CConcreteOntology *ontology);
+
 
 					// protected methods
 					protected:

@@ -297,3 +297,74 @@ Estimate: at ~660 kB/state, 10k states ≈ 6.6 GB and 100k ≈ 66 GB.
 
 **Decision (2026-10-06).** 5b uses option A: release superseded revisions
 inside one handle. 5a was committed separately first.
+
+**5b measurements.** Heap (`mallinfo2`) per state, states 101–300: tell/retract
+−60 kB (the previous query layer gets deleted), **1st query +1,100 kB**, 2nd
+query +27 kB. So almost everything retained comes from the first query of a
+state: building, preprocessing, precomputing and realizing the new revision,
+plus its query layer.
+
+**5b holders of per-ontology state** (nothing ever removes these entries):
+
+| Keyed by | Holder |
+|---|---|
+| `CConcreteOntology*` | `CRequirementPreparingData::mOntoReqDataHash`; `CPreprocessing/CPrecomputation/CRealizationManager` hashes; `CClassificationManager` (4 hashes); `CFirstQueuedAnsweringHandlerProvider::mOntoloyHandlerDataHash`; `mOntItemHash` + active/inactive/processing lists in each shared thread (`CPreprocessingThread`, `CPrecomputationThread`, `CRealizerThread`, `CSubsumptionClassifierThread`) |
+| `ontologyID` | `CBackendRepresentativeMemoryCache` (`mOntologyIdentifierDataHash`, `mFixedOntologyIdentifierDataHash`), `COccurrenceStatisticsCacheData::mOntologyDataHash` |
+| revision | `CSPOntologyRevisionManager`: `onRevContainer`, `revisionHash` |
+| back-references | the next revision's `getPreviousOntologyVersion()` chain (walked by the update builder's triples-accessor search and the incremental searches); name-map entries for retracted individuals point at old revisions' `CIndividual` objects (read by task 1's `mMaxKnownIndividualId` loop) |
+
+`~CConcreteOntology` frees its memory-pool context (data boxes, concepts,
+individuals), build data, mappings and its consistence/classification/
+precomputation/preprocessing/realization objects. So deleting a revision
+frees most of its memory, once every external holder has dropped its entries.
+
+**5b plan (stages; measure + rerun all checks after each):**
+
+1. **Release path.**
+   - Add `CReleaseOntologyCommand` (embedded layer → `CCommanderManagerThread`)
+     → `CReasonerManager::releaseOntology(ontology, callback)` (non-pure,
+     no-op default).
+   - In `CReasonerManagerThread`, on its own thread, ask each manager to
+     drop its entry and each shared thread to drop and delete its item (on
+     that thread), then call back.
+   - Apply it to the query layer that `resetForNewState()` already deletes.
+     This removes the dangling-key hazard.
+2. **Superseded state revisions.**
+   - After state *k+1* is installed and its first query is done, release
+     revision *k*'s holders, including the answering handler and the
+     caches keyed by `ontologyID`.
+   - Cut references: point *k+1*'s previous version to the basement, and
+     replace name-map entries that point at freed individuals.
+   - Then remove revision *k* from the revision manager and delete it.
+3. **Kernel caches.** Check the satisfiability/unsatisfiability/completion-
+   graph caches for pointers into released ontologies (the author's warning).
+   An AddressSanitizer build of the library is the safety net for stages 2–3.
+
+**Stage 1 done (not committed).** The release path exists and is used for
+query layers.
+
+- **New files.**
+  - `Control/Command/Instructions/CReleaseOntologyCommand` (tag 2104).
+  - `Reasoner/Kernel/Manager/Events/CReleaseOntologyEvent` (manager event
+    2008).
+  - `Reasoner/Preprocess/Events/CReleasePreprocessingOntologyEvent`
+    (preprocessing event 2003).
+  - All registered in `Konclude.pri`.
+- **Flow.**
+  1. `CEmbeddedQueryManager::resetForNewState()` sends `CReleaseOntologyCommand`
+     and waits, then deletes the query layer.
+  2. `CCommanderManagerThread` calls `CReasonerManager::releaseOntology`
+     (no-op default; overridden in `CReasonerManagerThread`), using
+     `COntologyPreparedCallbackEvent` to finish the command.
+  3. On the manager thread, `CPreprocessingManager::releaseOntology` takes
+     the hash entry and the preprocessor deletes its item on its own thread.
+     An item that is still active or has running tests is kept, with a
+     warning.
+- **Verified.**
+  - A temporary counter: 19 of 20 query layers released. Remaining items
+    grow by 1 per state, i.e. the state revisions (stage 2).
+  - Memory unchanged (~664 kB/state); query-layer preprocessing items are
+    small. Stage 1's benefit is removing the dangling-pointer hazard.
+  - Regression: all 5 request files, both state drivers ×5, probe, both
+    benchmarks; classification closure identical (roberts, galen);
+    realisation differs only in the random `PersonWithManySibling`.

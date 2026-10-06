@@ -78,6 +78,7 @@
 #include "Reasoner/Kernel/Manager/Events/CQueryJobCalculatedSatisfiableCallbackEvent.h"
 #include "Reasoner/Kernel/Manager/Events/CRequirementProcessedCallbackEvent.h"
 #include "Reasoner/Kernel/Manager/Events/CPrepareOntologyEvent.h"
+#include "Reasoner/Kernel/Manager/Events/CReleaseOntologyEvent.h"
 
 
 #include "Concurrent/CIntervalThread.h"
@@ -170,6 +171,8 @@ namespace Konclude {
 
 						virtual CReasonerManager* prepareOntology(CConcreteOntology* ontology, const QList<COntologyProcessingRequirement*>& reqList, CCallbackData *callback);
 						virtual CReasonerManager* prepareOntology(CConcreteOntology* ontology, const QList<COntologyProcessingRequirement*>& reqList);
+
+						virtual CReasonerManager* releaseOntology(CConcreteOntology* ontology, CCallbackData* callback);
 
 
 

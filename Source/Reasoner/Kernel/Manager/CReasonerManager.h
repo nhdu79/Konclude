@@ -92,6 +92,11 @@ namespace Konclude {
 						virtual CReasonerManager* prepareOntology(CConcreteOntology* ontology, const QList<COntologyProcessingRequirement*>& reqList, CCallbackData *callback) = 0;
 						virtual CReasonerManager* prepareOntology(CConcreteOntology* ontology, const QList<COntologyProcessingRequirement*>& reqList) = 0;
 
+						//! Drops all reasoning data kept for the ontology (e.g., items of the preprocessing
+						//! threads) before it is deleted; the callback is called when done. The default
+						//! implementation keeps everything and just calls back.
+						virtual CReasonerManager* releaseOntology(CConcreteOntology* ontology, CCallbackData* callback);
+
 						virtual CUnsatisfiableCache *getUnsatisfiableCache() = 0;
 						virtual CCompletionGraphCache *getCompletionGraphCache() = 0;
 						virtual CBackendCache* getBackendAssociationCache() = 0;

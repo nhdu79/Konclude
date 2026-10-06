@@ -141,6 +141,7 @@ HEADERS += \
    ./Source\Control\Command\Instructions\CPrepareKnowledgeBaseForRevisionCommand.h \
    ./Source\Control\Command\Instructions\CPrepareKnowledgeBaseForQueryCommand.h \
    ./Source\Control\Command\Instructions\CPrepareKnowledgeBaseCommand.h \
+   ./Source\Control\Command\Instructions\CReleaseOntologyCommand.h \
    ./Source\Control\Command\Instructions\CParseTestsuiteXMLNodeCommand.h \
    ./Source\Control\Command\Instructions\CParseTestsuiteCommandsCommand.h \
    ./Source\Control\Command\Instructions\CParseSPARQLQueryCommand.h \
@@ -1268,6 +1269,7 @@ HEADERS += \
    ./Source\Reasoner\Kernel\Manager\Events\CQueryJobCalculatedSatisfiableCallbackEvent.h \
    ./Source\Reasoner\Kernel\Manager\Events\CQueriedTaxonomyComputedCallbackEvent.h \
    ./Source\Reasoner\Kernel\Manager\Events\CPrepareOntologyEvent.h \
+   ./Source\Reasoner\Kernel\Manager\Events\CReleaseOntologyEvent.h \
    ./Source\Reasoner\Kernel\Manager\Events\CJobCalculatedSatisfiableCallbackEvent.h \
    ./Source\Reasoner\Kernel\Manager\Events\CCalcQueryEvent.h \
    ./Source\Reasoner\Kernel\Manager\Events\CCalcedQueryEvent.h \
@@ -1964,6 +1966,7 @@ HEADERS += \
    ./Source\Reasoner\Preprocess\CBranchTriggerPreProcess.h \
    ./Source\Reasoner\Preprocess\CBranchStatisticsExtenderPreProcess.h \
    ./Source\Reasoner\Preprocess\Events\CPreprocessOntologyEvent.h \
+   ./Source\Reasoner\Preprocess\Events\CReleasePreprocessingOntologyEvent.h \
    ./Source\Reasoner\Preprocess\Events\CPreprocessingCalculatedCallbackEvent.h \
    ./Source\Reasoner\Preprocess\Events\CCallbackPreprocessedOntologyEvent.h \
    ./Source\Reasoner\Query\QuerySettings.h \
@@ -2797,6 +2800,7 @@ SOURCES += \
    ./Source/Control/Command/Instructions/CPrepareKnowledgeBaseForRevisionCommand.cpp \
    ./Source/Control/Command/Instructions/CPrepareKnowledgeBaseForQueryCommand.cpp \
    ./Source/Control/Command/Instructions/CPrepareKnowledgeBaseCommand.cpp \
+   ./Source/Control/Command/Instructions/CReleaseOntologyCommand.cpp \
    ./Source/Control/Command/Instructions/CParseTestsuiteXMLNodeCommand.cpp \
    ./Source/Control/Command/Instructions/CParseTestsuiteCommandsCommand.cpp \
    ./Source/Control/Command/Instructions/CParseSPARQLQueryCommand.cpp \
@@ -3896,6 +3900,7 @@ SOURCES += \
    ./Source/Reasoner/Kernel/Manager/Events/CQueryJobCalculatedSatisfiableCallbackEvent.cpp \
    ./Source/Reasoner/Kernel/Manager/Events/CQueriedTaxonomyComputedCallbackEvent.cpp \
    ./Source/Reasoner/Kernel/Manager/Events/CPrepareOntologyEvent.cpp \
+   ./Source/Reasoner/Kernel/Manager/Events/CReleaseOntologyEvent.cpp \
    ./Source/Reasoner/Kernel/Manager/Events/CJobCalculatedSatisfiableCallbackEvent.cpp \
    ./Source/Reasoner/Kernel/Manager/Events/CCalcQueryEvent.cpp \
    ./Source/Reasoner/Kernel/Manager/Events/CCalcedQueryEvent.cpp \
@@ -4585,6 +4590,7 @@ SOURCES += \
    ./Source/Reasoner/Preprocess/CBranchTriggerPreProcess.cpp \
    ./Source/Reasoner/Preprocess/CBranchStatisticsExtenderPreProcess.cpp \
    ./Source/Reasoner/Preprocess/Events/CPreprocessOntologyEvent.cpp \
+   ./Source/Reasoner/Preprocess/Events/CReleasePreprocessingOntologyEvent.cpp \
    ./Source/Reasoner/Preprocess/Events/CPreprocessingCalculatedCallbackEvent.cpp \
    ./Source/Reasoner/Preprocess/Events/CCallbackPreprocessedOntologyEvent.cpp \
    ./Source/Reasoner/Query/CWriteSerializerPropertySubsumptionsHierarchyQuery.cpp \

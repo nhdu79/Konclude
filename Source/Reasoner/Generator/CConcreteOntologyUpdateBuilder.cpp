@@ -2188,13 +2188,21 @@ namespace Konclude {
 			CIndividual* CConcreteOntologyUpdateBuilder::getIndividualForIndividualTerm(CIndividualTermExpression* indiTermExp, bool forceLocalisation) {
 				CIndividual* indi = nullptr;
 				indi = mIndividulTermIndiHash->value(indiTermExp);
+				bool foundByName = false;
 				if (!indi && mIndividualNameIndividualMapHash) {
 					CNamedIndividualExpression* namedIndiExp = (CNamedIndividualExpression*)indiTermExp;
 					indi = mIndividualNameIndividualMapHash->value(namedIndiExp->getName());
+					foundByName = indi != nullptr;
 				}
 				bool forceCreation = false;
 				if (indi && indi->getTag() == -1) {
 					forceLocalisation = false;
+				}
+				if (foundByName) {
+					// the individual found by name belongs to an earlier revision (e.g., after a rebuild from the
+					// basement), hence a local copy is required even if it is only referenced, e.g., as the
+					// destination of a role assertion; otherwise the assertion would link to the stale object
+					forceLocalisation = true;
 				}
 				if (indi && forceLocalisation) {
 					if (!mLocalisationSet.contains(indiTermExp)) {

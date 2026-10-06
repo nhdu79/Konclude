@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  TBox: ObjectPropertyDomain(hasChild, Person), Parent == hasChild some Person.
+  Tell Person(mary), Person(bob), hasChild(john, mary), hasChild(mary, bob); query;
+  retract Person(bob); query again.
+  Expected: targets(john) = {mary}, targets(mary) = {bob}, Parent = {john, mary};
+  after the retract Parent = {john} (targets unchanged).
+-->
+<RequestMessage xmlns="http://www.owllink.org/owllink#" xmlns:owl="http://www.w3.org/2002/07/owl#">
+  <CreateKB kb="http://ex/kb"/>
+  <Tell kb="http://ex/kb"><owl:ObjectPropertyDomain><owl:ObjectProperty IRI="http://example.org/test#hasChild"/><owl:Class IRI="http://example.org/test#Person"/></owl:ObjectPropertyDomain>
+<owl:EquivalentClasses><owl:Class IRI="http://example.org/test#Parent"/><owl:ObjectSomeValuesFrom><owl:ObjectProperty IRI="http://example.org/test#hasChild"/><owl:Class IRI="http://example.org/test#Person"/></owl:ObjectSomeValuesFrom></owl:EquivalentClasses></Tell>
+  <Tell kb="http://ex/kb"><owl:ClassAssertion><owl:Class IRI="http://example.org/test#Person"/><owl:NamedIndividual IRI="http://example.org/test#mary"/></owl:ClassAssertion><owl:ClassAssertion><owl:Class IRI="http://example.org/test#Person"/><owl:NamedIndividual IRI="http://example.org/test#bob"/></owl:ClassAssertion><owl:ObjectPropertyAssertion><owl:ObjectProperty IRI="http://example.org/test#hasChild"/><owl:NamedIndividual IRI="http://example.org/test#john"/><owl:NamedIndividual IRI="http://example.org/test#mary"/></owl:ObjectPropertyAssertion><owl:ObjectPropertyAssertion><owl:ObjectProperty IRI="http://example.org/test#hasChild"/><owl:NamedIndividual IRI="http://example.org/test#mary"/><owl:NamedIndividual IRI="http://example.org/test#bob"/></owl:ObjectPropertyAssertion></Tell>
+  <GetObjectPropertyTargets kb="http://ex/kb"><owl:NamedIndividual IRI="http://example.org/test#john"/><owl:ObjectProperty IRI="http://example.org/test#hasChild"/></GetObjectPropertyTargets>
+  <GetObjectPropertyTargets kb="http://ex/kb"><owl:NamedIndividual IRI="http://example.org/test#mary"/><owl:ObjectProperty IRI="http://example.org/test#hasChild"/></GetObjectPropertyTargets>
+  <GetInstances kb="http://ex/kb"><owl:Class IRI="http://example.org/test#Parent"/></GetInstances>
+  <Retract kb="http://ex/kb"><owl:ClassAssertion><owl:Class IRI="http://example.org/test#Person"/><owl:NamedIndividual IRI="http://example.org/test#bob"/></owl:ClassAssertion></Retract>
+  <GetObjectPropertyTargets kb="http://ex/kb"><owl:NamedIndividual IRI="http://example.org/test#john"/><owl:ObjectProperty IRI="http://example.org/test#hasChild"/></GetObjectPropertyTargets>
+  <GetObjectPropertyTargets kb="http://ex/kb"><owl:NamedIndividual IRI="http://example.org/test#mary"/><owl:ObjectProperty IRI="http://example.org/test#hasChild"/></GetObjectPropertyTargets>
+  <GetInstances kb="http://ex/kb"><owl:Class IRI="http://example.org/test#Parent"/></GetInstances>
+</RequestMessage>

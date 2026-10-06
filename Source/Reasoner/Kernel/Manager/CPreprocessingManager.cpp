@@ -35,6 +35,7 @@ namespace Konclude {
 
 				CPreprocessingManager::CPreprocessingManager(CReasonerManager* reasonerManager) {
 					mReasonerManager = reasonerManager;
+					mSharedPreprocessor = nullptr;
 				}
 
 
@@ -51,7 +52,10 @@ namespace Konclude {
 						mReadWriteLock.lockForWrite();
 						preprocessor = mOntoPreprocessHash.value(ontology);
 						if (!preprocessor) {
-							preprocessor = new CRequirementConfigPreprocessingThread(mReasonerManager);
+							if (!mSharedPreprocessor) {
+								mSharedPreprocessor = new CRequirementConfigPreprocessingThread(mReasonerManager);
+							}
+							preprocessor = mSharedPreprocessor;
 							mOntoPreprocessHash.insert(ontology,preprocessor);
 						}
 						mReadWriteLock.unlock();

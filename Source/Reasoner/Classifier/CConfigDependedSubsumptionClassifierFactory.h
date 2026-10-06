@@ -93,6 +93,15 @@ namespace Konclude {
 				protected:
 					CReasonerManager *reasonerMan;
 
+					//! One classifier (thread) per kind, shared by all ontologies (classifier threads keep
+					//! per-ontology items and are never deleted), instead of one leaked thread per ontology revision.
+					CSubsumptionClassifier* mIncrementalKPSetClassClassifier;
+					CSubsumptionClassifier* mExtractedSaturationClassClassifier;
+					CSubsumptionClassifier* mSubClassClassifier;
+					CSubsumptionClassifier* mKPSetClassClassifier;
+					CSubsumptionClassifier* mDataPropertyClassifier;
+					CSubsumptionClassifier* mObjectPropertyClassifier;
+
 				// private methods
 				private:
 

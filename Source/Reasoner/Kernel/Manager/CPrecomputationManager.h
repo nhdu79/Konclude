@@ -85,6 +85,10 @@ namespace Konclude {
 						CReasonerManager* mReasonerManager;
 						QReadWriteLock mReadWriteLock;
 						QHash<CConcreteOntology*,CPrecomputator*> mOntoPrecomputatorHash;
+						//! One thread per kind shared by all ontologies (the threads keep per-ontology
+						//! items, and are never deleted), instead of one leaked thread per ontology revision.
+						CPrecomputator* mSharedIncrementalPrecomputator;
+						CPrecomputator* mSharedTotallyPrecomputator;
 
 					// private methods
 					private:

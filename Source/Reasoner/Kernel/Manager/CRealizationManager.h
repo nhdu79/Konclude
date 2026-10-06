@@ -87,6 +87,11 @@ namespace Konclude {
 						QReadWriteLock mReadWriteLock;
 						QHash<CConcreteOntology*,CRealizer*> mOntoRealizerHash;
 						QSet<CRealizer*> mRealizerSet;
+						//! One realizer (and thus one OS thread) shared by all ontologies that are not
+						//! realized incrementally; realizer threads keep per-ontology items, and are never
+						//! deleted, so creating one per ontology revision leaked one thread per revision.
+						CRealizer* mSharedRealizer;
+						CRealizer* mSharedIncrementalRealizer;
 
 						CRealizationProgress mRealizationProgress;
 

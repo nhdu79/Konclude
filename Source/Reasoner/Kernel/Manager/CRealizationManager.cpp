@@ -36,6 +36,8 @@ namespace Konclude {
 
 				CRealizationManager::CRealizationManager(CReasonerManager* reasonerManager) {
 					mReasonerManager = reasonerManager;
+					mSharedRealizer = nullptr;
+					mSharedIncrementalRealizer = nullptr;
 				}
 
 
@@ -58,9 +60,15 @@ namespace Konclude {
 						if (!realizer) {
 
 							if (previousRealizedOntologyVersion && onlyChangedABoxAxioms) {
-								realizer = new CIncrementalKPSetOntologyConceptRealizingThread(mReasonerManager);
+								if (!mSharedIncrementalRealizer) {
+									mSharedIncrementalRealizer = new CIncrementalKPSetOntologyConceptRealizingThread(mReasonerManager);
+								}
+								realizer = mSharedIncrementalRealizer;
 							} else {
-								realizer = new COptimizedRepresentativeKPSetOntologyRealizingThread(mReasonerManager);
+								if (!mSharedRealizer) {
+									mSharedRealizer = new COptimizedRepresentativeKPSetOntologyRealizingThread(mReasonerManager);
+								}
+								realizer = mSharedRealizer;
 							}
 							mOntoRealizerHash.insert(ontology,realizer);
 							mRealizerSet.insert(realizer);

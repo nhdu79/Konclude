@@ -30,6 +30,12 @@ namespace Konclude {
 
 			CConfigDependedSubsumptionClassifierFactory::CConfigDependedSubsumptionClassifierFactory(CReasonerManager *reasonerManager) {
 				reasonerMan = reasonerManager;
+				mIncrementalKPSetClassClassifier = nullptr;
+				mExtractedSaturationClassClassifier = nullptr;
+				mSubClassClassifier = nullptr;
+				mKPSetClassClassifier = nullptr;
+				mDataPropertyClassifier = nullptr;
+				mObjectPropertyClassifier = nullptr;
 			}
 
 
@@ -44,24 +50,42 @@ namespace Konclude {
 					bool onlyChangedABoxAxioms = ontology->getIncrementalRevisionData()->getAxiomChangeData()->hasOnlyChangedABoxAxioms();
 					bool previousClassifiedOntologyVersion = ontology->getIncrementalRevisionData()->getPreviousClassesClassifiedOntology() != nullptr;
 					if (previousClassifiedOntologyVersion && onlyChangedABoxAxioms) {
-						classifier = new CIncrementalKPSetClassSubsumptionClassifierThread(reasonerMan);
+						if (!mIncrementalKPSetClassClassifier) {
+							mIncrementalKPSetClassClassifier = new CIncrementalKPSetClassSubsumptionClassifierThread(reasonerMan);
+						}
+						classifier = mIncrementalKPSetClassClassifier;
 					} else if (isClassificationBySaturationCalculationSufficient(ontology,config)) {
 						LOG(INFO,"::Konclude::Reasoner::Classifier::Factory",logTr("Ontology '%1' has been sufficiently saturated, extracting data for classification.").arg(ontology->getOntologyName()),this);
-						classifier = new COptimizedClassExtractedSaturationSubsumptionClassifierThread(reasonerMan);
+						if (!mExtractedSaturationClassClassifier) {
+							mExtractedSaturationClassClassifier = new COptimizedClassExtractedSaturationSubsumptionClassifierThread(reasonerMan);
+						}
+						classifier = mExtractedSaturationClassClassifier;
 					} else if (isClassificationBySatisfiableCalculationSufficient(ontology,config)) {
 						LOG(INFO,"::Konclude::Reasoner::Classifier::Factory",logTr("Ontology '%1' is deterministic, using satisfiable tests for classification.").arg(ontology->getOntologyName()),this);
-						classifier = new COptimizedSubClassSubsumptionClassifierThread(reasonerMan);
+						if (!mSubClassClassifier) {
+							mSubClassClassifier = new COptimizedSubClassSubsumptionClassifierThread(reasonerMan);
+						}
+						classifier = mSubClassClassifier;
 					}
 				}
 				if (!classifier) {
 					QString classifierName = CConfigDataReader::readConfigString(config,"Konclude.Calculation.Classification.Classifier","Konclude.Calculation.Classification.Classifier.OptimizedKPSetClassClassifier");
 
 					if (classifierName == "Konclude.Calculation.Classification.Classifier.OptimizedSubClassClassifier") {
-						classifier = new COptimizedSubClassSubsumptionClassifierThread(reasonerMan);
+						if (!mSubClassClassifier) {
+							mSubClassClassifier = new COptimizedSubClassSubsumptionClassifierThread(reasonerMan);
+						}
+						classifier = mSubClassClassifier;
 					} else if (classifierName == "Konclude.Calculation.Classification.Classifier.OptimizedKPSetClassClassifier") {
-						classifier = new COptimizedKPSetClassSubsumptionClassifierThread(reasonerMan);
+						if (!mKPSetClassClassifier) {
+							mKPSetClassClassifier = new COptimizedKPSetClassSubsumptionClassifierThread(reasonerMan);
+						}
+						classifier = mKPSetClassClassifier;
 					} else if (classifierName == "Konclude.Calculation.Classification.Classifier.OptimizedClassExtractedSaturationClassifier") {
-						classifier = new COptimizedClassExtractedSaturationSubsumptionClassifierThread(reasonerMan);
+						if (!mExtractedSaturationClassClassifier) {
+							mExtractedSaturationClassClassifier = new COptimizedClassExtractedSaturationSubsumptionClassifierThread(reasonerMan);
+						}
+						classifier = mExtractedSaturationClassClassifier;
 					}
 				}
 				return classifier;
@@ -110,11 +134,17 @@ namespace Konclude {
 
 
 			CSubsumptionClassifier* CConfigDependedSubsumptionClassifierFactory::getDataPropertyClassifier(CConcreteOntology *ontology, CConfigurationBase *config) {
-				return new COptimizedKPSetRoleSubsumptionClassifierThread(reasonerMan,true);
+				if (!mDataPropertyClassifier) {
+					mDataPropertyClassifier = new COptimizedKPSetRoleSubsumptionClassifierThread(reasonerMan,true);
+				}
+				return mDataPropertyClassifier;
 			}			
 			
 			CSubsumptionClassifier* CConfigDependedSubsumptionClassifierFactory::getObjectPropertyClassifier(CConcreteOntology *ontology, CConfigurationBase *config) {
-				return new COptimizedKPSetRoleSubsumptionClassifierThread(reasonerMan,false);
+				if (!mObjectPropertyClassifier) {
+					mObjectPropertyClassifier = new COptimizedKPSetRoleSubsumptionClassifierThread(reasonerMan,false);
+				}
+				return mObjectPropertyClassifier;
 			}
 
 

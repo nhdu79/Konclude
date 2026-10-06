@@ -187,13 +187,25 @@ namespace Konclude {
 					}
 
 					COntologyRealizingDynamicRequirmentCallbackData* callbackProcData = new COntologyRealizingDynamicRequirmentCallbackData(callbackData);
-					callbackProcData->incProcessingRequirmentCount(requirementList->count());
+					// one extra count keeps callbackProcData alive while the requirements are added: a requirement
+					// that completes synchronously would otherwise delete it (as the last one) before the
+					// statistics below are read
+					callbackProcData->incProcessingRequirmentCount(requirementList->count() + 1);
 					for (QList<COntologyProcessingRequirement*>::const_iterator it = requirementList->constBegin(), itEnd = requirementList->constEnd(); it != itEnd; ++it) {
 						COntologyProcessingRequirement* requ(*it);
 						COntologyRealizingDynamicRequirmentProcessingData* procData = new COntologyRealizingDynamicRequirmentProcessingData(requ, callbackProcData);
 						addOntologyRealizingRequirements(item, requ, procData);
 					}
 					item->logRequirementProcessingStartStatistics(callbackProcData->getStatistics());
+					callbackProcData->decProcessingRequirmentCount();
+					if (!callbackProcData->hasCurrentProcessingRequirmentCount()) {
+						// all requirements already completed synchronously
+						item->logRequirementProcessingFinishStatistics(callbackProcData->getStatistics());
+						if (callbackProcData->getProcessingFinishedCallback()) {
+							callbackProcData->getProcessingFinishedCallback()->doCallback();
+						}
+						delete callbackProcData;
+					}
 
 					//for (QList<COntologyProcessingRequirement*>::const_iterator it = requirementList->constBegin(), itEnd = requirementList->constEnd(); it != itEnd; ++it) {
 					//	COntologyProcessingRequirement* requ(*it);

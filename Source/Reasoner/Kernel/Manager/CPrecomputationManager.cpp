@@ -36,6 +36,8 @@ namespace Konclude {
 
 				CPrecomputationManager::CPrecomputationManager(CReasonerManager* reasonerManager) {
 					mReasonerManager = reasonerManager;
+					mSharedIncrementalPrecomputator = nullptr;
+					mSharedTotallyPrecomputator = nullptr;
 				}
 
 
@@ -56,9 +58,15 @@ namespace Konclude {
 						precomputator = mOntoPrecomputatorHash.value(ontology);
 						if (!precomputator) {
 							if (onlyChangedABoxAxioms && previousConsistentOntologyVersion) {
-								precomputator = new CIncrementalPrecomputationThread(mReasonerManager);
+								if (!mSharedIncrementalPrecomputator) {
+									mSharedIncrementalPrecomputator = new CIncrementalPrecomputationThread(mReasonerManager);
+								}
+								precomputator = mSharedIncrementalPrecomputator;
 							} else {
-								precomputator = new CTotallyPrecomputationThread(mReasonerManager);
+								if (!mSharedTotallyPrecomputator) {
+									mSharedTotallyPrecomputator = new CTotallyPrecomputationThread(mReasonerManager);
+								}
+								precomputator = mSharedTotallyPrecomputator;
 							}
 							mOntoPrecomputatorHash.insert(ontology,precomputator);
 						}

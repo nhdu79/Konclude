@@ -32,3 +32,7 @@ embedded_property_driver
 embedded_memory_benchmark
 .ua/
 .clangd
+releaseembedded-asan/
+ReleaseEmbeddedAsan/
+MakefileEmbeddedAsan
+GeneratedFiles/releaseembedded-asan/

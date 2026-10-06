@@ -187,8 +187,33 @@ namespace Konclude {
 			}
 
 
+			bool CSubsumptionClassifierThread::releaseOntology(CConcreteOntology* ontology, CCallbackData* callback) {
+				postEvent(new CReleaseClassificationOntologyEvent(ontology,callback));
+				return true;
+			}
+
+
 			bool CSubsumptionClassifierThread::processCustomsEvents(QEvent::Type type, CCustomEvent *event) {
 				if (CThread::processCustomsEvents(type,event)) {
+					return true;
+				} else if (type == CReleaseClassificationOntologyEvent::EVENTTYPE) {
+					CReleaseClassificationOntologyEvent* roe = (CReleaseClassificationOntologyEvent*)event;
+					CConcreteOntology* ontology = roe->getOntology();
+					COntologyClassificationItem* item = ontItemHash.value(ontology);
+					if (item) {
+						if (processingOntItemList.contains(item)) {
+							// still in use, keep it (the ontology must then not be deleted)
+							LOG(WARN,"::Konclude::Reasoner::Classifier",logTr("Classification of ontology '%1' is still running, its data is not released.").arg(ontology->getOntologyName()),this);
+						} else {
+							ontItemHash.remove(ontology);
+							ontItemList.removeAll(item);
+							delete item;
+						}
+					}
+					CCallbackData* callback = roe->getCallbackData();
+					if (callback) {
+						callback->doCallback();
+					}
 					return true;
 				} else if (type == CClassifyOntologyEvent::EVENTTYPE) {
 					CClassifyOntologyEvent *coe = (CClassifyOntologyEvent *)event;

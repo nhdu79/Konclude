@@ -63,6 +63,19 @@ namespace Konclude {
 			}
 
 
+			COntologyIncrementalRevisionData* COntologyIncrementalRevisionData::forgetOntology(CConcreteOntology* ontology) {
+				if (mPreviousVersionOntology == ontology) {
+					mPreviousVersionOntology = (mBasementOntology != ontology) ? mBasementOntology : nullptr;
+				}
+				for (CConcreteOntology** previousOntology : {&mPreviousBuiltOntology, &mPreviousConsistentOntology, &mPreviousClassesClassifiedOntology, &mPreviousSameIndividualsRealizedOntology, &mPreviousClassTypesRealizedOntology, &mPreviousRoleTypesRealizedOntology}) {
+					if (*previousOntology == ontology) {
+						*previousOntology = nullptr;
+					}
+				}
+				return this;
+			}
+
+
 			CConcreteOntology* COntologyIncrementalRevisionData::getBasementOntology() {
 				return mBasementOntology;
 			}

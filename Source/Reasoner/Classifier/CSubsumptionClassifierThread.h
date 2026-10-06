@@ -35,6 +35,7 @@
 #include "Reasoner/Classifier/Events/CClassifyOntologyEvent.h"
 #include "Reasoner/Classifier/Events/CTestCalculatedCallbackEvent.h"
 #include "Reasoner/Classifier/Events/CCallbackClassifiedOntologyEvent.h"
+#include "Reasoner/Classifier/Events/CReleaseClassificationOntologyEvent.h"
 #include "Reasoner/Classifier/Events/COntologyTellClassificationMessageEvent.h"
 
 #include "Reasoner/Ontology/CConcept.h"
@@ -86,6 +87,7 @@ namespace Konclude {
 					virtual bool classify(CConcreteOntology *ontology, CConfigurationBase *config, const QList<COntologyProcessingRequirement*>& requirementList, CCallbackData* callback);
 					virtual bool classify(CConcreteOntology *ontology, CConfigurationBase *config, const QList<COntologyProcessingRequirement*>& requirementList);
 					virtual bool callbackClassified(CConcreteOntology *ontology, CCallbackData *callback);
+					virtual bool releaseOntology(CConcreteOntology* ontology, CCallbackData* callback);
 
 
 					virtual CClassifierStatistics *getClassificationStatistics();

@@ -82,6 +82,10 @@ namespace Konclude {
 
 					virtual CAnsweringManager* prepareAnswering(CConcreteOntology* ontology, CCallbackData* callback = nullptr) = 0;
 
+					//! Deletes the answering data of the ontology (which is about to be deleted); the callback
+					//! is called when done. The default implementation just calls back.
+					virtual CAnsweringManager* releaseOntology(CConcreteOntology* ontology, CCallbackData* callback);
+
 				// protected methods
 				protected:
 

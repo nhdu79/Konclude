@@ -129,6 +129,24 @@ namespace Konclude {
 		}
 
 
+		CConfigurationBase *CConfigurationBase::skipPreviousConfiguration(CConfigurationBase *removedConfiguration) {
+			if (removedConfiguration && prevConfBase == removedConfiguration) {
+				prevConfBase = removedConfiguration->prevConfBase;
+				prevConf = removedConfiguration->prevConf;
+				for (qint64 i = 0; i < conData->count(); ++i) {
+					if ((*hasRefConData)[i]) {
+						(*conData)[i] = nullptr;
+						(*hasRefConData)[i] = false;
+					}
+					if (!(*conData)[i]) {
+						(*checkedRefConData)[i] = false;
+					}
+				}
+			}
+			return this;
+		}
+
+
 		CConfigurationBase *CConfigurationBase::appendConfigurationsToList(QLinkedList<CConfigurationBase *> *configurationList) {
 			if (configurationList) {
 				configurationList->append(this);

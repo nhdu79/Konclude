@@ -76,6 +76,10 @@ namespace Konclude {
 
 						virtual CRealizer* getRealizer(CConcreteOntology *ontology, CConfigurationBase *config);
 
+						//! Forgets the ontology and returns its realizer (or nullptr), which must then
+						//! release its item for the ontology.
+						virtual CRealizer* releaseOntology(CConcreteOntology *ontology);
+
 						virtual CRealizationProgress* getRealizationProgress();
 
 					// protected methods

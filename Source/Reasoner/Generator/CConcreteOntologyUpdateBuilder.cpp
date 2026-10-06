@@ -82,9 +82,10 @@ namespace Konclude {
 
 				// After a full rebuild from the basement (Konclude.Ontology.Revision.IncrementalRebuild
 				// false), the ABox starts empty, but individuals found via the name mapping still
-				// carry the IDs of earlier revisions. Remember the largest one so that fresh IDs
-				// (buildIndividualIDs()) are allocated above it.
-				mMaxKnownIndividualId = -1;
+				// carry the IDs of earlier revisions. Remember the largest known ID (also of individuals
+				// that no longer exist, via the build data) so that fresh IDs (buildIndividualIDs()) are
+				// allocated above it.
+				mMaxKnownIndividualId = mOntoBuild->getMaxAssignedIndividualId();
 				if (mIndividualNameIndividualMapHash) {
 					for (CIndividual* knownIndi : *mIndividualNameIndividualMapHash) {
 						if (knownIndi && knownIndi->getIndividualID() > mMaxKnownIndividualId) {
@@ -2652,6 +2653,11 @@ namespace Konclude {
 					taggingIndividual->setIndividualID(nextIndiID++);
 					mInstallIndividualList.append(taggingIndividual);
 				}
+				cint64 maxAssignedIndividualId = qMax(mOntoBuild->getMaxAssignedIndividualId(), nextIndiID - 1);
+				for (cint64 assignedId : mAssignedIndividualIdSet) {
+					maxAssignedIndividualId = qMax(maxAssignedIndividualId, assignedId);
+				}
+				mOntoBuild->setMaxAssignedIndividualId(maxAssignedIndividualId);
 
 				for (CBUILDLIST<CIndividual*>::const_iterator it1 = mTaggingIndividualSet.constBegin(), it1End = mTaggingIndividualSet.constEnd(); it1 != it1End; ++it1) {
 					CIndividual* individual = *it1;

@@ -148,8 +148,34 @@ namespace Konclude {
 
 
 
+			bool CRealizerThread::releaseOntology(CConcreteOntology* ontology, CCallbackData* callback) {
+				postEvent(new CReleaseRealizationOntologyEvent(ontology,callback));
+				return true;
+			}
+
+
 			bool CRealizerThread::processCustomsEvents(QEvent::Type type, CCustomEvent* event) {
 				if (CThread::processCustomsEvents(type,event)) {
+					return true;
+				} else if (type == CReleaseRealizationOntologyEvent::EVENTTYPE) {
+					CReleaseRealizationOntologyEvent* roe = (CReleaseRealizationOntologyEvent*)event;
+					CConcreteOntology* ontology = roe->getOntology();
+					COntologyRealizingItem* item = mOntItemHash.value(ontology);
+					if (item) {
+						if (mActiveOntItemSet.contains(item)) {
+							// still in use, keep it (the ontology must then not be deleted)
+							LOG(WARN,"::Konclude::Reasoner::Realizer",logTr("Realization of ontology '%1' is still running, its data is not released.").arg(ontology->getOntologyName()),this);
+						} else {
+							mOntItemHash.remove(ontology);
+							mInactiveOntItemSet.remove(item);
+							mProcessingOntItemList.removeAll(item);
+							delete item;
+						}
+					}
+					CCallbackData* callback = roe->getCallbackData();
+					if (callback) {
+						callback->doCallback();
+					}
 					return true;
 				} else if (type == CRealizationMessageEvent::EVENTTYPE) {
 					CRealizationMessageEvent* otcme = (CRealizationMessageEvent *)event;

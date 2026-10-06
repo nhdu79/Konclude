@@ -198,6 +198,11 @@ namespace Konclude {
 					cint64 getNextEntityNumber(bool moveNext = false);	
 					COntologyBuildData* setNextEntityNumber(cint64 entityNumber);
 
+					//! Largest individual ID ever assigned in this or a previous revision (-1 if none), so that
+					//! fresh IDs never collide, even with individuals that no longer exist.
+					cint64 getMaxAssignedIndividualId();
+					COntologyBuildData* setMaxAssignedIndividualId(cint64 individualId);
+
 
 
 					CBUILDHASH<CStringRefStringHasher,COntologyImportData*>* getImportDataHash();
@@ -231,6 +236,7 @@ namespace Konclude {
 
 					cint64 mAxiomNumber;				
 					cint64 mEntityNumber;				
+					cint64 mMaxAssignedIndividualId;
 
 
 					CBUILDSET<CDeclarationAxiomExpression*>* mDeclarationAxiomSet;

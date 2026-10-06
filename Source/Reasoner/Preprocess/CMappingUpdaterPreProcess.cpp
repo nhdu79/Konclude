@@ -145,9 +145,48 @@ namespace Konclude {
 					}
 				}
 
+				removeForeignNameMappings();
+
 				collectActiveOntologyItemsFromActiveEntities();
 
 				return ontology;
+			}
+
+			bool CMappingUpdaterPreProcess::removeForeignNameMappings() {
+				// The name mappings are copied from the previous ontology revision. After a rebuild (from the
+				// basement), entities that no longer exist in this ontology would still map to the objects of an
+				// earlier revision, which may be deleted later, hence, only keep the objects of this ontology.
+				if (mNameConceptHash && mConceptVec) {
+					for (CMAPPINGHASH<CStringRefStringHasher,CConcept*>::iterator it = mNameConceptHash->begin(); it != mNameConceptHash->end(); ) {
+						CConcept* concept = it.value();
+						if (!concept || mConceptVec->getData(concept->getConceptTag()) != concept) {
+							it = mNameConceptHash->erase(it);
+						} else {
+							++it;
+						}
+					}
+				}
+				if (mNameRoleHash && mRoleVec) {
+					for (CMAPPINGHASH<CStringRefStringHasher,CRole*>::iterator it = mNameRoleHash->begin(); it != mNameRoleHash->end(); ) {
+						CRole* role = it.value();
+						if (!role || mRoleVec->getData(role->getRoleTag()) != role) {
+							it = mNameRoleHash->erase(it);
+						} else {
+							++it;
+						}
+					}
+				}
+				if (mNameIndiHash && mIndiVec) {
+					for (CMAPPINGHASH<CStringRefStringHasher,CIndividual*>::iterator it = mNameIndiHash->begin(); it != mNameIndiHash->end(); ) {
+						CIndividual* indi = it.value();
+						if (!indi || mIndiVec->getData(indi->getIndividualID()) != indi) {
+							it = mNameIndiHash->erase(it);
+						} else {
+							++it;
+						}
+					}
+				}
+				return true;
 			}
 
 			bool CMappingUpdaterPreProcess::collectActiveOntologyItemsFromActiveEntities() {

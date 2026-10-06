@@ -73,6 +73,7 @@ namespace Konclude {
 			const QEvent::Type EVENTONTOLOGYTELLCONPOSSSUBSUM			= (QEvent::Type)2008;
 			const QEvent::Type EVENTSATURATIONCALCULATEDCALLBACK		= (QEvent::Type)2009;
 			const QEvent::Type EVENTONTOLOGYTELLCLASSIFICATIONMESSAGE	= (QEvent::Type)2010;
+			const QEvent::Type EVENTRELEASECLASSIFICATIONONTOLOGY		= (QEvent::Type)2011;
 
 
 

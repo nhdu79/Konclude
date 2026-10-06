@@ -33,6 +33,14 @@ namespace Konclude {
 
 			CAnsweringManager::~CAnsweringManager() {
 			}
+
+
+			CAnsweringManager* CAnsweringManager::releaseOntology(CConcreteOntology* ontology, CCallbackData* callback) {
+				if (callback) {
+					callback->doCallback();
+				}
+				return this;
+			}
 			
 
 

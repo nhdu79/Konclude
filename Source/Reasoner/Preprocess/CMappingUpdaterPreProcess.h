@@ -74,6 +74,7 @@ namespace Konclude {
 				// protected methods
 				protected:
 					bool collectActiveOntologyItemsFromActiveEntities();
+					bool removeForeignNameMappings();
 					bool collectActiveOntologyItems();
 
 				// private methods

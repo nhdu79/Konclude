@@ -36,6 +36,14 @@ namespace Konclude {
 			}
 
 
+			bool CSubsumptionClassifier::releaseOntology(CConcreteOntology* ontology, CCallbackData* callback) {
+				if (callback) {
+					callback->doCallback();
+				}
+				return true;
+			}
+
+
 		}; // end namespace Classifier
 
 	}; // end namespace Reasoner

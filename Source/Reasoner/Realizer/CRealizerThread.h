@@ -35,6 +35,7 @@
 
 // Other includes
 #include "Reasoner/Realizer/Events/CCallbackRealizedOntologyEvent.h"
+#include "Reasoner/Realizer/Events/CReleaseRealizationOntologyEvent.h"
 #include "Reasoner/Realizer/Events/CRealizeOntologyEvent.h"
 #include "Reasoner/Realizer/Events/CRealizingCalculatedCallbackEvent.h"
 #include "Reasoner/Realizer/Events/CRealizationMessageEvent.h"
@@ -90,6 +91,7 @@ namespace Konclude {
 					virtual bool realize(CConcreteOntology* ontology, CConfigurationBase* config, const QList<COntologyProcessingRequirement*>& requirementList, CCallbackData* callback);
 					virtual bool realize(CConcreteOntology* ontology, CConfigurationBase* config, const QList<COntologyProcessingRequirement*>& requirementList);
 					virtual bool callbackRealized(CConcreteOntology* ontology, CCallbackData* callback);
+					virtual bool releaseOntology(CConcreteOntology* ontology, CCallbackData* callback);
 
 					virtual CRealizationMessageObserver* tellRealizationMessage(CConcreteOntology *ontology, CRealizationMessageData* messageData, CMemoryPool* memoryPool);
 

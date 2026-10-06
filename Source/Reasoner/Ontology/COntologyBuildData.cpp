@@ -103,6 +103,7 @@ namespace Konclude {
 
 				mAxiomNumber = 0;
 				mEntityNumber = 0;
+				mMaxAssignedIndividualId = -1;
 			}
 
 
@@ -228,6 +229,7 @@ namespace Konclude {
 
 				mAxiomNumber = buildData->mAxiomNumber;
 				mEntityNumber = buildData->mEntityNumber;
+				mMaxAssignedIndividualId = buildData->mMaxAssignedIndividualId;
 
 				mExpressionCounter.referenceBuildExpressionCounter(&buildData->mExpressionCounter);
 
@@ -537,6 +539,17 @@ namespace Konclude {
 
 			COntologyBuildData* COntologyBuildData::setNextEntityNumber(cint64 entityNumber) {
 				mEntityNumber = entityNumber;
+				return this;
+			}
+
+
+			cint64 COntologyBuildData::getMaxAssignedIndividualId() {
+				return mMaxAssignedIndividualId;
+			}
+
+
+			COntologyBuildData* COntologyBuildData::setMaxAssignedIndividualId(cint64 individualId) {
+				mMaxAssignedIndividualId = individualId;
 				return this;
 			}
 

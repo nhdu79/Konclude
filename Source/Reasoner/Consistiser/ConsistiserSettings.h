@@ -64,6 +64,7 @@ namespace Konclude {
 			const QEvent::Type EVENTSATURATIONCALCULATEDCALLBACK					= (QEvent::Type)2003;
 			const QEvent::Type EVENTRETRIEVEDPRECOMPUATIONINDIVIDUALSCALLBACK		= (QEvent::Type)2004;
 			const QEvent::Type EVENTRESCHEDULEJOBCREATION							= (QEvent::Type)2005;
+			const QEvent::Type EVENTRELEASEPRECOMPUTATIONONTOLOGY		= (QEvent::Type)2006;
 
 
 

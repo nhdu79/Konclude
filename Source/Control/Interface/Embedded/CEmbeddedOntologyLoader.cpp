@@ -34,6 +34,8 @@
 #include "Control/Command/Instructions/CCreateKnowledgeBaseRevisionUpdateCommand.h"
 #include "Control/Command/Instructions/CInstallKnowledgeBaseRevisionUpdateCommand.h"
 #include "Control/Command/Instructions/CLoadKnowledgeBaseOWLAutoOntologyCommand.h"
+#include "Control/Command/Instructions/CReleaseOntologyCommand.h"
+#include "Control/Command/Instructions/CDeleteKnowledgeBaseRevisionCommand.h"
 
 #include "Reasoner/Revision/COntologyRevision.h"
 
@@ -64,7 +66,8 @@ namespace Embedded {
 
 CEmbeddedOntologyLoader::CEmbeddedOntologyLoader(
     CEmbeddedReasoner *instanceManager)
-    : mInstanceManager(instanceManager), mOntologyLoaded(false) {}
+    : mInstanceManager(instanceManager), mOntologyLoaded(false),
+      mLastQueriedRevision(nullptr) {}
 
 CEmbeddedOntologyLoader::~CEmbeddedOntologyLoader() {}
 
@@ -275,7 +278,50 @@ bool CEmbeddedOntologyLoader::tellAndRetractAssertions(
       installCommand);
   CCommandExecutedBlocker::waitExecutedCommand(installCommand);
   delete installCommand;
+  mUnreleasedRevisions.append(ontRev);
+  releaseSupersededRevisions();
   return true;
+}
+
+void CEmbeddedOntologyLoader::markCurrentStateQueried() {
+  if (!mUnreleasedRevisions.isEmpty()) {
+    mLastQueriedRevision = mUnreleasedRevisions.last();
+  }
+}
+
+void CEmbeddedOntologyLoader::releaseSupersededRevisions() {
+  while (!mUnreleasedRevisions.isEmpty() &&
+         mUnreleasedRevisions.first() != mLastQueriedRevision &&
+         mUnreleasedRevisions.contains(mLastQueriedRevision)) {
+    COntologyRevision *revision = mUnreleasedRevisions.takeFirst();
+    CConcreteOntology *ontology = revision->getOntology();
+
+    // 1. The next revision has been built from scratch (it precedes or is the
+    // last queried one), so it only refers to this one as its predecessor.
+    COntologyRevision *nextRevision = mUnreleasedRevisions.first();
+    nextRevision->getOntology()->getIncrementalRevisionData()->forgetOntology(
+        ontology);
+    nextRevision->setPreviousOntologyRevision(nullptr);
+    nextRevision->getOntologyConfiguration()->skipPreviousConfiguration(
+        revision->getOntologyConfiguration());
+
+    // 2. Drop the reasoning data kept for its ontology.
+    CReleaseOntologyCommand *releaseCommand =
+        new CReleaseOntologyCommand(ontology);
+    mInstanceManager->getPreconditionSynchronizer()->delegateCommand(
+        releaseCommand);
+    CCommandExecutedBlocker::waitExecutedCommand(releaseCommand);
+    delete releaseCommand;
+
+    // 3. Remove it from the revision manager, which deletes it.
+    CDeleteKnowledgeBaseRevisionCommand *deleteCommand =
+        new CDeleteKnowledgeBaseRevisionCommand(
+            mInstanceManager->getKnowledgeBaseName(), revision);
+    mInstanceManager->getPreconditionSynchronizer()->delegateCommand(
+        deleteCommand);
+    CCommandExecutedBlocker::waitExecutedCommand(deleteCommand);
+    delete deleteCommand;
+  }
 }
 
 bool CEmbeddedOntologyLoader::isOntologyLoaded() const {

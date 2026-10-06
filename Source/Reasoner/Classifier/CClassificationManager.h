@@ -86,6 +86,10 @@ namespace Konclude {
 					virtual CSubsumptionClassifier *getDataPropertyClassifier(CConcreteOntology *ontology, CConfigurationBase *config);
 					virtual CSubsumptionClassifier *getObjectPropertyClassifier(CConcreteOntology *ontology, CConfigurationBase *config);
 
+					//! Forgets the ontology and returns its classifiers, which must then release their
+					//! items for the ontology.
+					virtual QSet<CSubsumptionClassifier*> releaseOntology(CConcreteOntology *ontology);
+
 
 				// protected methods
 				protected:

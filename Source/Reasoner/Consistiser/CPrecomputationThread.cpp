@@ -175,8 +175,34 @@ namespace Konclude {
 				return true;
 			}
 
+			bool CPrecomputationThread::releaseOntology(CConcreteOntology* ontology, CCallbackData* callback) {
+				postEvent(new CReleasePrecomputationOntologyEvent(ontology,callback));
+				return true;
+			}
+
+
 			bool CPrecomputationThread::processCustomsEvents(QEvent::Type type, CCustomEvent* event) {
 				if (CThread::processCustomsEvents(type,event)) {
+					return true;
+				} else if (type == CReleasePrecomputationOntologyEvent::EVENTTYPE) {
+					CReleasePrecomputationOntologyEvent* roe = (CReleasePrecomputationOntologyEvent*)event;
+					CConcreteOntology* ontology = roe->getOntology();
+					COntologyPrecomputationItem* item = mOntItemHash.value(ontology);
+					if (item) {
+						if (mActiveOntItemSet.contains(item)) {
+							// still in use, keep it (the ontology must then not be deleted)
+							LOG(WARN,"::Konclude::Reasoner::Precomputator",logTr("Precomputation of ontology '%1' is still running, its data is not released.").arg(ontology->getOntologyName()),this);
+						} else {
+							mOntItemHash.remove(ontology);
+							mInactiveOntItemSet.remove(item);
+							mProcessingOntItemList.removeAll(item);
+							delete item;
+						}
+					}
+					CCallbackData* callback = roe->getCallbackData();
+					if (callback) {
+						callback->doCallback();
+					}
 					return true;
 				} else if (type == CPrecomputeOntologyEvent::EVENTTYPE) {
 					CPrecomputeOntologyEvent* poe = (CPrecomputeOntologyEvent*)event;

@@ -160,6 +160,20 @@ namespace Konclude {
 
 
 
+			QSet<CSubsumptionClassifier*> CClassificationManager::releaseOntology(CConcreteOntology *ontology) {
+				QSet<CSubsumptionClassifier*> classifiers;
+				readWriteLock.lockForWrite();
+				for (QHash<CConcreteOntology*,CSubsumptionClassifier*>* hash : {&mOntoClassifierHash, &mOntoBackgroundClassifierHash, &mOntoDataPropertyClassifierHash, &mOntoObjectPropertyClassifierHash}) {
+					CSubsumptionClassifier* classifier = hash->take(ontology);
+					if (classifier) {
+						classifiers.insert(classifier);
+					}
+				}
+				readWriteLock.unlock();
+				return classifiers;
+			}
+
+
 		}; // end namespace Classifier
 
 	}; // end namespace Reasoner

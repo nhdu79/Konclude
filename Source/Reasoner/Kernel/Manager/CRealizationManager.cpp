@@ -107,6 +107,14 @@ namespace Konclude {
 
 
 
+				CRealizer* CRealizationManager::releaseOntology(CConcreteOntology *ontology) {
+					mReadWriteLock.lockForWrite();
+					CRealizer* item = mOntoRealizerHash.take(ontology);
+					mReadWriteLock.unlock();
+					return item;
+				}
+
+
 			}; // end namespace Manager
 
 		}; // end namespace Kernel

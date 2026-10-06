@@ -66,6 +66,7 @@ namespace Konclude {
 
 					virtual CConcreteOntology *getOntology();
 					virtual COntologyRevision *setOntology(CConcreteOntology *ontology);
+					virtual COntologyRevision *setPreviousOntologyRevision(COntologyRevision *previousRevision);
 
 					virtual qint64 getOntologyRevisionDepth();
 					virtual COntologyRevision *setOntologyRevisionDepth(qint64 depth);

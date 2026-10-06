@@ -135,7 +135,11 @@ bool CEmbeddedQueryManager::checkConsistency(bool *consistentOut) {
       new CIsConsistentQueryCommand(mInstanceManager->getKnowledgeBaseName());
   mInstanceManager->getOwlLinkProcessor()->delegateCommand(command);
   CCommandExecutedBlocker::waitExecutedCommand(command);
-  return extractBooleanResult(command, consistentOut);
+  bool ok = extractBooleanResult(command, consistentOut);
+  if (ok) {
+    mOntologyLoader->markCurrentStateQueried();
+  }
+  return ok;
 }
 
 bool CEmbeddedQueryManager::checkSatisfiability(const QString &classIRI,
@@ -149,7 +153,11 @@ bool CEmbeddedQueryManager::checkSatisfiability(const QString &classIRI,
           mInstanceManager->getKnowledgeBaseName(), classIRI);
   mInstanceManager->getOwlLinkProcessor()->delegateCommand(command);
   CCommandExecutedBlocker::waitExecutedCommand(command);
-  return extractBooleanResult(command, satisfiableOut);
+  bool ok = extractBooleanResult(command, satisfiableOut);
+  if (ok) {
+    mOntologyLoader->markCurrentStateQueried();
+  }
+  return ok;
 }
 
 bool CEmbeddedQueryManager::executeConjunctiveQuery(
@@ -285,6 +293,7 @@ bool CEmbeddedQueryManager::executeConjunctiveQuery(
   delete rowIt;
   delete cellIt;
   delete query;
+  mOntologyLoader->markCurrentStateQueried();
   return true;
 }
 

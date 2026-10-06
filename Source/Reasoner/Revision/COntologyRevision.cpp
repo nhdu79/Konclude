@@ -52,6 +52,11 @@ namespace Konclude {
 				return prevRev;
 			}
 
+			COntologyRevision *COntologyRevision::setPreviousOntologyRevision(COntologyRevision *previousRevision) {
+				prevRev = previousRevision;
+				return this;
+			}
+
 			COntologyRevision *COntologyRevision::getRootOntologyRevision() {
 				return rootRev;
 			}

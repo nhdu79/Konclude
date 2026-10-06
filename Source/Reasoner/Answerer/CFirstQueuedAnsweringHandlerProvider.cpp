@@ -79,6 +79,25 @@ namespace Konclude {
 
 
 
+			bool CFirstQueuedAnsweringHandlerProvider::releaseOntology(CConcreteOntology* ontology) {
+				CAnsweringHandlerData* handlerData = mOntoloyHandlerDataHash.value(ontology);
+				if (!handlerData) {
+					return true;
+				}
+				if (!handlerData->mProcessingHandlerSet.isEmpty()) {
+					return false;
+				}
+				for (CAnsweringHandler* handler : handlerData->mQueuedHandlerList) {
+					mHandlerHandlerDataHash.remove(handler);
+					delete handler;
+				}
+				delete handlerData->mCollectedStats;
+				delete handlerData;
+				mOntoloyHandlerDataHash.remove(ontology);
+				return true;
+			}
+
+
 			CAnsweringHandlerProvider* CFirstQueuedAnsweringHandlerProvider::addAnsweringStatistics(CConcreteOntology* ontology, CAnsweringStatistics* stats) {
 				CAnsweringHandlerData*& handlerData = mOntoloyHandlerDataHash[ontology];
 				if (!handlerData) {

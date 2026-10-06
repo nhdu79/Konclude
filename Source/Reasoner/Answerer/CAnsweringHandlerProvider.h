@@ -74,6 +74,10 @@ namespace Konclude {
 
 					virtual CAnsweringHandlerProvider* releaseAnsweringHandler(CAnsweringHandler* answeringHandler) = 0;
 
+					//! Deletes the (idle) answering handlers of the ontology, which is about to be deleted.
+					//! Returns false if a handler is still processing (then nothing is deleted).
+					virtual bool releaseOntology(CConcreteOntology* ontology);
+
 
 				// protected methods
 				protected:

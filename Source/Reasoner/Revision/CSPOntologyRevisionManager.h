@@ -42,6 +42,7 @@
 #include "Control/Command/Instructions/CInstallKnowledgeBaseRevisionUpdateCommand.h"
 #include "Control/Command/Instructions/CGetCurrentKnowledgeBaseRevisionCommand.h"
 #include "Control/Command/Instructions/CReleaseKnowledgeBaseCommand.h"
+#include "Control/Command/Instructions/CDeleteKnowledgeBaseRevisionCommand.h"
 #include "Control/Command/Instructions/CGetKnowledgeBaseConfigCommand.h"
 #include "Control/Command/Instructions/CSetKnowledgeBaseConfigCommand.h"
 #include "Control/Command/Instructions/CGetKnowledgeBaseSettingsCommand.h"

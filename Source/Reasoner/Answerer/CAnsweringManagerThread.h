@@ -39,6 +39,7 @@
 #include "Reasoner/Answerer/Events/CAnswerComplexQueryEvent.h"
 #include "Reasoner/Answerer/Events/CAnsweringOntologyPreparationEvent.h"
 #include "Reasoner/Answerer/Events/CAnsweringPreparedEvent.h"
+#include "Reasoner/Answerer/Events/CReleaseAnsweringOntologyEvent.h"
 
 #include "Reasoner/Query/CComplexAnsweringQuery.h"
 
@@ -92,6 +93,7 @@ namespace Konclude {
 					virtual CAnsweringStatistics* getAnsweringStatistics(CConcreteOntology* ontology);
 
 					virtual CAnsweringManager* prepareAnswering(CConcreteOntology* ontology, CCallbackData* callback = nullptr);
+					virtual CAnsweringManager* releaseOntology(CConcreteOntology* ontology, CCallbackData* callback);
 
 
 				// protected methods

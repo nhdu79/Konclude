@@ -32,6 +32,14 @@ namespace Konclude {
 			}
 
 
+			bool CRealizer::releaseOntology(CConcreteOntology* ontology, CCallbackData* callback) {
+				if (callback) {
+					callback->doCallback();
+				}
+				return true;
+			}
+
+
 		}; // end namespace Realizer
 
 	}; // end namespace Reasoner

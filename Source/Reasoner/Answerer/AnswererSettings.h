@@ -102,6 +102,7 @@ namespace Konclude {
 			const QEvent::Type EVENTREQUIREMENTCOMPLETED			= (QEvent::Type)2006;
 			const QEvent::Type EVENTANSWERINGPREPARATION			= (QEvent::Type)2007;
 			const QEvent::Type EVENTANSWERINGPREPARED				= (QEvent::Type)2008;
+			const QEvent::Type EVENTRELEASEANSWERINGONTOLOGY		= (QEvent::Type)2009;
 
 
 

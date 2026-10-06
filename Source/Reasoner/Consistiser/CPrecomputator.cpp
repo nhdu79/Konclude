@@ -32,6 +32,14 @@ namespace Konclude {
 			}
 
 
+			bool CPrecomputator::releaseOntology(CConcreteOntology* ontology, CCallbackData* callback) {
+				if (callback) {
+					callback->doCallback();
+				}
+				return true;
+			}
+
+
 		}; // end namespace Consistiser
 
 	}; // end namespace Reasoner

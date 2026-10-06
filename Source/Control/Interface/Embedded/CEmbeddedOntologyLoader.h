@@ -26,6 +26,7 @@
 // Libraries includes
 #include <QString>
 #include <QVector>
+#include <QList>
 
 
 namespace Konclude {
@@ -35,6 +36,10 @@ namespace Konclude {
 		namespace Generator {
 			class CConcreteOntologyUpdateCollectorBuilder;
 		}; // end namespace Generator
+
+		namespace Revision {
+			class COntologyRevision;
+		}; // end namespace Revision
 
 	}; // end namespace Reasoner
 
@@ -114,9 +119,19 @@ namespace Konclude {
 
 						bool isOntologyLoaded() const;
 
+						//! Records that the current state was queried, i.e., its revision has been
+						//! built; revisions older than it are then no longer needed (see
+						//! releaseSupersededRevisions()).
+						void markCurrentStateQueried();
+
 					// private methods
 					private:
 						bool addClassAssertionAxioms(Reasoner::Generator::CConcreteOntologyUpdateCollectorBuilder* builder, const QVector<ClassAssertionFact>& assertions, bool tell);
+						//! Releases the reasoning data of all revisions older than the last queried
+						//! one and deletes them: a revision that has been built (from the basement) no
+						//! longer depends on its predecessors.
+						void releaseSupersededRevisions();
+
 						bool addObjectPropertyAssertionAxioms(Reasoner::Generator::CConcreteOntologyUpdateCollectorBuilder* builder, const QVector<ObjectPropertyAssertionFact>& assertions, bool tell);
 
 					// private variables
@@ -124,6 +139,12 @@ namespace Konclude {
 						CEmbeddedReasoner* mInstanceManager;
 
 						bool mOntologyLoaded;
+
+						//! Revisions installed by tellAndRetractAssertions() whose data has not
+						//! been released yet, oldest first.
+						QList<Reasoner::Revision::COntologyRevision*> mUnreleasedRevisions;
+						//! The last revision a query ran on (thus built), or nullptr.
+						Reasoner::Revision::COntologyRevision* mLastQueriedRevision;
 				};
 
 			}; // end namespace Embedded

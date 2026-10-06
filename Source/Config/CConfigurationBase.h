@@ -70,6 +70,11 @@ namespace Konclude {
 
 				virtual CConfigurationBase *appendConfigurationsToList(QLinkedList<CConfigurationBase *> *configurationList);
 
+				//! If removedConfiguration is the previous configuration (which is about to be deleted), its
+				//! previous configuration becomes the previous one of this configuration, and all values
+				//! resolved via it are looked up again. Its own (local) changes are no longer inherited.
+				virtual CConfigurationBase *skipPreviousConfiguration(CConfigurationBase *removedConfiguration);
+
 				virtual bool isConfigLevelLocked(CConfigData *data);
 				virtual bool isConfigLevelLocked(qint64 configIndex, bool defaultCompensation = true);
 				virtual bool isConfigLevelLocked(const QString &configName, bool defaultCompensation = true);

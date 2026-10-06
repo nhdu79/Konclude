@@ -180,6 +180,30 @@ namespace Konclude {
 					CStopProcessCommandRecord::makeRecord(&commandRecordRouter);
 					CFinishProcessCommandRecord::makeRecord(&commandRecordRouter);
 
+				} else if (dynamic_cast<CDeleteKnowledgeBaseRevisionCommand *>(command)) {
+					CDeleteKnowledgeBaseRevisionCommand *dKBRevC = (CDeleteKnowledgeBaseRevisionCommand *)command;
+					CCommandRecordRouter commandRecordRouter(command,this);
+					CStartProcessCommandRecord::makeRecord(&commandRecordRouter);
+
+					COntologyRevision* ontRev = dKBRevC->getOntologyRevision();
+					bool currentRevision = false;
+					for (COntologyRevision* headRev : revisionHash) {
+						if (headRev == ontRev) {
+							currentRevision = true;
+						}
+					}
+					if (!ontRev || !onRevContainer.contains(ontRev)) {
+						CUnspecifiedMessageErrorRecord::makeRecord(QString("Revision of KnowledgeBase '%1' is not installed.").arg(dKBRevC->getKnowledgeBaseName()),&commandRecordRouter);
+					} else if (currentRevision) {
+						CUnspecifiedMessageErrorRecord::makeRecord(QString("The current revision of KnowledgeBase '%1' cannot be deleted.").arg(dKBRevC->getKnowledgeBaseName()),&commandRecordRouter);
+					} else {
+						onRevContainer.remove(ontRev);
+						delete ontRev;
+					}
+
+					CStopProcessCommandRecord::makeRecord(&commandRecordRouter);
+					CFinishProcessCommandRecord::makeRecord(&commandRecordRouter);
+
 				} else if (dynamic_cast<CReleaseKnowledgeBaseCommand *>(command)) {
 					CReleaseKnowledgeBaseCommand *rKBRevUpC = (CReleaseKnowledgeBaseCommand *)command;
 					CCommandRecordRouter commandRecordRouter(command,this);

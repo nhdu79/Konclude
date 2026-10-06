@@ -29,6 +29,35 @@ namespace Konclude {
 
 			namespace Manager {
 
+				namespace {
+
+					// Calls the wrapped callback once all pending component releases have called back. Starts with
+					// one pending count for the dispatching code itself, which is released by its final doCallback().
+					class CReleaseOntologyCallbackCounter : public CCallbackData {
+						public:
+							CReleaseOntologyCallbackCounter(CCallbackData* callback) : mCallback(callback), mPending(1) {
+							}
+
+							void addPending() {
+								mPending.ref();
+							}
+
+							virtual void doCallback() {
+								if (!mPending.deref()) {
+									if (mCallback) {
+										mCallback->doCallback();
+									}
+									delete this;
+								}
+							}
+
+						private:
+							CCallbackData* mCallback;
+							QAtomicInt mPending;
+					};
+
+				}
+
 
 				CReasonerManagerThread::CReasonerManagerThread(CWatchDog *threadWatchDog) : CIntervalThread("Reasoner-Manager",threadWatchDog) {
 					mWatchDog = threadWatchDog;
@@ -625,7 +654,11 @@ namespace Konclude {
 							CConfigurationBase* config = ontology->getConfiguration();
 							bool created = false;
 							if (!mAnswererManager) {
-								mAnswererManager = new CAnsweringManagerThread(this, config);
+								// the answering manager outlives the ontology revision, hence it is configured with the
+								// configuration of the basement ontology (which all revisions extend), not of this revision
+								CConcreteOntology* basementOntology = ontology->getIncrementalRevisionData()->getBasementOntology();
+								CConfigurationBase* answeringConfig = (basementOntology && basementOntology->getConfiguration()) ? basementOntology->getConfiguration() : config;
+								mAnswererManager = new CAnsweringManagerThread(this, answeringConfig);
 								created = true;
 							}
 							CRequirementProcessedCallbackEvent* reqProcCallbackEvent = new CRequirementProcessedCallbackEvent(this, ontology, reqData, COntologyProcessingStep::OPANSWERER);
@@ -1231,14 +1264,34 @@ namespace Konclude {
 					} else if (type == CReleaseOntologyEvent::EVENTTYPE) {
 						CReleaseOntologyEvent* roe = static_cast<CReleaseOntologyEvent *>(event);
 						CConcreteOntology* ontology = roe->getOntology();
-						CCallbackData* callback = roe->getCallbackData();
-						// so far, only the preprocessing data is released
+						// each component drops its data on its own thread; the counter calls back once all are done
+						CReleaseOntologyCallbackCounter* counter = new CReleaseOntologyCallbackCounter(roe->getCallbackData());
 						CPreprocessor* preprocessor = mPreprocessingManager->releaseOntology(ontology);
 						if (preprocessor) {
-							preprocessor->releaseOntology(ontology,callback);
-						} else if (callback) {
-							callback->doCallback();
+							counter->addPending();
+							preprocessor->releaseOntology(ontology,counter);
 						}
+						CPrecomputator* precomputator = mPrecomputationManager->releaseOntology(ontology);
+						if (precomputator) {
+							counter->addPending();
+							precomputator->releaseOntology(ontology,counter);
+						}
+						CRealizer* realizer = mRealizationManager->releaseOntology(ontology);
+						if (realizer) {
+							counter->addPending();
+							realizer->releaseOntology(ontology,counter);
+						}
+						if (classificationMan) {
+							for (CSubsumptionClassifier* classifier : classificationMan->releaseOntology(ontology)) {
+								counter->addPending();
+								classifier->releaseOntology(ontology,counter);
+							}
+						}
+						if (mAnswererManager) {
+							counter->addPending();
+							mAnswererManager->releaseOntology(ontology,counter);
+						}
+						counter->doCallback();
 						return true;
 
 					} else if (type == CCalcedQueryEvent::EVENTTYPE) {

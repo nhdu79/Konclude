@@ -142,6 +142,7 @@ HEADERS += \
    ./Source\Control\Command\Instructions\CPrepareKnowledgeBaseForQueryCommand.h \
    ./Source\Control\Command\Instructions\CPrepareKnowledgeBaseCommand.h \
    ./Source\Control\Command\Instructions\CReleaseOntologyCommand.h \
+   ./Source\Control\Command\Instructions\CDeleteKnowledgeBaseRevisionCommand.h \
    ./Source\Control\Command\Instructions\CParseTestsuiteXMLNodeCommand.h \
    ./Source\Control\Command\Instructions\CParseTestsuiteCommandsCommand.h \
    ./Source\Control\Command\Instructions\CParseSPARQLQueryCommand.h \
@@ -1967,6 +1968,10 @@ HEADERS += \
    ./Source\Reasoner\Preprocess\CBranchStatisticsExtenderPreProcess.h \
    ./Source\Reasoner\Preprocess\Events\CPreprocessOntologyEvent.h \
    ./Source\Reasoner\Preprocess\Events\CReleasePreprocessingOntologyEvent.h \
+   ./Source\Reasoner\Answerer\Events\CReleaseAnsweringOntologyEvent.h \
+   ./Source\Reasoner\Classifier\Events\CReleaseClassificationOntologyEvent.h \
+   ./Source\Reasoner\Realizer\Events\CReleaseRealizationOntologyEvent.h \
+   ./Source\Reasoner\Consistiser\Events\CReleasePrecomputationOntologyEvent.h \
    ./Source\Reasoner\Preprocess\Events\CPreprocessingCalculatedCallbackEvent.h \
    ./Source\Reasoner\Preprocess\Events\CCallbackPreprocessedOntologyEvent.h \
    ./Source\Reasoner\Query\QuerySettings.h \
@@ -2801,6 +2806,7 @@ SOURCES += \
    ./Source/Control/Command/Instructions/CPrepareKnowledgeBaseForQueryCommand.cpp \
    ./Source/Control/Command/Instructions/CPrepareKnowledgeBaseCommand.cpp \
    ./Source/Control/Command/Instructions/CReleaseOntologyCommand.cpp \
+   ./Source/Control/Command/Instructions/CDeleteKnowledgeBaseRevisionCommand.cpp \
    ./Source/Control/Command/Instructions/CParseTestsuiteXMLNodeCommand.cpp \
    ./Source/Control/Command/Instructions/CParseTestsuiteCommandsCommand.cpp \
    ./Source/Control/Command/Instructions/CParseSPARQLQueryCommand.cpp \
@@ -4591,6 +4597,10 @@ SOURCES += \
    ./Source/Reasoner/Preprocess/CBranchStatisticsExtenderPreProcess.cpp \
    ./Source/Reasoner/Preprocess/Events/CPreprocessOntologyEvent.cpp \
    ./Source/Reasoner/Preprocess/Events/CReleasePreprocessingOntologyEvent.cpp \
+   ./Source/Reasoner/Answerer/Events/CReleaseAnsweringOntologyEvent.cpp \
+   ./Source/Reasoner/Classifier/Events/CReleaseClassificationOntologyEvent.cpp \
+   ./Source/Reasoner/Realizer/Events/CReleaseRealizationOntologyEvent.cpp \
+   ./Source/Reasoner/Consistiser/Events/CReleasePrecomputationOntologyEvent.cpp \
    ./Source/Reasoner/Preprocess/Events/CPreprocessingCalculatedCallbackEvent.cpp \
    ./Source/Reasoner/Preprocess/Events/CCallbackPreprocessedOntologyEvent.cpp \
    ./Source/Reasoner/Query/CWriteSerializerPropertySubsumptionsHierarchyQuery.cpp \

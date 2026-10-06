@@ -76,6 +76,14 @@ namespace Konclude {
 					return precomputator;
 				}
 
+				CPrecomputator* CPrecomputationManager::releaseOntology(CConcreteOntology *ontology) {
+					mReadWriteLock.lockForWrite();
+					CPrecomputator* item = mOntoPrecomputatorHash.take(ontology);
+					mReadWriteLock.unlock();
+					return item;
+				}
+
+
 			}; // end namespace Manager
 
 		}; // end namespace Kernel

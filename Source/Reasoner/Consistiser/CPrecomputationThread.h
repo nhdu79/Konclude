@@ -35,6 +35,7 @@
 
 // Other includes
 #include "Reasoner/Consistiser/Events/CCallbackPrecomputedOntologyEvent.h"
+#include "Reasoner/Consistiser/Events/CReleasePrecomputationOntologyEvent.h"
 #include "Reasoner/Consistiser/Events/CPrecomputeOntologyEvent.h"
 #include "Reasoner/Consistiser/Events/CPrecomputationCalculatedCallbackEvent.h"
 #include "Reasoner/Consistiser/Events/CSaturationPrecomputationCalculatedCallbackEvent.h"
@@ -90,6 +91,7 @@ namespace Konclude {
 					virtual bool precompute(CConcreteOntology* ontology, CConfigurationBase* config, const QList<COntologyProcessingRequirement*>& requirementList, CCallbackData* callback);
 					virtual bool precompute(CConcreteOntology* ontology, CConfigurationBase* config, const QList<COntologyProcessingRequirement*>& requirementList);
 					virtual bool callbackPrecomputed(CConcreteOntology* ontology, CCallbackData* callback);
+					virtual bool releaseOntology(CConcreteOntology* ontology, CCallbackData* callback);
 
 
 				// protected methods

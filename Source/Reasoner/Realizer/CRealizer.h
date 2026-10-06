@@ -70,6 +70,10 @@ namespace Konclude {
 					virtual bool realize(CConcreteOntology* ontology, CConfigurationBase* config, const QList<COntologyProcessingRequirement*>& requirementList, CCallbackData* callback) = 0;
 					virtual bool realize(CConcreteOntology* ontology, CConfigurationBase* config, const QList<COntologyProcessingRequirement*>& requirementList) = 0;
 					virtual bool callbackRealized(CConcreteOntology* ontology, CCallbackData* callback) = 0;
+
+					//! Drops and deletes the item kept for the ontology (which is about to be deleted);
+					//! the callback is called when done. The default implementation just calls back.
+					virtual bool releaseOntology(CConcreteOntology* ontology, CCallbackData* callback);
 					
 					
 					virtual CRealizationProgress* getRealizationProgress() = 0;

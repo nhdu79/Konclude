@@ -158,8 +158,25 @@ namespace Konclude {
 			}
 
 
+			CAnsweringManager* CAnsweringManagerThread::releaseOntology(CConcreteOntology* ontology, CCallbackData* callback) {
+				postEvent(new CReleaseAnsweringOntologyEvent(ontology, callback));
+				return this;
+			}
+
+
 			bool CAnsweringManagerThread::processCustomsEvents(QEvent::Type type, CCustomEvent *event) {
 				if (CThread::processCustomsEvents(type, event)) {
+					return true;
+				} else if (type == CReleaseAnsweringOntologyEvent::EVENTTYPE) {
+					CReleaseAnsweringOntologyEvent* raoe = (CReleaseAnsweringOntologyEvent *)event;
+					CConcreteOntology* ontology = raoe->getOntology();
+					if (!mHandlerProvider.releaseOntology(ontology)) {
+						// still in use, keep it (the ontology must then not be deleted)
+						LOG(WARN, "::Konclude::Reasoner::Answerer", logTr("Answering for ontology '%1' is still running, its data is not released.").arg(ontology->getOntologyName()), this);
+					}
+					if (raoe->getCallbackData()) {
+						raoe->getCallbackData()->doCallback();
+					}
 					return true;
 				} else if (type == CAnsweringOntologyPreparationEvent::EVENTTYPE) {
 					CAnsweringOntologyPreparationEvent* ape = (CAnsweringOntologyPreparationEvent *)event;

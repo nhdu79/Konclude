@@ -81,6 +81,8 @@ namespace Konclude {
 
 					virtual CAnsweringHandlerProvider* addAnsweringStatistics(CConcreteOntology* ontology, CAnsweringStatistics* stats);
 
+					virtual bool releaseOntology(CConcreteOntology* ontology);
+
 				// protected methods
 				protected:
 

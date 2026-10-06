@@ -368,3 +368,116 @@ query layers.
   - Regression: all 5 request files, both state drivers ×5, probe, both
     benchmarks; classification closure identical (roberts, galen);
     realisation differs only in the random `PersonWithManySibling`.
+
+**Stage 2a done (not committed).** Revisions older than the last queried one
+now release their items in every shared thread; nothing is deleted yet.
+
+- **New events:** `CReleasePrecomputation/Realization/ClassificationOntologyEvent`
+  (event types 2006 / 2004 / 2011).
+- **New overrides:** `releaseOntology` in `CPrecomputator`/`CRealizer`/
+  `CSubsumptionClassifier` (no-op default) and in their threads; in the
+  precomputation and realization managers; and in `CClassificationManager`
+  (4 hashes).
+- **Fan-out:** `CReasonerManagerThread` uses a local
+  `CReleaseOntologyCallbackCounter` to wait for all components.
+- **Scheduling:** `CEmbeddedOntologyLoader::releaseSupersededRevisions()` and
+  `markCurrentStateQueried()`, which the query manager calls after a
+  successful query or check.
+- **Result:** frees only ~20 kB/state (664 → 645). The bulk is in the
+  revisions themselves and the answering handlers (stages 2b/2c).
+- **ASan build:** `MakefileEmbeddedAsan` → `ReleaseEmbeddedAsan/`
+  (qmake `-after` overrides; ignored by git). Run drivers linked against it
+  with `ASAN_OPTIONS=detect_leaks=0:alloc_dealloc_mismatch=0`. The mismatch
+  check has to be off because of a separate bug:
+  `COccurrenceUnsatisfiableCacheEntry.cpp:61` deletes `new[]` memory with
+  `delete` (at shutdown, in `COccurrenceUnsatisfiableCache::threadStopped`).
+  With 2a, `embedded_state_driver`, `embedded_property_driver` and a
+  30-state memory benchmark run without ASan errors.
+
+**Next (stage 2b/2c):**
+- **2b:** answering handler release (`CAnsweringManagerThread` →
+  `CFirstQueuedAnsweringHandlerProvider` → per-handler data in each
+  `CAnswererThread`).
+- **2c:**
+  - a persistent individual-ID high-water mark in `COntologyBuildData`;
+  - name-map cleanup in `CMappingUpdaterPreProcess`;
+  - point the next revision's previous version at the basement;
+  - the revision manager drops and deletes the revision.
+- Then measure and run everything under ASan.
+
+**Stage 2b done (not committed).** Answering handlers of released revisions
+are deleted.
+
+- **API:** `CAnsweringManager::releaseOntology` (no-op default);
+  `CAnsweringManagerThread` gets a `CReleaseAnsweringOntologyEvent` (event
+  type 2009); `CAnsweringHandlerProvider::releaseOntology` deletes the idle
+  handlers. Answerer threads need nothing: they drop their per-handler data
+  when answering finishes.
+- **Fan-out:** the reasoner manager includes the answering manager.
+- **Bug exposed and fixed:** deleting a handler deletes its answering item's
+  *testing ontology*, which shares the base ontology's `CConsistence`, so
+  teardown freed it twice (ASan heap-use-after-free in `~CConcreteOntology`).
+  `~COptimizedComplexExpressionOntologyAnsweringItem` now unsets the
+  consistence first, as the realizing item already does for its helper
+  ontologies.
+- **Result:** ~570 kB/state (was 645). ASan clean on both state drivers and
+  a 30-state memory benchmark. Normal build: drivers ×5, `embedded_cq_driver`,
+  `embedded_cq_benchmark`, and `embedded_state_benchmark` all pass.
+
+**Stage 2c done (not committed).** Superseded revisions are deleted.
+
+- **Sequence** (`CEmbeddedOntologyLoader::releaseSupersededRevisions`): for
+  every revision older than the last queried one:
+  1. **Cut links in the next revision.**
+     `COntologyIncrementalRevisionData::forgetOntology` points the previous
+     version at the basement and clears the other previous-ontology
+     pointers. `COntologyRevision::setPreviousOntologyRevision(nullptr)`.
+     `CConfigurationBase::skipPreviousConfiguration` re-points the parent
+     config past the deleted one and drops cached config references.
+  2. **Release** reasoner data (`CReleaseOntologyCommand`, stages 1–2b).
+  3. **Delete:** the new `CDeleteKnowledgeBaseRevisionCommand` (tag 2105)
+     makes `CSPOntologyRevisionManager` remove the revision from
+     `onRevContainer` and delete it. The current head is refused.
+- **Prerequisites.**
+  - `CMappingUpdaterPreProcess::removeForeignNameMappings`: after a build,
+    the class/property/individual name maps keep only objects of the current
+    revision.
+  - `COntologyBuildData` max-assigned individual ID: task 1's fresh IDs no
+    longer depend on old individuals staying in the name map.
+- **ASan findings, fixed.**
+  - Each revision's `COntologyConfigurationExtension` is the parent of the
+    next one's.
+  - The answering manager was configured with the config of the first
+    queried revision; it now uses the basement ontology's config
+    (`CReasonerManagerThread`, where `CAnsweringManagerThread` is created).
+- **Verified.**
+  - ASan: both state drivers and a 100-state memory benchmark, 0 errors.
+  - Normal build: all 5 request files (CLI), drivers ×5, `embedded_cq_driver`,
+    probe, both benchmarks, OWLlink classify+realize.
+  - Classification closure identical (roberts, galen); realisation differs
+    only in the random `PersonWithManySibling`.
+- **Memory:** ~486 kB/state (500 states; was ~570 after 2b, 664 before 5b).
+
+**What's left per state (heap profile, `Tools/HeapProfiler/`, 15 vs 30
+states).** About 12 call sites each keep **one ~50 kB memory pool per state**
+from `CNewAllocationMemoryPoolProvider::acquireMemoryPool`, never released:
+12 × 48.8 kB ≈ **586 kB of heap per state** in total (one more site adds
+~30 kB). That is more than the ~486 kB/state RSS growth because the profiler
+counts requested heap bytes, while RSS only counts touched pages, and partly
+used pools are only partly resident. Before 2c, `mallinfo` showed the same
+gap (~1,068 kB heap vs ~664 kB RSS per state).
+They are requested by:
+
+- **precomputation jobs:** `CPrecomputationThread::processCalculationJob` —
+  consistency, individual/concept saturation and occurrence-statistics
+  saturation tasks, plus their task-schedule events
+  (`CTaskEventCommunicator::postSendTaskScheduleEvent`) and
+  `CSatisfiableCalculationTask` allocations;
+- **classifier jobs**, and the role classifier's temporary role-classification
+  ontology (`COptimizedKPSetRoleSubsumptionClassifierThread::createTemporaryRoleClassificationOntology`);
+- **two `CThread::event` sites**, still to be identified.
+
+**Next (stage 2d):** find who keeps each of these pools after its job is
+done (probably result data such as saturation/consistency models that hold
+the task's memory pools, and the role classifier's temporary ontologies).
+Release them with the revision, then re-measure.

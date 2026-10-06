@@ -33,6 +33,11 @@ namespace Konclude {
 
 			CAnsweringHandlerProvider::~CAnsweringHandlerProvider() {
 			}
+
+
+			bool CAnsweringHandlerProvider::releaseOntology(CConcreteOntology* ontology) {
+				return true;
+			}
 			
 
 

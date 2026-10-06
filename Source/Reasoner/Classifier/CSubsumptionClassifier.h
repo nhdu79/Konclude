@@ -77,6 +77,10 @@ namespace Konclude {
 					virtual bool classify(CConcreteOntology *ontology, CConfigurationBase *config, const QList<COntologyProcessingRequirement*>& requirementList) = 0;
 					virtual bool callbackClassified(CConcreteOntology *ontology, CCallbackData *callback) = 0;
 
+					//! Drops and deletes the item kept for the ontology (which is about to be deleted);
+					//! the callback is called when done. The default implementation just calls back.
+					virtual bool releaseOntology(CConcreteOntology* ontology, CCallbackData* callback);
+
 					virtual CClassifierStatistics *getClassificationStatistics() = 0;
 					virtual QString getStatusString() = 0;
 

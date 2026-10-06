@@ -75,6 +75,7 @@ namespace Konclude {
 			const QEvent::Type EVENTCALLBACKREALIZEDONTOLOGY			= (QEvent::Type)2001;
 			const QEvent::Type EVENTREALIZINGCALCULATEDCALLBACK			= (QEvent::Type)2002;
 			const QEvent::Type EVENTREALIZATIONMESSAGE					= (QEvent::Type)2003;
+			const QEvent::Type EVENTRELEASEREALIZATIONONTOLOGY		= (QEvent::Type)2004;
 
 
 

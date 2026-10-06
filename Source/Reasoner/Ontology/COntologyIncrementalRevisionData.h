@@ -71,6 +71,10 @@ namespace Konclude {
 					COntologyIncrementalRevisionData* setBasementOntology(CConcreteOntology* ontology);
 					COntologyIncrementalRevisionData* setPreviousOntologyVersion(CConcreteOntology* ontology);
 
+					//! Drops all references to the given (previous) ontology, which is about to be deleted:
+					//! the previous version then becomes the basement, the other references are cleared.
+					COntologyIncrementalRevisionData* forgetOntology(CConcreteOntology* ontology);
+
 
 					COntologyIncrementalAxiomChangeData* getCummulativeAxiomChangeData();
 					COntologyIncrementalAxiomChangeData* getAxiomChangeData();

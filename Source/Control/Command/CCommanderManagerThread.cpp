@@ -281,14 +281,15 @@ namespace Konclude {
 
 					} else if (type == EVENTONTOLOGYPREPAREDCALLBACK) {
 						COntologyPreparedCallbackEvent* ontPreparedCallbackEv = (COntologyPreparedCallbackEvent*)event;
+						// cast before finishing, a finished command may be deleted by its waiting issuer at any time
 						CPrepareKnowledgeBaseCommand* command = dynamic_cast<CPrepareKnowledgeBaseCommand*>(ontPreparedCallbackEv->getCommand());
+						CReleaseOntologyCommand* releaseCommand = dynamic_cast<CReleaseOntologyCommand*>(ontPreparedCallbackEv->getCommand());
 						if (command) {							
 							CCommandRecordRouter commandRecordRouter(command,this);
 							CUnspecifiedMessageInformationRecord::makeRecord("Ontology for reasoner manager prepared.",&commandRecordRouter);
 							CStopProcessCommandRecord::makeRecord(&commandRecordRouter);
 							CFinishProcessCommandRecord::makeRecord(&commandRecordRouter);
 						}
-						CReleaseOntologyCommand* releaseCommand = dynamic_cast<CReleaseOntologyCommand*>(ontPreparedCallbackEv->getCommand());
 						if (releaseCommand) {
 							CCommandRecordRouter commandRecordRouter(releaseCommand,this);
 							CUnspecifiedMessageInformationRecord::makeRecord("Ontology data released by reasoner manager.",&commandRecordRouter);

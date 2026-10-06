@@ -66,7 +66,11 @@ namespace Konclude {
 
 			COptimizedComplexExpressionOntologyAnsweringItem::~COptimizedComplexExpressionOntologyAnsweringItem() {
 				delete mDiffStoredStatCollStrings;
-				delete mTestingOntology;
+				if (mTestingOntology) {
+					// the consistence is shared with (and deleted by) the answered ontology
+					mTestingOntology->setConsistence(nullptr);
+					delete mTestingOntology;
+				}
 			}
 
 

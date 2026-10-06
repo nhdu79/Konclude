@@ -36,3 +36,8 @@ releaseembedded-asan/
 ReleaseEmbeddedAsan/
 MakefileEmbeddedAsan
 GeneratedFiles/releaseembedded-asan/
+embedded_handle_cycle_benchmark
+embedded_incremental_growth_benchmark
+konclude_worker
+konclude_worker_equivalence_test
+konclude_worker_growth_benchmark

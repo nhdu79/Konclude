@@ -80,6 +80,19 @@ namespace Konclude {
 					}
 				}
 
+				// After a full rebuild from the basement (Konclude.Ontology.Revision.IncrementalRebuild
+				// false), the ABox starts empty, but individuals found via the name mapping still
+				// carry the IDs of earlier revisions. Remember the largest one so that fresh IDs
+				// (buildIndividualIDs()) are allocated above it.
+				mMaxKnownIndividualId = -1;
+				if (mIndividualNameIndividualMapHash) {
+					for (CIndividual* knownIndi : *mIndividualNameIndividualMapHash) {
+						if (knownIndi && knownIndi->getIndividualID() > mMaxKnownIndividualId) {
+							mMaxKnownIndividualId = knownIndi->getIndividualID();
+						}
+					}
+				}
+
 
 				mInitialBuild = mOntoData->isInitialBuild();
 
@@ -196,6 +209,7 @@ namespace Konclude {
 				mInstallRoleChainList.clear();
 				mTaggingIndividualSet.clear();
 				mInstallIndividualList.clear();
+				mAssignedIndividualIdSet.clear();
 
 				mNewBuildConceptSet.clear();
 				mNewBuildObjectRoleSet.clear();
@@ -2211,7 +2225,12 @@ namespace Konclude {
 						useIndiTag = mIndexedTriplesAssertionAccessor->getIndividualId(indiName);
 					} 
 
+					if (useIndiTag >= 0 && mAssignedIndividualIdSet.contains(useIndiTag)) {
+						// stale ID already taken by another individual in this build
+						useIndiTag = -1;
+					}
 					if (useIndiTag >= 0) {
+						mAssignedIndividualIdSet.insert(useIndiTag);
 						indi->initTag(useIndiTag);
 						mInstallIndividualList.append(indi);
 					} else {
@@ -2530,6 +2549,11 @@ namespace Konclude {
 
 			bool CConcreteOntologyUpdateBuilder::buildIndividualIDs() {
 				cint64 nextIndiID = aBox->getIndividualCount();
+				// fresh IDs must not collide with IDs reused in this build or known from earlier revisions
+				nextIndiID = qMax(nextIndiID, mMaxKnownIndividualId + 1);
+				for (cint64 assignedId : mAssignedIndividualIdSet) {
+					nextIndiID = qMax(nextIndiID, assignedId + 1);
+				}
 
 
 

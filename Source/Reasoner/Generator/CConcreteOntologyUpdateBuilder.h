@@ -302,6 +302,14 @@ namespace Konclude {
 					CBUILDLIST<CIndividual*> mTaggingIndividualSet;
 					CBUILDLIST<CIndividual*> mInstallIndividualList;
 
+					//! Individual IDs already assigned in this build; a reused ID that
+					//! is already taken gets a fresh one (see getIndividualForIndividualTerm()).
+					CBUILDSET<cint64> mAssignedIndividualIdSet;
+					//! Largest individual ID known before this build (from the
+					//! name-to-individual mapping), so fresh IDs never collide with
+					//! IDs of earlier revisions after a rebuild from the basement.
+					cint64 mMaxKnownIndividualId;
+
 					CBUILDSET<CRoleChain*> mTaggingRoleChainSet;
 					CBUILDLIST<CRoleChain*> mInstallRoleChainList;
 

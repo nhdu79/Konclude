@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RequestMessage xmlns="http://www.owllink.org/owllink#" xmlns:owl="http://www.w3.org/2002/07/owl#">
+  <CreateKB kb="http://ex/kb"/>
+  <Tell kb="http://ex/kb">
+    <owl:SubClassOf><owl:Class IRI="http://example.org/test#Father"/><owl:Class IRI="http://example.org/test#Person"/></owl:SubClassOf>
+  </Tell>
+  <Tell kb="http://ex/kb">
+    <owl:ClassAssertion><owl:Class IRI="http://example.org/test#Father"/><owl:NamedIndividual IRI="http://example.org/test#john"/></owl:ClassAssertion>
+  </Tell>
+  <GetInstances kb="http://ex/kb"><owl:Class IRI="http://example.org/test#Person"/></GetInstances>
+  <Retract kb="http://ex/kb">
+    <owl:ClassAssertion><owl:Class IRI="http://example.org/test#Father"/><owl:NamedIndividual IRI="http://example.org/test#john"/></owl:ClassAssertion>
+  </Retract>
+  <Tell kb="http://ex/kb">
+    <owl:ClassAssertion><owl:Class IRI="http://example.org/test#Person"/><owl:NamedIndividual IRI="http://example.org/test#mary"/></owl:ClassAssertion>
+  </Tell>
+  <GetInstances kb="http://ex/kb"><owl:Class IRI="http://example.org/test#Person"/></GetInstances>
+  <Tell kb="http://ex/kb">
+    <owl:ClassAssertion><owl:Class IRI="http://example.org/test#Father"/><owl:NamedIndividual IRI="http://example.org/test#john"/></owl:ClassAssertion>
+  </Tell>
+  <GetInstances kb="http://ex/kb"><owl:Class IRI="http://example.org/test#Person"/></GetInstances>
+  <GetInstances kb="http://ex/kb"><owl:Class IRI="http://example.org/test#Father"/></GetInstances>
+</RequestMessage>

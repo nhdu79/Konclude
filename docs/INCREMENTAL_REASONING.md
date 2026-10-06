@@ -114,9 +114,11 @@ All are pre-existing and not fixed. They need their own tasks.
   `COptimizedComplexExpressionAnsweringHandler::tryReuseVariableRolePropagationItem`
   dereferenced a missing item set (e.g. `?y` in `?x p ?y`) when reusing an
   item from an earlier query.
-- **Revisions never freed.** `onRevContainer` is only cleared in
-  `~CSPOntologyRevisionManager`. `CReleaseKnowledgeBaseCommand` only removes
-  the name mapping.
+- **Revisions never freed. Mostly fixed** (task 5b). The embedded layer
+  releases and deletes superseded revisions. Their precomputation saturation
+  tasks stay (~150 kB/state), since later revisions share them through the
+  TBox concepts. `CReleaseKnowledgeBaseCommand` still only removes the name
+  mapping, and `konclude_destroy_reasoner` frees almost nothing.
 - **Nondeterministic realisation of `PersonWithManySibling`** (roberts-family,
   `realisation -w 2`). Which individuals get this type changes from run to
   run, with or without the §3 fix. It is the only nondeterministic
@@ -155,17 +157,13 @@ Each task is its own change (see CLAUDE.md "Task Scope").
      `COWLlinkProcessor::processCustomsEvents`).
 4. **Branching (Option B). Deferred**: we use Option A for now. Kept as a
    possible experiment in §6.
-5. **Memory cleanup.** 5a (quadratic change history) done; 5b (freeing
-   superseded revisions inside one handle) in progress, see `docs/INCREMENTAL_WORK_LOG.md`,
-   Task 5.
-   - Free revisions superseded by a later state change, and the query
-     layers built on them. That means dropping:
-     - the revision from `onRevContainer`/`revisionHash`;
-     - its items in the shared preprocessor, precomputator, classifier and
-       realizer threads (`mOntItemHash` etc.);
-     - the cache data keyed by its `ontologyID` (`Reasoner/Kernel/Cache/`,
-       answering/realization items).
-   - Measure RSS per state with a long `embedded_state_benchmark` run.
+5. **Memory cleanup.** Mostly done; see `docs/INCREMENTAL_WORK_LOG.md`, Task 5.
+   - 5a (quadratic change history) and 5b (releasing and deleting
+     superseded revisions and query layers) are done: ~255 kB per queried
+     state (was ~1,300 and rising).
+   - Left: the precomputation saturation tasks (~150 kB/state; freeing them
+     needs a reachability analysis over saturation nodes shared through the
+     TBox concepts), and `konclude_destroy_reasoner` freeing a handle.
 6. **Powerlifted wiring** (1–3 are done): replace the smoke test in
    `../powerlifted/src/search/main.cc` (see `../powerlifted/TODO.md`).
    Consider caching answers on the Powerlifted side, since search revisits

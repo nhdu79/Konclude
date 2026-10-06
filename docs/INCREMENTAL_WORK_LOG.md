@@ -229,7 +229,7 @@ KB) for now. Branching is kept as a possible later experiment in
 `docs/INCREMENTAL_REASONING.md` §6. Next: task 5 (memory cleanup) and task
 6 (Powerlifted wiring).
 
-## Task 5: Memory cleanup. 5a done; 5b in progress (option A)
+## Task 5: Memory cleanup. 5a done; 5b done except the saturation tasks (option A)
 
 **Measurement.** New driver `Tools/EmbeddedDriver/embedded_memory_benchmark.cpp`
 reads RSS and the thread count from `/proc/self/status` while it cycles
@@ -477,7 +477,87 @@ They are requested by:
   ontology (`COptimizedKPSetRoleSubsumptionClassifierThread::createTemporaryRoleClassificationOntology`);
 - **two `CThread::event` sites**, still to be identified.
 
-**Next (stage 2d):** find who keeps each of these pools after its job is
-done (probably result data such as saturation/consistency models that hold
-the task's memory pools, and the role classifier's temporary ontologies).
-Release them with the revision, then re-measure.
+**Stage 2d done.** ~255 kB/state (500 states; was ~486
+after 2c).
+
+- **Finding the holders.** The scheduler recycles released pools through a
+  reserve (`CLimitedReserveMemoryPoolAllocationManager`), so the call stacks
+  above show where a pool was first acquired, not who keeps it. With the
+  reserve set to 0 (temporary diagnostic), the per-state holders are:
+
+  | Holder | Heap/state | Result |
+  |---|---|---|
+  | Role classifier's temporary ontology (`createTemporaryRoleClassificationOntology`) | ~52 kB | freed |
+  | `CBackendRepresentativeMemoryCache` data of the revision's `ontologyID` | ~98 kB | freed |
+  | Logger: keeps every message (`Konclude.Logging.MaxLogMessageCount` = -1) | ~20 kB (≈100 kB RSS) | capped |
+  | Precomputation saturation tasks (2 pools) + backend association allocation inside them | ~147 kB | **kept**, see below |
+  | Builder name hashes, answerer item linkers | ~10 kB | not investigated |
+
+- **Fixes.**
+  1. *Virtual destructors.* `COntologyPreprocessingItem`,
+     `COntologyRealizingItem` and `COntologyPrecomputationItem` had none, so
+     the `delete item` calls of stages 1/2a skipped the derived destructors
+     (undefined behavior; leaked e.g. each item's
+     `CCalculationConfigurationExtension`). The realizing item's destructor
+     now also guards against null temporary ontologies.
+  2. *Role classifier.* `~COptimizedKPSetRoleOntologyClassificationItem`
+     deletes the temporary ontology (after unsetting the shared consistence,
+     like the realizing item) and its two temporary individuals.
+  3. *Backend cache.* `CBackendRepresentativeMemoryCache::releaseOntologyData`
+     (event `CReleaseOntologyDataCacheEvent`, type 2011) is part of the
+     release fan-out in `CReasonerManagerThread`. On the cache thread,
+     `releaseOntologyIdentifierData`:
+     1. removes the identifier from the identifier hash and the fixed hash;
+     2. sets each remaining data version's usage count to the number of
+        reader slots that refer to it (the hash, fixed-hash and fixed-reader
+        references are dropped: the fixed reader belongs to the realizing item
+        released alongside);
+     3. deletes unreferenced versions now; the others are deleted by
+        `cleanUnusedSlots` when their slots go;
+     4. deletes the identifier's shared ontology context once no slot refers
+        to the identifier (`deleteUnreferredReleasedOntologyContexts`).
+
+     Individual association contexts with separate memory management
+     (individuals with >100 neighbours or >20 updates) are not freed.
+  4. *Logger.* `CEmbeddedReasoner` configures the logger to keep at most
+     1,000 messages; its observer copies the text it needs.
+  5. *Race in the release callback* (stage 1 bug). `CCommanderManagerThread`
+     cast the command to `CReleaseOntologyCommand` after finishing it as a
+     `CPrepareKnowledgeBaseCommand`, when the waiting issuer may already have
+     deleted it (ASan SEGV in `__dynamic_cast`). Both casts now happen first.
+
+- **Why the saturation tasks stay.** The precomputation keeps its saturation
+  tasks as models (`CSaturationTaskData::overtakeData()`). Freeing them with
+  the revision is unsafe:
+  1. Concept saturation data is shared across revisions through the TBox
+     concepts: `CTotallyOntologyPrecomputationItem::getSaturationConceptDataItem`
+     reuses the item that an earlier revision linked into the concept's
+     `CConceptSaturationReferenceLinkingData`, and its node lives in that
+     revision's task.
+  2. Nodes then chain across tasks: `CPrecomputedSaturationSubsumerExtractor`
+     follows `getSubstituteIndividualNode()` from a concept-linked node into a
+     later revision's task.
+  3. Tried and reverted: freeing all tasks (ASan use-after-free in the next
+     revision's saturation), and keeping only the tasks with concept- or
+     individual-linked nodes (use-after-free via the substitute chain). A safe
+     release needs a reachability analysis over the saturation node graph, or
+     per-revision concept saturation data.
+  4. No consistency-model tasks are kept in this workload (consistency comes
+     from the saturation); releasing those is untested and not done.
+
+- **Verified.**
+  - ASan: state/property drivers, 2 × 100-state memory benchmark, 0 errors.
+  - Normal build: state/property drivers ×5, `embedded_cq_driver`, both
+    probes, `embedded_state_benchmark`, `embedded_cq_benchmark 5 all`,
+    500-state memory benchmark.
+  - CLI vs a `HEAD` build: all 5 request files give identical responses
+    (order ignored); classification closure identical (roberts, galen);
+    realisation differs only in the random `PersonWithManySibling`.
+
+- **Hazard: `embedded_cq_benchmark` at its default 1000 iterations.** Each
+  iteration creates, loads and destroys a handle; `konclude_destroy_reasoner`
+  frees almost nothing (finding 3 above), so roberts-family leaks ~420 MB per
+  cycle. On a 22 GB machine it was OOM-killed, and systemd
+  (`DefaultOOMPolicy=stop`) then stopped the whole tmux scope, including the
+  shell. Run it with few iterations (e.g. `./embedded_cq_benchmark 5 all`)
+  until handle destruction frees its data.

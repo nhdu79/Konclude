@@ -92,6 +92,9 @@ CEmbeddedReasoner::CEmbeddedReasoner()
   ensureQCoreApplication();
 
   CLogger::getInstance()->addLogObserver(this, 70.0);
+  // By default, the logger keeps every message, which grows with every state
+  // change; observers (as this one) copy what they need.
+  CLogger::getInstance()->configureLogger(1000, 0);
 
   CConfigurationGroup *reasonerConfigGroup =
       CSingletonProvider<CReasonerConfigurationGroup>::getInstance()

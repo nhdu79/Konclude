@@ -29,5 +29,6 @@ embedded_state_benchmark
 embedded_state_driver
 embedded_state_existing_abox_probe
 embedded_property_driver
+embedded_memory_benchmark
 .ua/
 .clangd

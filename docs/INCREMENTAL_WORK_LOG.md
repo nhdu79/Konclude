@@ -228,3 +228,72 @@ Decision (2026-10-06): stay with Option A (incremental tell/retract on one
 KB) for now. Branching is kept as a possible later experiment in
 `docs/INCREMENTAL_REASONING.md` §6. Next: task 5 (memory cleanup) and task
 6 (Powerlifted wiring).
+
+## Task 5: Memory cleanup. 5a done; 5b in progress (option A)
+
+**Measurement.** New driver `Tools/EmbeddedDriver/embedded_memory_benchmark.cpp`
+reads RSS and the thread count from `/proc/self/status` while it cycles
+through states. Run: 500 states, 20 facts each, names drawn from a pool of
+100.
+
+| Mode | Before 5a | After 5a |
+|---|---|---|
+| tell + 2 queries (the real use) | 526 MB; 822 → 1,308 kB/state, **rising** | 332 MB; flat at ~660 kB/state |
+| tell/retract only | 173 MB; 98 → 595 kB/state, rising | (not re-run) |
+| queries only, one state | 23 MB; flat at ~40 kB/state | (not re-run) |
+
+**5a: quadratic change history.**
+
+- **Cause.** Each new revision copies its predecessor's build data
+  (`COntologyBuildData::referenceBuildData`). Every container stays bounded
+  except `mChangeAxiomList`, which grows ~32 entries per state: 9,545 after
+  300 states. Appending detaches the Qt list, so every revision keeps a full
+  copy of the whole history. Each basement rebuild also replayed the whole
+  history for active-entity counting.
+- **Fix** (`CRequirementConfigPreprocessingThread::countActiveEntites`,
+  basement-reset branch): compact the change list to
+  `{(axiom, added) : axiom ∈ tellAxiomSet}` and reset
+  `lastChangeCountedAxiom`. After a reset every reader starts at 0 and needs
+  only the net effect, so the results are the same.
+- **Result.** The change list stays at 51–61 entries.
+- **Limitation.** Revisions that are never queried aren't compacted (no
+  preprocessing runs for them), so the tell-only mode still grows. Real use
+  queries every state.
+- **Verified.**
+  - All 5 `Tests/incremental-*-request.xml` ×3.
+  - `embedded_state_driver` / `embedded_property_driver` ×5 each.
+  - `embedded_cq_driver`, probe, `embedded_state_benchmark`.
+  - Classification closure identical (roberts, galen); realisation identical
+    except the random `PersonWithManySibling`.
+
+**5b findings: the remaining ~660 kB per queried state.**
+
+1. **What's kept per state.** Each queried state creates 2 ontologies: the
+   state revision, which goes through preprocessor, precomputator and
+   realizer, and the query layer, which goes through the preprocessor only.
+   Nothing in Konclude ever removes per-ontology items (no release path in
+   any manager, thread or cache: `grep` for `remove`/`release` finds none).
+2. **Latent hazard.** `CEmbeddedQueryManager::resetForNewState()` deletes
+   query layers, but the shared preprocessor (`mOntItemHash`) and
+   `CPreprocessingManager::mOntoPreprocessHash` keep entries keyed by the
+   freed `CConcreteOntology*`. No address was reused over 500 states (1,000
+   distinct pointers), because memory only grows. Once 5b frees memory,
+   reuse becomes likely and a new ontology could hit a stale item, so these
+   entries must be removed first.
+3. **Recycling the handle doesn't help.** 10 × (create → load → 50 states →
+   destroy): RSS grows +30 MB per cycle and doesn't drop at destroy, and +13
+   threads stay alive per destroyed handle. `konclude_destroy_reasoner`
+   frees almost nothing.
+
+**5b options (decision needed).**
+
+| Option | What | Pros | Cons |
+|---|---|---|---|
+| A. Release superseded revisions in one handle | A "release ontology" path through every holder: revision manager (`onRevContainer`, `revisionHash`), the 4 managers' hashes + shared threads' items (preprocess, precompute, classify, realize; on their own threads), backend cache + occurrence statistics (keyed by `ontologyID`), answering items, and the ontology's own memory. Also cut `getPreviousOntologyVersion` links | Memory bounded by the current state; matches Option A use | Large: touches every component; threading/ordering risks; the author warned cleanup is incomplete |
+| B. Make `konclude_destroy_reasoner` free everything; Powerlifted recreates the handle every N states | Stop and delete threads/managers; implement the empty destructors | Coarse but conceptually simpler: no partial-liveness bookkeeping | Still many classes; recreating costs a TBox reload + first reasoning per N states |
+| C. Run Konclude in a child process that Powerlifted restarts every N states | Powerlifted side only | The OS reclaims everything; no Konclude changes | IPC/serialization per call, losing the in-process benefit |
+
+Estimate: at ~660 kB/state, 10k states ≈ 6.6 GB and 100k ≈ 66 GB.
+
+**Decision (2026-10-06).** 5b uses option A: release superseded revisions
+inside one handle. 5a was committed separately first.

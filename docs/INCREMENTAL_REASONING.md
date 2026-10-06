@@ -155,7 +155,9 @@ Each task is its own change (see CLAUDE.md "Task Scope").
      `COWLlinkProcessor::processCustomsEvents`).
 4. **Branching (Option B). Deferred**: we use Option A for now. Kept as a
    possible experiment in §6.
-5. **Memory cleanup.**
+5. **Memory cleanup.** 5a (quadratic change history) done; 5b (freeing
+   superseded revisions inside one handle) in progress, see `docs/INCREMENTAL_WORK_LOG.md`,
+   Task 5.
    - Free revisions superseded by a later state change, and the query
      layers built on them. That means dropping:
      - the revision from `onRevContainer`/`revisionHash`;

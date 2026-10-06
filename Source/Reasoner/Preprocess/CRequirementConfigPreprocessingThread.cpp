@@ -329,6 +329,19 @@ namespace Konclude {
 				if (!incRebuild && ontology->getIncrementalRevisionData()->getBasementOntology() != ontology) {
 					COntologyIncrementalRevisionData* incRevData = ontology->getIncrementalRevisionData();
 					ontology->getDataBoxes()->referenceDataBoxes(incRevData->getBasementOntology()->getDataBoxes());
+
+					// The ontology is rebuilt from the basement, i.e., from the told axioms, and the active entity
+					// counting below starts again from the first change. Hence, only the net effect of the change
+					// history is needed, which is the set of told axioms. Compacting the change list to it keeps
+					// the list (which is copied for every new revision) proportional to the current ontology
+					// instead of growing with every tell/retract of the revision history.
+					changeAxiomList->clear();
+					CONTOLOGYAXIOMSET<CAxiomExpression*>* tellAxiomSet = ontology->getBuildData()->getTellAxiomSet();
+					for (CONTOLOGYAXIOMSET<CAxiomExpression*>::const_iterator it = tellAxiomSet->constBegin(), itEnd = tellAxiomSet->constEnd(); it != itEnd; ++it) {
+						changeAxiomList->append(QPair<CAxiomExpression*,bool>(*it, true));
+					}
+					newAxiomCount = changeAxiomList->size();
+					incRevData->setLastChangeCountedAxiom(newAxiomCount);
 				} else {
 					incRevData->setPreviousBuiltOntology(searchPreviousBuiltOntologyVersion(incRevData,reqConfPreCompItem));
 					incRevData->setPreviousConsistentOntology(searchPreviousConsistentOntologyVersion(incRevData,reqConfPreCompItem));

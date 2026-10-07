@@ -112,6 +112,8 @@ namespace Konclude {
 
 
 			COptimizedComplexConceptItem::~COptimizedComplexConceptItem() {
+				// created once per item (initializeKnownPossibleInstances), only borrowed by others
+				delete mKnownInstanceItems;
 			}
 
 

@@ -739,7 +739,7 @@ predate this branch; see `docs/INCREMENTAL_REASONING.md` §4):
 The hang matters for the worker: the client has no timeout yet, so a hung
 query blocks the search.
 
-## Task 5d: Why the per-state leak survives handle destruction. Investigated; B1 fixed
+## Task 5d: Why the per-state leak survives handle destruction. Investigated; B1 and B3 fixed
 
 **Question.** Each state change costs ~1.8 kB per fact in the state, and
 `konclude_destroy_reasoner` gives none of it back (Task 5c). Where does it go?
@@ -843,7 +843,7 @@ into a context's pools; the pools are dropped in bulk, e.g.
 **Fix options** (one change each, per CLAUDE.md "Task Scope"):
 1. B1: `delete mQueryResult` in `~CComplexAnsweringQuery`. **Done**, see
    "B1 fix" below.
-2. B2/B3/B4: complete the destructors. For B2, check that no running
+2. B2/B3/B4: complete the destructors (B3 **done**, see "B3 fix" below). For B2, check that no running
    calculation still uses the job when the item is replaced or deleted.
 3. C: allocate in memory that lives until the cache has written the data
    (e.g. the cache's write-data pools, kept until teardown by 5c), or delete
@@ -891,3 +891,36 @@ deletes `mQueryResult`. Ownership checks before the change:
   - The 5 `Tests/incremental-*-request.xml` files: identical answer sets;
     only the order of the namespace attributes differs, which varies
     between runs.
+
+**B3 fix: the answering item frees its concept items.**
+- *Root.* `COptimizedComplexExpressionOntologyAnsweringItem::getComplexConceptItem`
+  creates every `COptimizedComplexConceptItem` with `new` and lists it in
+  `mComplexConceptItemContainerSet`. Nothing ever deleted one, so deleting
+  an answering handler (5b, or teardown) lost all its items.
+- *Change.*
+  - The answering item's destructor deletes them (`qDeleteAll`).
+  - `~COptimizedComplexConceptItem` deletes `mKnownInstanceItems`, which is
+    created once per item (`initializeKnownPossibleInstances`; the other
+    creation sites are a debug function and the unused
+    `searchKnownPossibleInstances`) and only borrowed elsewhere (e.g. the
+    finishing handler, for one query).
+- *Left out.* The item's other pointer fields (super/sub class sets, instance
+  sets, iterator, variable-concept items) are handed between fields and
+  partly deleted by the handler, so their ownership needs its own analysis.
+  The realizer's `COptimizedKPSetIndividualInstantiatedItemMultiHash`
+  (~0.3 MB per 100 states) has a different owner; it was wrongly grouped
+  under B3 above.
+
+| Measure | B1 only | B1 + B3 |
+|---|---|---|
+| Growth, `embedded_incremental_growth_benchmark 300 2 100 0` | 498 kB/state | 468 kB/state |
+| RSS after destroying that handle | 105.4 MB | 96.7 MB |
+| LSan leaks at 100 states (instance hashes + concept items) | 8.7 MB (1.2 MB) | 7.4 MB (0) |
+
+**Verified** as for B1:
+- the drivers, both benchmarks, handle cycles (0 threads, ~1.1 MB per
+  cycle) and the worker equivalence test pass;
+- ASan state, property and CQ drivers and the 100-state growth run show no
+  memory errors and 0 failures;
+- the CLI `sparqlfile` answers and the 5 incremental request files give
+  the same answers as the pre-B1 build.

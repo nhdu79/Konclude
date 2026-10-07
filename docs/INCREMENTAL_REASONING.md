@@ -205,7 +205,8 @@ Each task is its own change (see CLAUDE.md "Task Scope").
      pool-allocated objects with heap members, destructors that skip owned
      objects (query results are the largest), and a nulled temporary memory
      manager in the backend association handler. Fix options are listed
-     there. Fixed so far: query results (B1), 616 → 498 kB/state.
+     there. Fixed so far: query results (B1) and answerer concept items (B3),
+     616 → 468 kB/state.
    - Bounding memory now: run Konclude in a worker process restarted every N
      changes (`Tools/KoncludeWorker/`, prototype; 175 MB max at N = 50 on the
      1000-change growth workload).

@@ -66,6 +66,8 @@ namespace Konclude {
 
 			COptimizedComplexExpressionOntologyAnsweringItem::~COptimizedComplexExpressionOntologyAnsweringItem() {
 				delete mDiffStoredStatCollStrings;
+				// every concept item is created by getComplexConceptItem and listed here
+				qDeleteAll(mComplexConceptItemContainerSet);
 				if (mTestingOntology) {
 					// the consistence is shared with (and deleted by) the answered ontology
 					mTestingOntology->setConsistence(nullptr);

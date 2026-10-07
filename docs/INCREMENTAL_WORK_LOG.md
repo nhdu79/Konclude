@@ -1104,3 +1104,5 @@ write pools, freed at teardown) is unchanged.
   That is the remaining leak plus allocator retention: LSan finds 6.7 MB
   lost after 200 states.
 - So the worker process remains the reliable bound.
+- **Open:** that ~90 MB is not analyzed yet. It is tracked as TODO 5e in
+  `docs/INCREMENTAL_REASONING.md` §5.

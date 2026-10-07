@@ -228,6 +228,26 @@ Each task is its own change (see CLAUDE.md "Task Scope").
    - Bounding memory now: run Konclude in a worker process restarted every N
      changes (`Tools/KoncludeWorker/`, prototype). On the same workload: 84 MB
      max at N = 50 (was 175 MB before 5d).
+   - **TODO (5e): the ~90 MB that stays after destroying the handle.**
+     - *What is known:*
+       - after the 1000-change growth workload, process RSS after
+         `konclude_destroy_reasoner` (and `malloc_trim(0)`) is ~120 MB
+         against ~28 MB at start, with or without handle recreation;
+       - it is unknown how much of that is still allocated (lost) and how
+         much is memory the allocator keeps;
+       - LSan finds 6.7 MB lost after 200 states, but was not run at 1000.
+     - *Why it matters:* it is what keeps in-process handle recreation from
+       fully bounding memory, so the worker process is still needed.
+     - *Next steps:*
+       1. split it with `malloc_stats()` (the benchmark prints it after
+          destroying): bytes in use vs. held;
+       2. run LSan at 1000 states and group the result with
+          `Tools/HeapProfiler/lsan_owners.py`;
+       3. check how it scales (500 vs. 1000 states) to tell a per-state leak
+          from a fixed cost.
+
+       The remaining known leaks are listed at the end of Task 5d in
+       `docs/INCREMENTAL_WORK_LOG.md`.
 6. **Powerlifted wiring. Methods done, search not wired yet**; see
    `docs/INCREMENTAL_WORK_LOG.md`, Task 6.
    - `../powerlifted/src/search/konclude/state_reasoner.h`

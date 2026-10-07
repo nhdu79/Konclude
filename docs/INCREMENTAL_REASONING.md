@@ -152,6 +152,14 @@ All are pre-existing and not fixed. They need their own tasks.
   - Pre-existing: upstream `a7a80bc2` (built with the `if (concept)` typo
     fix of `056334ad`) misses `Captain(alice)` and hangs the same way.
   - Possibly related to the cardinality bug of issue #19.
+- **Backend cache association iterator oddities** (found in task 5d, not
+  fixed, effect unknown):
+  - `CBackendRepresentativeMemoryLabelCacheItemIndividualAssociationMapIterator.cpp:56`
+    compares the merged map's begin iterator with the *base* map's end
+    iterator (likely meant `mSameIndiMergedAssoMapItEnd`).
+  - `…IndividualAssociationMapExtensionData::visitIndividualIdAssociationsDescending`
+    ignores its `visitBase`/`visitSameMerged` flags and the visitor's
+    return value (so it never stops early).
 - **CLI `sparqlfile` side issues.** These were found while trying to
   reproduce §3 via SPARQL.
   - `INSERT`/`DELETE` without a graph clause read `{` as the graph name
@@ -205,9 +213,10 @@ Each task is its own change (see CLAUDE.md "Task Scope").
      pool-allocated objects with heap members, destructors that skip owned
      objects (query results are the largest), and a nulled temporary memory
      manager in the backend association handler. Fix options are listed
-     there. Fixed so far: query results (B1), answerer concept items (B3),
-     saturation jobs (B2) and backend association scratch (C),
-     616 → 385 kB/state.
+     there. Fixed: query results (B1), answerer concept items (B3), saturation
+     jobs (B2), backend association scratch (C) and the heap members of
+     pool objects (A), 616 → 314 kB/state, RSS after destroy
+     140.6 → 50.4 MB (300 states).
    - Bounding memory now: run Konclude in a worker process restarted every N
      changes (`Tools/KoncludeWorker/`, prototype; 175 MB max at N = 50 on the
      1000-change growth workload).

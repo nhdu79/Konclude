@@ -2026,7 +2026,7 @@ namespace Konclude {
 			}
 
 
-			bool CConcreteOntologyUpdateBuilder::updateName(CNamedItem* item, const QString& name) {
+			bool CConcreteOntologyUpdateBuilder::updateName(CNamedItem* item, const QString& name, CNamedItem* sharedNameSource) {
 				bool nameAdded = false;
 				if (!CIRIName::hasIRIName(item->getNameLinker(),name)) {
 					cint64 lastNameID = CName::getLastNameVersionID(item->getNameLinker());
@@ -2036,7 +2036,25 @@ namespace Konclude {
 					FOREACHHASHIT (QString prefix, CNamePrefix* namePrefix, *mNamePrefixMapHash) {
 						if (name.startsWith(prefix)) {
 							CAbbreviatedIRIName* newName = CObjectAllocator<CAbbreviatedIRIName>::allocateAndConstruct(mMemManager);
-							QString abbString = name.mid(prefix.length());
+							// Reuse an equal abbreviated name of sharedNameSource (e.g. the same
+							// individual in the previous revision), so the QString shares its data.
+							// Name objects live in the revision's memory pools, which are freed
+							// without running destructors, so a fresh copy per rebuild leaked.
+							QString abbString;
+							bool sharedAbbString = false;
+							for (CLinker<CName*>* sourceNameIt = sharedNameSource ? sharedNameSource->getNameLinker() : nullptr; sourceNameIt && !sharedAbbString; sourceNameIt = sourceNameIt->getNext()) {
+								CAbbreviatedIRIName* sourceName = dynamic_cast<CAbbreviatedIRIName*>(sourceNameIt->getData());
+								if (sourceName && sourceName->getNamePrefix() && sourceName->getNamePrefix()->getPrefixString() == prefix) {
+									QString sourceAbbString = sourceName->getAbbreviatedIRIName();
+									if (name.midRef(prefix.length()) == sourceAbbString) {
+										abbString = sourceAbbString;
+										sharedAbbString = true;
+									}
+								}
+							}
+							if (!sharedAbbString) {
+								abbString = name.mid(prefix.length());
+							}
 							newName->init(namePrefix,abbString);
 							newName->setNameVersionID(lastNameID);
 							CLinker<CName*>* newNameLinker = CObjectAllocator< CLinker<CName*> >::allocateAndConstruct(mMemManager);
@@ -2249,7 +2267,7 @@ namespace Konclude {
 					mIndividulTermIndiHash->insert(indiTermExp,indi);
 					mIndiIndividulTermHash->insert(indi,indiTermExp);
 
-					updateName(indi, indiName);
+					updateName(indi, indiName, prevIndi);
 					if (indiTermExp->getType() == CBuildExpression::BETANONYMOUSINDIVIDUAL) {
 						indi->setAnonymousIndividual(true);
 					}

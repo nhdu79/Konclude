@@ -200,6 +200,8 @@ namespace Konclude {
 						delete ontologyData;
 					}
 					for (CBackendRepresentativeMemoryCacheOntologyContext* ontologyContext : ontologyContextSet) {
+						// run the destructors of what owns heap memory, before its pools go
+						ontologyContext->destroyOwnedExtensionData();
 						memMan->releaseTemporaryMemoryPools(ontologyContext->getMemoryPoolContainer()->takeMemoryPools());
 						delete ontologyContext;
 					}
@@ -637,6 +639,8 @@ namespace Konclude {
 							// all data versions of the identifier are deleted, which shared this context
 							CBackendRepresentativeMemoryCacheOntologyContext* ontologyContext = it.value();
 							if (ontologyContext) {
+								// run the destructors of what owns heap memory, before its pools go
+								ontologyContext->destroyOwnedExtensionData();
 								memMan->releaseTemporaryMemoryPools(ontologyContext->getMemoryPoolContainer()->takeMemoryPools());
 								delete ontologyContext;
 							}
@@ -3534,6 +3538,7 @@ namespace Konclude {
 					if (!extensionData) {
 						extensionData = CObjectParameterizingAllocator< CBackendRepresentativeMemoryLabelCacheItemIndividualAssociationMapExtensionData, CBackendRepresentativeMemoryCacheContext* >::allocateAndConstructAndParameterize(context->getMemoryAllocationManager(), context);
 						labelItem->setExtensionData(CBackendRepresentativeMemoryLabelCacheItemIndividualAssociationMapExtensionData::INDIVIDUAL_ASSOCIATION_MAP, extensionData);
+						ontologyData->getOntologyContext()->addOwnedExtensionData(extensionData);
 					}
 					return extensionData;
 				}
@@ -4183,6 +4188,8 @@ namespace Konclude {
 
 
 								CMemoryPoolNewAllocationIncreasingContext newAllocContext;
+								// destroyed with the ontology context, which takes over the pools below
+								QList<CBackendRepresentativeMemoryLabelCacheItemIndividualAssociationMapExtensionData*> newExtensionDataList;
 
 								for (cint64 indiId = 0; indiId <= indiCount && indiId < vecSize; ++indiId) {
 									CBackendRepresentativeMemoryCacheIndividualAssociationData* indiAssData = ontologyData->getIndividualIdAssoiationDataVector()[indiId];
@@ -4194,12 +4201,14 @@ namespace Konclude {
 											if (!indiAssoExtData) {
 												indiAssoExtData = CObjectParameterizingAllocator< CBackendRepresentativeMemoryLabelCacheItemIndividualAssociationMapExtensionData, CMemoryPoolNewAllocationIncreasingContext* >::allocateAndConstructAndParameterize(newAllocContext.getMemoryAllocationManager(), &newAllocContext);
 												labelItem->setExtensionData(CBackendRepresentativeMemoryLabelCacheItemIndividualAssociationMapExtensionData::INDIVIDUAL_ASSOCIATION_MAP, indiAssoExtData);
+												newExtensionDataList.append(indiAssoExtData);
 											}
 											indiAssoExtData->addIndividualIdAssociation(indiAssData);
 										}
 									}
 								}
 								CMemoryPool* memoryPools = newAllocContext.takeMemoryPools();
+								ontologyData->getOntologyContext()->addOwnedExtensionData(newExtensionDataList);
 								cint64 remainingCount = ontologyData->updateIndividualLabelAssociationIndexed(true, memoryPools);
 								if (remainingCount <= 0) {
 									LOG(INFO, "::Konclude::RepresentativeBackendCache", logTr("Finished indexing all label types for %1 individuals.").arg(indiCount), this);

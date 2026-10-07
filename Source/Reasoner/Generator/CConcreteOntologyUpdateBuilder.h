@@ -138,7 +138,7 @@ namespace Konclude {
 					CDatatype* getDatatypeForDatatypeExpression(CDatatypeExpression* datatypeExp, bool forceLocalisation = false);
 					CDataLiteral* getDataLiteralForLiteralExpression(CDataLiteralExpression* dataLiteralExp, bool forceLocalisation = false);
 
-					bool updateName(CNamedItem* item, const QString& name);
+					bool updateName(CNamedItem* item, const QString& name, CNamedItem* sharedNameSource = nullptr);
 
 					bool resortAndInstallConceptsAndRolesAndIndividuals();
 					CSortedNegLinker<CConcept*>* resortConceptLinkersByTagging(CSortedNegLinker<CConcept*>* conceptLinkers, cint64 linkerCount = -1);

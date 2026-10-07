@@ -19,6 +19,7 @@
  */
 
 #include "CBackendRepresentativeMemoryCacheOntologyContext.h"
+#include "CBackendRepresentativeMemoryLabelCacheItemIndividualAssociationMapExtensionData.h"
 
 
 namespace Konclude {
@@ -57,6 +58,31 @@ namespace Konclude {
 
 				CMemoryPoolContainer* CBackendRepresentativeMemoryCacheOntologyContext::getMemoryPoolContainer() {
 					return &mMemPoolContainer;
+				}
+
+				CBackendRepresentativeMemoryCacheOntologyContext* CBackendRepresentativeMemoryCacheOntologyContext::addOwnedExtensionData(CBackendRepresentativeMemoryLabelCacheItemIndividualAssociationMapExtensionData* extensionData) {
+					mOwnedExtensionDataMutex.lock();
+					mOwnedExtensionDataList.append(extensionData);
+					mOwnedExtensionDataMutex.unlock();
+					return this;
+				}
+
+				CBackendRepresentativeMemoryCacheOntologyContext* CBackendRepresentativeMemoryCacheOntologyContext::addOwnedExtensionData(const QList<CBackendRepresentativeMemoryLabelCacheItemIndividualAssociationMapExtensionData*>& extensionDataList) {
+					mOwnedExtensionDataMutex.lock();
+					mOwnedExtensionDataList.append(extensionDataList);
+					mOwnedExtensionDataMutex.unlock();
+					return this;
+				}
+
+				CBackendRepresentativeMemoryCacheOntologyContext* CBackendRepresentativeMemoryCacheOntologyContext::destroyOwnedExtensionData() {
+					mOwnedExtensionDataMutex.lock();
+					for (CBackendRepresentativeMemoryLabelCacheItemIndividualAssociationMapExtensionData* extensionData : mOwnedExtensionDataList) {
+						// the memory itself belongs to the pools
+						extensionData->~CBackendRepresentativeMemoryLabelCacheItemIndividualAssociationMapExtensionData();
+					}
+					mOwnedExtensionDataList.clear();
+					mOwnedExtensionDataMutex.unlock();
+					return this;
 				}
 
 

@@ -44,6 +44,8 @@ namespace Konclude {
 			CABox::~CABox() {
 				delete mDeleteBoxContext;
 				COPADestroyAndRelease(mIndiVec,mMemMan);
+				// as CTBox and CRBox do with theirs: its hash nodes are plain heap memory
+				COPADestroyAndRelease(mActiveIndividualSet,mMemMan);
 			}
 
 

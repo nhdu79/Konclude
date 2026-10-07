@@ -739,7 +739,7 @@ predate this branch; see `docs/INCREMENTAL_REASONING.md` §4):
 The hang matters for the worker: the client has no timeout yet, so a hung
 query blocks the search.
 
-## Task 5d: Why the per-state leak survives handle destruction. Investigated; B1, B3, B2 (jobs) and C fixed
+## Task 5d: Why the per-state leak survives handle destruction. Investigated; A, B1, B2 (jobs), B3 and C fixed
 
 **Question.** Each state change costs ~1.8 kB per fact in the state, and
 `konclude_destroy_reasoner` gives none of it back (Task 5c). Where does it go?
@@ -847,10 +847,7 @@ into a context's pools; the pools are dropped in bulk, e.g.
    calculation still uses the job when the item is replaced or deleted.
 3. C: **done**, see "C fix" below. It turned out that none of these
    structures reaches the cache, so they only need to live for one call.
-4. A: either run the destructors before dropping the pools (e.g. walk a
-   revision's individuals/names on delete), or switch these members to
-   pool-backed containers (`CQtManagedRestrictedModification*`, as the
-   kernel already does) and pool-backed names.
+4. A: **done** for its three groups, each in its own way; see "A fix" below.
 
 Fixing 1–4 would remove ~93% of the measured growth; the rest (1.8 MB) is
 spread over classification/realization sites below 0.2 MB each.
@@ -1021,3 +1018,68 @@ state benchmark, CLI vs. the pre-B1 build). Note on `sparqlfile`: it
 streams results in parts, and which query's block a part lands in varies
 between runs of the same binary. So compare the set of result rows over the
 whole file (identical, 8 rows), not per block.
+
+**A fix: heap members of pool-allocated objects.** Each of the three groups
+has its own fix:
+- *A1, names.* A rebuild gives every individual a new name object, whose
+  abbreviated name was a new copy (`name.mid(...)`).
+  - Change: `CConcreteOntologyUpdateBuilder::updateName` takes an optional
+    source item. `getIndividualForIndividualTerm` passes `prevIndi`, the
+    same individual in the previous revision.
+  - If that item has an equal abbreviated name (same prefix string), the
+    new name shares its `QString` data, so no allocation per state. The
+    shared data stays alive, bounded by the number of distinct names.
+- *A2, backend cache maps.* The two `QMap`s of
+  `CBackendRepresentativeMemoryLabelCacheItemIndividualAssociationMapExtensionData`
+  lived in ontology-context pools, released without destructors.
+  - Why not pool-backed maps: the indexing tasks
+    (`indexIndividualLabelAssociations`) build these objects with a
+    stack-local context, so a pool-backed map would keep a dangling context
+    for later updates.
+  - Instead, `CBackendRepresentativeMemoryCacheOntologyContext` records the
+    extension data allocated in it, under a mutex:
+    - `getIndividualAssociationsExtensionData` registers each object;
+    - the indexing tasks register theirs together with their pools.
+  - `destroyOwnedExtensionData()` runs their destructors before the
+    context's pools are released, both in
+    `deleteUnreferredReleasedOntologyContexts` and at teardown.
+  - That is safe because a context is only released once all data versions
+    of its ontology are gone, and the label items holding the extension
+    data live in the same context.
+- *A3, active individual set.* `~CTBox` and `~CRBox` destroy their active
+  sets, `~CABox` didn't. It now does (`COPADestroyAndRelease`).
+  `referenceABox` never shares the pointer.
+
+| Measure | before A | + A |
+|---|---|---|
+| Growth, `embedded_incremental_growth_benchmark 300 2 100 0` | 385 kB/state | 314 kB/state |
+| RSS after destroying that handle | 70.7 MB | 50.4 MB |
+| LSan leaks at 100 states | 5.2 MB | 3.4 MB |
+| of which names / cache maps / active sets | 663 / 613 / 551 kB | 38 / 0 / 2 kB |
+| handle cycles kept (small / roberts) | ~0.95 / ~11.3 MB | ~0.87 / ~10.9 MB |
+
+**Verified** as for C:
+- ASan: state, property and CQ drivers, the growth run, the state
+  benchmark and roberts cycles show no memory errors.
+- Normal build: drivers, benchmarks and the worker equivalence test pass;
+  time per state is unchanged.
+- CLI vs. the pre-B1 build:
+  - roberts realisation: same assertions;
+  - roberts/galen classification: same closures;
+  - `sparqlfile`: same rows;
+  - the 5 incremental request files: same answers.
+
+**Where task 5d stands.** From the start of 5d to now:
+- growth 616 → 314 kB/state;
+- RSS after destroy 140.6 → 50.4 MB;
+- LSan leaks at 200 states 40.3 → 6.7 MB.
+
+What remains, all smaller:
+- the saturation data items (B2, 0.25 MB per 100 states, need the
+  reachability analysis);
+- the realizer's KPSet multi-hash (~0.3 MB);
+- the occurrence-statistics vectors (~0.24 MB);
+- many classification/realization sites below 0.2 MB each.
+
+The in-run growth that is not a leak (retained saturation tasks and cache
+write pools, freed at teardown) is unchanged.

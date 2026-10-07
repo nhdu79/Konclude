@@ -26,6 +26,9 @@
 
 // Namespace includes
 #include "CacheSettings.h"
+
+#include <QList>
+#include <QMutex>
 #include "CBackendRepresentativeMemoryCacheBaseContext.h"
 #include "CBackendRepresentativeMemoryCacheContext.h"
 
@@ -62,6 +65,8 @@ namespace Konclude {
 				 *		\brief		TODO
 				 *
 				 */
+				class CBackendRepresentativeMemoryLabelCacheItemIndividualAssociationMapExtensionData;
+
 				class CBackendRepresentativeMemoryCacheOntologyContext : public CBackendRepresentativeMemoryCacheContext {
 					// public methods
 					public:
@@ -76,6 +81,13 @@ namespace Konclude {
 
 						CMemoryPoolContainer* getMemoryPoolContainer();
 
+						// Extension data allocated in this context's pools whose members own heap
+						// memory (QMaps). Releasing the pools runs no destructors, so
+						// destroyOwnedExtensionData() must be called before. Thread-safe.
+						CBackendRepresentativeMemoryCacheOntologyContext* addOwnedExtensionData(CBackendRepresentativeMemoryLabelCacheItemIndividualAssociationMapExtensionData* extensionData);
+						CBackendRepresentativeMemoryCacheOntologyContext* addOwnedExtensionData(const QList<CBackendRepresentativeMemoryLabelCacheItemIndividualAssociationMapExtensionData*>& extensionDataList);
+						CBackendRepresentativeMemoryCacheOntologyContext* destroyOwnedExtensionData();
+
 					// protected methods
 					protected:
 
@@ -88,6 +100,8 @@ namespace Konclude {
 						cint64 mAddRelMemory;
 
 						CMemoryPoolContainer mMemPoolContainer;
+						QMutex mOwnedExtensionDataMutex;
+						QList<CBackendRepresentativeMemoryLabelCacheItemIndividualAssociationMapExtensionData*> mOwnedExtensionDataList;
 
 					// private methods
 					private:

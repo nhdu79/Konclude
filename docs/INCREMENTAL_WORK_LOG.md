@@ -738,3 +738,156 @@ predate this branch; see `docs/INCREMENTAL_REASONING.md` §4):
 
 The hang matters for the worker: the client has no timeout yet, so a hung
 query blocks the search.
+
+## Task 5d: Why the per-state leak survives handle destruction. Investigated; B1 fixed
+
+**Question.** Each state change costs ~1.8 kB per fact in the state, and
+`konclude_destroy_reasoner` gives none of it back (Task 5c). Where does it go?
+
+**Method.**
+1. *What survives.* `embedded_incremental_growth_benchmark N 2 50 0` (one
+   handle, N changes, destroyed at the end) under the live-heap profiler
+   (`Tools/HeapProfiler/`, 28-frame stacks, all sites); diff N = 100 vs 200.
+2. *Whether it is reachable.* The same benchmark linked against
+   `ReleaseEmbeddedAsan` with LeakSanitizer (`ASAN_OPTIONS=detect_leaks=1:
+   alloc_dealloc_mismatch=0:fast_unwind_on_malloc=0 LSAN_OPTIONS=max_leaks=0`),
+   N = 60/120/100/200, grouped by owner with `Tools/HeapProfiler/lsan_owners.py`.
+3. *Causality.* Patch one suspected owner, rerun under ASan, and check that
+   its leaks disappear and that ASan reports no use-after-free or double
+   free (done for B1 below, then reverted).
+
+**Findings.**
+- *All of it is unreachable.* At 200 states, LSan reports 40.3 MB leaked;
+  the profiler sees 39.8 MB live at exit. No reachable cache grows. The
+  memory is lost while the handle is running, not at teardown:
+  - when 5b deletes a superseded revision;
+  - when a task's memory is released;
+  - when a query or a precomputation item is deleted.
+
+  So no teardown code can find it; only fixing the owners (or process exit)
+  frees it.
+- *Why it is quadratic.* Each change rebuilds the whole state
+  (`IncrementalRebuild=false`, Task 1), and every rebuild allocates per
+  individual. From 100 to 200 states the main sites grow by ~22,750 objects,
+  1–3× the sum of the state sizes (1.5·s individuals at state s).
+- *Three causes* cover 25.2 of the 27.0 MB growth from 100 to 200 states
+  (LSan):
+
+| Cause | MB | Where |
+|---|---|---|
+| A. Pool-allocated objects own heap memory; freeing the pools runs no destructors | 5.5 | see A |
+| B. An owner is deleted, but its destructor doesn't delete what it owns | 15.7 | see B1–B4 |
+| C. Temporary manager set to `nullptr`, so `new` is used and nothing deletes | 4.1 | see C |
+
+**A. Pool-allocated owners** (`CObjectAllocator`/`CObjectParameterizingAllocator`
+into a context's pools; the pools are dropped in bulk, e.g.
+`~CConcreteOntology` → `delete mOntConctext` →
+`~CConcreteOntologyContextBase` deletes the pool provider):
+- Names: `CConcreteOntologyUpdateBuilder::updateName` (`.cpp:2029`, called
+  per individual at `:2252`) puts `CAbbreviatedIRIName`/`CIRIName` (with a
+  `QString`) into the revision's pools. 2.0 MB.
+- Backend cache:
+  - `CBackendRepresentativeMemoryLabelCacheItemIndividualAssociationMapExtensionData`
+    has two plain `QMap`s (`.h:88-89`) and is allocated in cache pools
+    (`CBackendRepresentativeMemoryCache.cpp:3535, 4195`). 1.8 MB.
+- Active-entity sets: `CABox::getActiveIndividualSet` (`CABox.cpp:126`, likewise
+  for TBox/RBox) puts a `CBOXSET` = `CQtSet` (plain Qt, `OntologySettings.h:402`)
+  into box pools; `~CABox` doesn't destroy it. Filled by
+  `CMappingUpdaterPreProcess::collectActiveOntologyItemsFromActiveEntities`. 1.6 MB.
+
+**B. Destructors that skip owned objects:**
+- B1, query results, 9.7 MB:
+  - The finishing handler hands the result to the query
+    (`CAbstractStreamingComplexQueryFinishingHandler.cpp:233`,
+    `setQueryResult`).
+  - `~CComplexAnsweringQuery` (`CComplexAnsweringQuery.cpp:39`) deletes only
+    `mQueryStats`.
+  - Every query's rows, binding copies and IRI strings (`getIRIName`)
+    therefore outlive `delete query` in `CEmbeddedQueryManager`.
+  - *Confirmed:* adding `delete mQueryResult` there removed all B1 leaks at
+    100 states (3.3 MB → 0, total 12.0 → 8.7 MB), with no ASan error and
+    all answers correct.
+- B2, saturation jobs and data items, 2.5 MB:
+  - `CTotallyOntologyPrecomputationItem::setSaturationCalculationJob`
+    (`.cpp:747`) overwrites `mApproxSatCalcJob` without deleting it, and the
+    destructor (`:176`) never deletes it, so the per-individual constructs
+    from `CApproximatedSaturationCalculationJobGenerator::extendApproximatedSaturationCalculationJobProcessing`
+    leak.
+  - The destructor also frees neither the free list nor
+    `mSatIDIndividualItemsHash` of `CSaturationIndividualDataItem`s
+    (`new` at `:811`).
+- B3, answerer instance hashes, 3.3 MB:
+  - `COptimizedComplexConceptInstanziatedIndividualItemHash`es are created
+    with `new` (`COptimizedComplexExpressionAnsweringHandler.cpp:8221, 8276,
+    10778, 11245`) and held by concept items.
+  - `~COptimizedComplexConceptItem` (`COptimizedComplexConceptItem.cpp:114`)
+    is empty.
+- B4, small, 0.07 MB:
+  - `~CConcreteOntologyQueryExtendedBuilder` deletes `mExpContainer` but
+    not the query expressions in `mSparqlIndividualSelectExpList`.
+  - `~COptimizedComplexExpressionAnsweringHandler` doesn't delete
+    `mJoinComputer`/`mPropagationComputer` (`.cpp:177-195`).
+
+**C. Nulled temporary manager** (4.1 MB):
+- `CSaturationNodeBackendAssociationCacheHandler::tryAssociateNodesWithBackendCache`
+  (`.cpp:1364`, upstream since `c2dc60e8`) sets
+  `calcAlgContext->mUsedTempMemMan = nullptr`.
+- Every `CObjectParameterizingAllocator<…>(getUsedTemporaryMemoryAllocationManager(), …)`
+  after it falls back to `new` (`CObjectParameterizingAllocator.h:74`): the
+  sets and hashes at `.cpp:285, 684, 733, 767, 835, 845, 1366-1386`. Nothing
+  deletes them.
+- Likely the author's intent: the write data must outlive the task's
+  temporary memory, which `handleTask` releases (`releaseAllMemory`) before
+  the next task, while the backend cache reads it later.
+
+**Fix options** (one change each, per CLAUDE.md "Task Scope"):
+1. B1: `delete mQueryResult` in `~CComplexAnsweringQuery`. **Done**, see
+   "B1 fix" below.
+2. B2/B3/B4: complete the destructors. For B2, check that no running
+   calculation still uses the job when the item is replaced or deleted.
+3. C: allocate in memory that lives until the cache has written the data
+   (e.g. the cache's write-data pools, kept until teardown by 5c), or delete
+   the structures once the write is done.
+4. A: either run the destructors before dropping the pools (e.g. walk a
+   revision's individuals/names on delete), or switch these members to
+   pool-backed containers (`CQtManagedRestrictedModification*`, as the
+   kernel already does) and pool-backed names.
+
+Fixing 1–4 would remove ~93% of the measured growth; the rest (1.8 MB) is
+spread over classification/realization sites below 0.2 MB each.
+
+**B1 fix: the query deletes its result.** `~CComplexAnsweringQuery` now
+deletes `mQueryResult`. Ownership checks before the change:
+- Every `setQueryResult` caller passes a new result, or the query's own
+  streaming result. The finishing handler skips `setQueryResult` when the
+  query already holds one (`CAbstractStreamingComplexQueryFinishingHandler.cpp:232`).
+- Readers finish before the query is deleted:
+  - the embedded layer copies the rows first;
+  - SPARQL streaming serializes in `handleQueryResult`, when the command
+    closes; the command, and with it the query, is deleted later
+    (`CGenerateQueryCommand`).
+  - JNI uses other query classes.
+- Redland subqueries can share their parent's streaming result
+  (`COptimizedComplexCompositionRedlandRasqalAnsweringHandler.cpp:306`).
+  They are never deleted, so there is no double free. Noted in the
+  destructor; not testable here (no Redland build).
+
+| Measure | Before | After |
+|---|---|---|
+| Growth, `embedded_incremental_growth_benchmark 300 2 100 0` | 616 kB/state | 498 kB/state |
+| RSS after destroying that handle | 140.6 MB | 105.4 MB |
+| LSan leaks at 100 states (B1 part) | 12.0 MB (3.3 MB) | 8.7 MB (0) |
+
+**Verified.**
+- Drivers: `embedded_cq_driver`, both probes, state and property drivers
+  (3× each), `embedded_state_benchmark 50 10 5 5` (0 problems),
+  `embedded_cq_benchmark 5 all`, `embedded_handle_cycle_benchmark small 5 10`
+  (0 threads kept, ~1.1 MB/cycle), `konclude_worker_equivalence_test`.
+- ASan: state, property and CQ drivers and the 100-state growth benchmark:
+  no use-after-free or double free, 0 failures.
+- CLI vs. a pre-fix build:
+  - `sparqlfile` (default config, disconnected-query file): identical
+    answers.
+  - The 5 `Tests/incremental-*-request.xml` files: identical answer sets;
+    only the order of the namespace attributes differs, which varies
+    between runs.

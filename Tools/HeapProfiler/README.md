@@ -15,3 +15,11 @@ python3 Tools/HeapProfiler/diff.py /tmp/live-15.<pid> /tmp/live-30.<pid>   # run
   `timeout`; that is why the command above is `timeout … env LD_PRELOAD=… ./program`.
 - Known issue: it sometimes segfaults in longer runs (≥30 states); just
   retry. `diff.py` prints the call stacks whose live bytes grew most.
+
+## Unreachable vs. reachable (LeakSanitizer)
+
+To learn whether surviving memory is lost (no pointer left) or still held
+somewhere, link a driver against `ReleaseEmbeddedAsan` and run it with
+`ASAN_OPTIONS=detect_leaks=1:alloc_dealloc_mismatch=0:fast_unwind_on_malloc=0
+LSAN_OPTIONS=max_leaks=0`. `lsan_owners.py a.log b.log` groups the reports
+of two runs by owner frame and prints the growth (used for task 5d).

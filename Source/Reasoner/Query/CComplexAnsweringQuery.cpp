@@ -38,6 +38,11 @@ namespace Konclude {
 
 			CComplexAnsweringQuery::~CComplexAnsweringQuery() {
 				delete mQueryStats;
+				// The query owns its result (setQueryResult deletes the previous one).
+				// Readers must copy or serialize it before deleting the query. Redland
+				// subqueries may share their parent's streaming result; they are never
+				// deleted, but would have to clear it first if they ever are.
+				delete mQueryResult;
 			}
 
 			CComplexAnsweringQuery* CComplexAnsweringQuery::setQueryResult(CQueryResult* queryResult) {

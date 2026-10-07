@@ -200,6 +200,12 @@ Each task is its own change (see CLAUDE.md "Task Scope").
      each state change also leaks memory that survives destruction (~1.8 kB
      per fact in the state), so recreating the handle does not yet bound
      memory. Never keep two handles alive at once (deadlock).
+   - 5d (Task 5d in the work log): why that leak survives destruction. All
+     of it is already unreachable during the run, from three causes:
+     pool-allocated objects with heap members, destructors that skip owned
+     objects (query results are the largest), and a nulled temporary memory
+     manager in the backend association handler. Fix options are listed
+     there. Fixed so far: query results (B1), 616 → 498 kB/state.
    - Bounding memory now: run Konclude in a worker process restarted every N
      changes (`Tools/KoncludeWorker/`, prototype; 175 MB max at N = 50 on the
      1000-change growth workload).

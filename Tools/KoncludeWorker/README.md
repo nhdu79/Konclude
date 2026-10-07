@@ -2,8 +2,9 @@
 
 Runs Konclude in a child process that the host restarts every N state
 changes. Process exit frees all of the worker's memory, including what
-Konclude leaks per state change (see `docs/INCREMENTAL_WORK_LOG.md`,
-Task 5c), so memory stays bounded by what one worker accumulates in N changes.
+Konclude still leaks per state change (much less since task 5d; see
+`docs/INCREMENTAL_WORK_LOG.md`, Tasks 5c and 5d), so memory stays bounded by
+what one worker accumulates in N changes.
 
 ## How it works
 
@@ -55,12 +56,15 @@ Tools/KoncludeWorker/build.sh       # the three binaries below, at the repo root
 
 ## Results (1000 changes, state grows to 1,500 facts)
 
+Measured after the leak fixes of task 5d (`docs/INCREMENTAL_WORK_LOG.md`);
+the numbers before them are in parentheses.
+
 | restartEvery | max worker RSS | total time | restarts |
 |---|---|---|---|
-| 50 | 175 MB | 17.7 s | 19 |
-| 100 | 302 MB | 18.8 s | 9 |
-| 200 | 538 MB | 19.1 s | 4 |
-| never | 1.54 GB | 20.6 s | 0 |
+| 50 | 84 MB (175 MB) | 15.9 s (17.7 s) | 19 |
+| 100 | 121 MB (302 MB) | 15.0 s (18.8 s) | 9 |
+| 200 | 191 MB (538 MB) | 15.6 s (19.1 s) | 4 |
+| never | 544 MB (1.54 GB) | 16.5 s (20.6 s) | 0 |
 
 Restarting does not cost time here: a restart (process start, load, re-tell,
 first query) takes tens of milliseconds, and a younger worker answers faster.

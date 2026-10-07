@@ -1083,3 +1083,24 @@ What remains, all smaller:
 
 The in-run growth that is not a leak (retained saturation tasks and cache
 write pools, freed at teardown) is unchanged.
+
+**Re-measured after all 5d fixes** (`embedded_incremental_growth_benchmark
+1000 2 100 <N>`, `konclude_worker_growth_benchmark 1000 <N>`,
+`embedded_memory_benchmark` defaults):
+
+| Workload | Before 5d | After 5d |
+|---|---|---|
+| In-process, no recreation: RSS at 100 / 500 / 1000 states | 67 MB / 461 MB / 1.54 GB | 55 / 211 / 543 MB |
+| In-process, recreate every 50: RSS at 1000 states | 1.11 GB | 167 MB |
+| In-process, recreate every 250: RSS at 1000 states | 1.22 GB | 280 MB |
+| RSS after the final destroy (1000 states, any N) | ~1.1 GB | ~120 MB |
+| Worker max RSS, restart every 50 / 100 / 200 / never | 175 / 302 / 538 / 1540 MB | 84 / 121 / 191 / 544 MB |
+| Worker total time (same four) | 17.7 / 18.8 / 19.1 / 20.6 s | 15.9 / 15.0 / 15.6 / 16.5 s |
+| `embedded_memory_benchmark` (500 states, fixed size) | 255 kB/state | 199 kB/state |
+
+- Recreating the handle now bounds memory to a large degree, which it did
+  not before.
+- About 90 MB of RSS above the start still stays after the last destroy.
+  That is the remaining leak plus allocator retention: LSan finds 6.7 MB
+  lost after 200 states.
+- So the worker process remains the reliable bound.

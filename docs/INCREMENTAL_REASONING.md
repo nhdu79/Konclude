@@ -120,7 +120,8 @@ All are pre-existing and not fixed. They need their own tasks.
   tasks stay (~150 kB/state), since later revisions share them through the
   TBox concepts. `CReleaseKnowledgeBaseCommand` still only removes the name
   mapping. `konclude_destroy_reasoner` frees a handle's threads and
-  reasoning data (task 5c), but not what state changes leak.
+  reasoning data (task 5c). Most of what state changes leaked is fixed
+  (task 5d), a small rest is not.
 - **Nondeterministic realisation of `PersonWithManySibling`** (roberts-family,
   `realisation -w 2`). Which individuals get this type changes from run to
   run, with or without the §3 fix. It is the only nondeterministic
@@ -199,15 +200,16 @@ Each task is its own change (see CLAUDE.md "Task Scope").
 5. **Memory cleanup.** Mostly done; see `docs/INCREMENTAL_WORK_LOG.md`, Task 5.
    - 5a (quadratic change history) and 5b (releasing and deleting
      superseded revisions and query layers) are done: ~255 kB per queried
-     state (was ~1,300 and rising).
+     state (was ~1,300 and rising); 199 kB after 5d
+     (`embedded_memory_benchmark`, 500 states).
    - Left: the precomputation saturation tasks (~150 kB/state; freeing them
      needs a reachability analysis over saturation nodes shared through the
      TBox concepts).
    - 5c (Task 5c in the work log): `konclude_destroy_reasoner` now frees
-     almost all of a handle (threads, task memory, caches). But
-     each state change also leaks memory that survives destruction (~1.8 kB
-     per fact in the state), so recreating the handle does not yet bound
-     memory. Never keep two handles alive at once (deadlock).
+     almost all of a handle (threads, task memory, caches). Each state
+     change also leaked memory that survives destruction (~1.8 kB per fact
+     in the state), so recreating the handle did not bound memory. Never
+     keep two handles alive at once (deadlock).
    - 5d (Task 5d in the work log): why that leak survives destruction. All
      of it is already unreachable during the run, from three causes:
      pool-allocated objects with heap members, destructors that skip owned
@@ -217,9 +219,15 @@ Each task is its own change (see CLAUDE.md "Task Scope").
      jobs (B2), backend association scratch (C) and the heap members of
      pool objects (A), 616 → 314 kB/state, RSS after destroy
      140.6 → 50.4 MB (300 states).
+   - Effect on the 1000-change growth workload (state grows to 1,500
+     facts):
+     - in-process, peak RSS 1.54 GB → 543 MB;
+     - recreating the handle every 50 changes now mostly bounds it
+       (1.11 GB → 167 MB), but ~90 MB stays after the last destroy;
+     - LSan still finds 6.7 MB lost after 200 states (was 40.3 MB).
    - Bounding memory now: run Konclude in a worker process restarted every N
-     changes (`Tools/KoncludeWorker/`, prototype; 175 MB max at N = 50 on the
-     1000-change growth workload).
+     changes (`Tools/KoncludeWorker/`, prototype). On the same workload: 84 MB
+     max at N = 50 (was 175 MB before 5d).
 6. **Powerlifted wiring. Methods done, search not wired yet**; see
    `docs/INCREMENTAL_WORK_LOG.md`, Task 6.
    - `../powerlifted/src/search/konclude/state_reasoner.h`

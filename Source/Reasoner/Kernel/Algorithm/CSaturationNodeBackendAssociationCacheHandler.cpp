@@ -20,6 +20,8 @@
 
 #include "CSaturationNodeBackendAssociationCacheHandler.h"
 
+#include "Scheduler/CTaskHandleMemoryPoolAllocationManager.h"
+
 
 namespace Konclude {
 
@@ -1361,7 +1363,15 @@ namespace Konclude {
 
 
 				bool CSaturationNodeBackendAssociationCacheHandler::tryAssociateNodesWithBackendCache(CIndividualSaturationProcessNodeLinker* indiSaturationAnalysingNodeLinker, CSatisfiableTaskRepresentativeBackendUpdatingAdapter* repbackUpdAdapter, CCalculationAlgorithmContext* calcAlgContext) {
-					calcAlgContext->mUsedTempMemMan = nullptr;
+					// Scratch memory for this call: the hashes, sets and linkers allocated
+					// through the used temporary manager below are only used until it returns.
+					// What the backend cache reads (asynchronously, possibly after this task)
+					// comes from the message pools (mMemAllocMan) instead. The manager used to
+					// be set to nullptr here, which turned all of these into plain news that
+					// were never deleted. The scratch pools return to the task's temporary
+					// manager when scratchMemMan goes out of scope.
+					Konclude::Scheduler::CTaskHandleMemoryPoolAllocationManager scratchMemMan(calcAlgContext->getTemporaryMemoryAllocationManager());
+					calcAlgContext->mUsedTempMemMan = &scratchMemMan;
 
 					mIndiNodeRefDetConceptSetLabelHash = CObjectParameterizingAllocator< CPROCESSHASH< CIndividualSaturationProcessNode*,QPair<CBackendRepresentativeMemoryLabelCacheItem*,CBackendRepresentativeMemoryCacheTemporaryLabelWriteDataLinker*> >, CContext* >::allocateAndConstructAndParameterize(calcAlgContext->getUsedTemporaryMemoryAllocationManager(),calcAlgContext->getUsedTaskProcessorContext());
 					mSignatureTmpRefDetConceptSetLabelHash = CObjectParameterizingAllocator< CPROCESSHASH<cint64,CBackendRepresentativeMemoryCacheTemporaryLabelWriteDataLinker*>, CContext* >::allocateAndConstructAndParameterize(calcAlgContext->getUsedTemporaryMemoryAllocationManager(),calcAlgContext->getUsedTaskProcessorContext());
@@ -1621,6 +1631,8 @@ namespace Konclude {
 					addCacheMessages(writeData,calcAlgContext);
 					commitCacheMessages(calcAlgContext);
 
+					// as before for the rest of the task: scratchMemMan is gone after the return
+					calcAlgContext->mUsedTempMemMan = nullptr;
 					return false;
 				}
 

@@ -739,7 +739,7 @@ predate this branch; see `docs/INCREMENTAL_REASONING.md` §4):
 The hang matters for the worker: the client has no timeout yet, so a hung
 query blocks the search.
 
-## Task 5d: Why the per-state leak survives handle destruction. Investigated; B1, B3 and B2 (jobs) fixed
+## Task 5d: Why the per-state leak survives handle destruction. Investigated; B1, B3, B2 (jobs) and C fixed
 
 **Question.** Each state change costs ~1.8 kB per fact in the state, and
 `konclude_destroy_reasoner` gives none of it back (Task 5c). Where does it go?
@@ -845,9 +845,8 @@ into a context's pools; the pools are dropped in bulk, e.g.
    "B1 fix" below.
 2. B2/B3/B4: complete the destructors (B3 **done**, B2 jobs **done**; see below). For B2, check that no running
    calculation still uses the job when the item is replaced or deleted.
-3. C: allocate in memory that lives until the cache has written the data
-   (e.g. the cache's write-data pools, kept until teardown by 5c), or delete
-   the structures once the write is done.
+3. C: **done**, see "C fix" below. It turned out that none of these
+   structures reaches the cache, so they only need to live for one call.
 4. A: either run the destructors before dropping the pools (e.g. walk a
    revision's individuals/names on delete), or switch these members to
    pool-backed containers (`CQtManagedRestrictedModification*`, as the
@@ -975,3 +974,50 @@ deletes `mQueryResult`. Ownership checks before the change:
   - roberts realisation: identical assertions (except the known-random
     `PersonWithManySibling`);
   - `sparqlfile` and the 5 incremental request files: same answers.
+
+**C fix: scratch pools for `tryAssociateNodesWithBackendCache`.**
+- *What the cache reads.* The cache processes the write data
+  asynchronously (`ThreadedUpdateSynchronization` defaults to true, so
+  `CBackendRepresentativeMemoryCache::writeCachedData` posts an event).
+  - The write data and its linkers are allocated in the message pools
+    (`mMemAllocMan`, `CBackendAssociationCacheHandler::prepareCacheMessages`).
+  - On commit, those pools go to the cache with the data.
+  - Label data copies cache values; it doesn't keep the handler's
+    structures.
+- *What leaked.* Everything allocated through the used temporary manager in
+  this call tree is scratch, used only until the call returns:
+  - the member hashes and lists set up at its start;
+  - the role sets and hashes in the `determine*`/`get*` helpers (in both
+    handler files);
+  - role and assertion linkers, nominal connection data,
+    `CCacheValueTmpLabelReferenceData`.
+
+  Their container nodes already lived in task memory
+  (`getUsedTaskProcessorContext()` → the task-handle manager).
+- *Change.* A local `CTaskHandleMemoryPoolAllocationManager scratchMemMan`
+  replaces the `nullptr`:
+  - it takes its pools from the task's temporary manager and returns them
+    when it goes out of scope;
+  - the used manager is reset to `nullptr` before the return, as before,
+    for the rest of the task.
+- *Poisoning experiment* (temporary, reverted). A subclass filled every
+  scratch pool with `0xAB` before releasing it, so any later read would see
+  garbage. With it:
+  - all drivers, both benchmarks, roberts handle cycles, the growth run and
+    the worker equivalence test passed;
+  - CLI roberts realisation and roberts/galen classification were identical
+    to the pre-fix build.
+
+| Measure | B1 + B3 + B2 | + C |
+|---|---|---|
+| Growth, `embedded_incremental_growth_benchmark 300 2 100 0` | 447 kB/state | 385 kB/state |
+| RSS after destroying that handle | 89.0 MB | 70.7 MB |
+| Time per state at state 300 | 11.3 ms | 10.6 ms |
+| roberts handle cycle, kept per cycle | ~13 MB | ~11.3 MB |
+| LSan leaks at 100 states (association handler) | 6.7 MB (1.46 MB) | 5.2 MB (0) |
+
+**Verified** as for B2 (normal build, ASan incl. roberts cycles and the
+state benchmark, CLI vs. the pre-B1 build). Note on `sparqlfile`: it
+streams results in parts, and which query's block a part lands in varies
+between runs of the same binary. So compare the set of result rows over the
+whole file (identical, 8 rows), not per block.

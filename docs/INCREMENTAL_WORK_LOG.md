@@ -678,3 +678,63 @@ leaks included.
 **Status.** The `embedded_cq_benchmark` hazard above is gone (it now keeps
 ~13 MB per cycle on roberts). Open: the per-revision mallocs (they are also
 most of the in-handle growth); until then, bound memory with the worker.
+
+## Task 6: Powerlifted wiring. Methods and test done; search not wired yet
+
+**Goal.** Give Powerlifted's search the methods to keep Konclude's ABox equal
+to a search state and to answer mko queries, through the worker process
+(Task 5c), and run them in a test there.
+
+**Powerlifted side** (`../powerlifted`, not committed by this task):
+
+1. *Build.* `build.py --konclude` (CMake `USE_KONCLUDE`) no longer links
+   `libKonclude`/Qt. It compiles `Tools/KoncludeWorker/konclude_worker_client.cpp`
+   into a `konclude_client` library and bakes in the worker path
+   (`KONCLUDE_WORKER_PATH`, CMake `KONCLUDE_WORKER`, default
+   `<KONCLUDE_REPO_ROOT>/konclude_worker`). The in-process wrapper
+   `src/search/konclude_reasoner.h` is gone; `--use-konclude` now only
+   starts a worker (smoke test in `main.cc`).
+2. *`KoncludeStateReasoner`* (`src/search/konclude/state_reasoner.{h,cc}`):
+   - `KoncludeVocabulary`: task predicate → class/property IRI, plus an
+     object-IRI prefix. Unlisted predicates (`type@object`, `QUERY<i>`,
+     `=`, …) are never sent.
+   - `facts_of(state)` (static facts included), `diff(from, to)`,
+     `set_state(state)` / `apply_diff(diff)`: one worker state change with
+     only the diff; none if nothing changed.
+   - `answer(query)`: certain answers as object-index tuples;
+     `entailed(query, candidates)`: the candidates (e.g. upperbound minus
+     lowerbound answers) that are certain answers.
+   - `KoncludeQuery` has one SPARQL SELECT per connected component; the
+     answers are their product, because Konclude answers only the first
+     component of a disconnected pattern (see
+     `docs/INCREMENTAL_REASONING.md` §4). An empty binding is an error, not
+     a dropped row.
+3. *Test.* `konclude_test TASK.lifted ONTOLOGY.ofn [WORKER] [RESTART_EVERY]`,
+   run by `dev/test-konclude.py`. It runs on the translated team task
+   with `dev/ontologies/team.ofn`, a functional-syntax copy of `team.owl`;
+   the embedded build reads no Turtle. It checks:
+   - the initial state's mko answers;
+   - the plan (recruit red bob) (recruit red carol), as a diff and as
+     `set_state`;
+   - goal entailment, then a jump back to the initial state (2 retracts);
+   - the disconnected-pattern error;
+   - worker restarts.
+
+**Verified.**
+- `dev/test-konclude.py`: PASS with a restart every 0 / 1 / 2 / 3 changes.
+  `Captain(alice)` is reported as a known issue (max-cardinality bug, §4).
+- Powerlifted `dev/run-tests.py --minimal`: all pass with and without
+  `--konclude` (needs `.venv/bin` and VAL's `validate` on `PATH`).
+- `search --use-konclude` on team prints "Konclude worker smoke test: OK".
+  The search then aborts with the existing "Actions with negated
+  preconditions not supported yet" (team's `(not (mko …))`), with or
+  without `--use-konclude`.
+
+**Found** (not fixed; all three also occur on upstream `a7a80bc2`, so they
+predate this branch; see `docs/INCREMENTAL_REASONING.md` §4):
+- disconnected queries are answered only in part;
+- a max-cardinality entailment is missed (`Tests/max-cardinality-realisation.ofn`);
+- realisation hangs (`Tests/max-cardinality-realisation-hang.ofn`).
+
+The hang matters for the worker: the client has no timeout yet, so a hung
+query blocks the search.

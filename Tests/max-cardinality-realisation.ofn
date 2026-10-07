@@ -1,0 +1,26 @@
+Prefix(:=<http://www.semanticweb.org/anon/ontologies/2026/9/Team/>)
+Prefix(owl:=<http://www.w3.org/2002/07/owl#>)
+
+Ontology(<http://www.semanticweb.org/anon/ontologies/2026/9/Team>
+
+Declaration(Class(:Team))
+Declaration(Class(:Player))
+Declaration(Class(:Captain))
+Declaration(Class(:Substitute))
+Declaration(ObjectProperty(:hasCaptain))
+Declaration(ObjectProperty(:hasMember))
+
+ObjectPropertyDomain(:hasCaptain :Team)
+ObjectPropertyRange(:hasCaptain :Player)
+ObjectPropertyDomain(:hasMember :Team)
+ObjectPropertyRange(:hasMember :Player)
+
+SubClassOf(:Team ObjectSomeValuesFrom(:hasCaptain :Captain))
+SubClassOf(:Team ObjectMaxCardinality(1 :hasCaptain :Player))
+SubClassOf(:Team ObjectMinCardinality(2 :hasMember :Player))
+SubClassOf(:Player ObjectUnionOf(:Captain :Substitute))
+DisjointClasses(:Captain :Substitute)
+
+ObjectPropertyAssertion(:hasCaptain :red :alice)
+ObjectPropertyAssertion(:hasMember :blue :bob)
+)

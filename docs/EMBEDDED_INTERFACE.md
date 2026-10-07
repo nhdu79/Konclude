@@ -145,40 +145,30 @@ Debug build notes:
 - Library `compile_commands.json` for clangd:
   `compiledb -n -o compile_commands.json make -f MakefileEmbedded`.
 
-## 5. Linking into Powerlifted
+## 5. Using it from Powerlifted
 
-Powerlifted (`../powerlifted`) builds with CMake and links the library as a
-prebuilt imported target. The setup below is already in place.
+Powerlifted (`../powerlifted`) runs Konclude in the worker process
+(`Tools/KoncludeWorker/`, see its README), not in-process: the search
+compiles only the client and links neither this library nor Qt.
 
-1. **Build the library** (§4).
-2. **Declare it in `src/search/CMakeLists.txt`:**
-   ```cmake
-   set(KONCLUDE_REPO_ROOT "/home/zinzin2312/repos/Konclude" CACHE PATH "Konclude checkout built with KoncludeEmbedded.pro")
-   add_library(Konclude SHARED IMPORTED)
-   set_target_properties(Konclude PROPERTIES
-       IMPORTED_LOCATION "${KONCLUDE_REPO_ROOT}/ReleaseEmbedded/libKonclude.so.1.0.0"
-       INTERFACE_INCLUDE_DIRECTORIES "${KONCLUDE_REPO_ROOT}/Source/Control/Interface/Embedded")
-   target_link_libraries(search PRIVATE project_options Konclude)
-   set_target_properties(search PROPERTIES
-       BUILD_RPATH "${KONCLUDE_REPO_ROOT}/ReleaseEmbedded"
-       INSTALL_RPATH "${KONCLUDE_REPO_ROOT}/ReleaseEmbedded")
-   ```
-   This links the checkout directly, without copying it. Vendor a copy
-   under `src/search/third_party/konclude/` once the API is stable.
-3. **Wrapper and switches.** The RAII wrapper is
-   `src/search/konclude_reasoner.h`. Linking is opt-in with
-   `build.py --konclude` (CMake `USE_KONCLUDE`); using it needs
-   `--use-konclude`.
-4. **Check the link:** `ldd builds/release/search/search | grep -i konclude`
-   must point into `ReleaseEmbedded/`.
+1. **Build** the library (§4), then the worker: `Tools/KoncludeWorker/build.sh`.
+2. **Build Powerlifted** with `python build.py --konclude` (CMake
+   `USE_KONCLUDE`). `src/search/CMakeLists.txt` compiles
+   `konclude_worker_client.cpp` from `KONCLUDE_REPO_ROOT` (default: this
+   checkout) and sets `KONCLUDE_WORKER_PATH` to `KONCLUDE_WORKER`
+   (default `<KONCLUDE_REPO_ROOT>/konclude_worker`); override either with
+   `-D…`. Configuring fails if the worker binary is missing.
+3. **Use** `src/search/konclude/state_reasoner.h` (`KoncludeStateReasoner`):
+   `set_state(DBState)` sends the diff, `answer`/`entailed` run mko queries.
+   `--use-konclude` (search option) is only a worker smoke test so far.
+4. **Test:** `python dev/test-konclude.py` (exit code 0 = pass).
 
 Troubleshooting:
 
-- `libKonclude.so.1 => not found`: the rpath is missing, or the CMake cache
-  holds a stale `KONCLUDE_REPO_ROOT`. Delete `builds/<type>` and rebuild.
-- Undefined `konclude_*` symbols: Konclude isn't linked into that target.
-  `datalog_test` needs it too if it uses the reasoner.
-- At runtime the Qt5 `.so` files (`libQt5Core`, `Xml`, `Network`,
-  `Concurrent`) must be installed on the machine that runs `search`.
-- macOS: `KoncludeEmbedded.pro` sets `-install_name @rpath/`. Without it,
-  dyld ignores the consumer's rpath.
+- Ontologies must be OWL 2 XML or functional syntax; the embedded build
+  reads no Turtle/RDF.
+- The worker needs the Qt5 runtime `.so` files (`libQt5Core`, `Xml`,
+  `Network`, `Concurrent`) and finds `libKonclude.so.1` through its rpath.
+- Changing the client's sources needs a Powerlifted rebuild; changing
+  Konclude needs only `Tools/EmbeddedDriver/rebuild.sh` and
+  `Tools/KoncludeWorker/build.sh`.

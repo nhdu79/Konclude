@@ -28,8 +28,9 @@ How the interface works internally, and how to build, test and link it:
 | `konclude_execute_conjunctive_query(sparql)` + `konclude_query_result_*` | Single-BGP SPARQL SELECT against the installed head |
 | `konclude_check_consistency` / `konclude_check_satisfiability` | Boolean queries |
 
-Powerlifted's wrapper (`../powerlifted/src/search/konclude_reasoner.h`)
-calls exactly these signatures. Driver results (`Tools/EmbeddedDriver/rebuild.sh`):
+Powerlifted uses them through the worker process
+(`Tools/KoncludeWorker/`, whose client mirrors these calls) and
+`KoncludeStateReasoner` (§5, task 6). Driver results (`Tools/EmbeddedDriver/rebuild.sh`):
 
 | Driver | Result |
 |---|---|
@@ -125,6 +126,32 @@ All are pre-existing and not fixed. They need their own tasks.
   run, with or without the §3 fix. It is the only nondeterministic
   assertion out of 5,419. It may be related to cardinality reasoning
   (issue #19 is a cardinality completeness bug).
+- **Disconnected queries answered only in part** (found in task 6). For a
+  basic graph pattern with several connected components, e.g.
+  `SELECT ?t ?p WHERE { ?t a :Team . ?p a :Player }`, each answer row binds
+  only the first component's variables; the others have no cell, so
+  `konclude_query_result_binding` returns `""` for them. The embedded copy
+  (`CEmbeddedQueryManager.cpp`, the loop over
+  `getVariableBindingsAnswersIterator()`) copies the rows as the answerer
+  built them, so the cause is in the answerer. The CLI (`sparqlfile`,
+  default config) is wrong too: it returns one-cell rows binding `?t` to
+  the teams and the players. Pre-existing: upstream `a7a80bc2` gives the
+  same CLI output. Workaround: query each component separately and take the
+  product (Powerlifted's `KoncludeStateReasoner` does).
+- **Max-cardinality entailments missed, or realization hangs** (found in
+  task 6, also with the CLI `realisation -w 2`).
+  - `Tests/max-cardinality-realisation.ofn` (the team ontology plus
+    `hasCaptain(red, alice)`): `Team ⊑ ∃hasCaptain.Captain`,
+    `Team ⊑ ≤1 hasCaptain.Player` and range `Player` entail
+    `Captain(alice)`, but neither realisation nor a CQ returns it.
+    Consistency checking is complete here: adding `Substitute(alice)` makes
+    the ontology inconsistent.
+  - `Tests/max-cardinality-realisation-hang.ofn` (the same without the min
+    cardinality, union, disjointness and `hasMember` axioms): realisation and
+    the first CQ never finish; consistency checking does.
+  - Pre-existing: upstream `a7a80bc2` (built with the `if (concept)` typo
+    fix of `056334ad`) misses `Captain(alice)` and hangs the same way.
+  - Possibly related to the cardinality bug of issue #19.
 - **CLI `sparqlfile` side issues.** These were found while trying to
   reproduce §3 via SPARQL.
   - `INSERT`/`DELETE` without a graph clause read `{` as the graph name
@@ -135,6 +162,9 @@ All are pre-existing and not fixed. They need their own tasks.
     `Konclude.Answering.UnsatisfiableNonInstanceStatisticsChecking`) read
     zero occurrence statistics for fresh revisions, so it emptied results.
   - With that check off, realization hung.
+  - With `-c Configs/querying-config.xml`, even a plain `LOAD` + `SELECT`
+    hangs after "Scheduling processing of (realization) requirements"
+    (upstream `a7a80bc2` too); the default config answers.
 
 ## 5. Next round — tasks in order
 
@@ -173,10 +203,20 @@ Each task is its own change (see CLAUDE.md "Task Scope").
    - Bounding memory now: run Konclude in a worker process restarted every N
      changes (`Tools/KoncludeWorker/`, prototype; 175 MB max at N = 50 on the
      1000-change growth workload).
-6. **Powerlifted wiring** (1–3 are done): replace the smoke test in
-   `../powerlifted/src/search/main.cc` (see `../powerlifted/TODO.md`).
-   Consider caching answers on the Powerlifted side, since search revisits
-   similar states.
+6. **Powerlifted wiring. Methods done, search not wired yet**; see
+   `docs/INCREMENTAL_WORK_LOG.md`, Task 6.
+   - `../powerlifted/src/search/konclude/state_reasoner.h`
+     (`KoncludeStateReasoner`): turns a `DBState` into the diff to the facts
+     Konclude holds and answers mko queries, through the worker process
+     (5c). `konclude_test` (`dev/test-konclude.py`) runs it on the team task.
+   - Missing, on the Powerlifted side: the translator must write the
+     vocabulary (predicate → IRI), the ontology in OWL 2 XML or functional
+     syntax, and each mko's query (one SPARQL SELECT per connected
+     component); the search must call `set_state`/`entailed` when an mko's
+     lowerbound and upperbound answers differ.
+   - Consider caching answers on the Powerlifted side, since search revisits
+     similar states.
+   - Blocking correctness for some ontologies: the max-cardinality bug (§4).
 
 ## 6. Later experiment: branching (Option B)
 

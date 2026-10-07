@@ -3,10 +3,11 @@
 // Process exit frees all of the worker's memory, so memory is bounded by what
 // one worker accumulates in restartEvery changes (see README.md here).
 //
-// Same methods as Powerlifted's KoncludeReasoner (src/search/konclude_reasoner.h),
-// plus result accessors. Needs only konclude_embedded.h for the assertion
-// structs; it does not link libKonclude or Qt. Not thread-safe; at most one
-// state change or query at a time.
+// Mirrors the embedded C API (konclude_embedded.h); Powerlifted compiles it
+// into its search (src/search/konclude/state_reasoner.h). Needs only
+// konclude_embedded.h for the assertion structs; it does not link
+// libKonclude or Qt. Not thread-safe; at most one state change or query at a
+// time.
 
 #ifndef KONCLUDE_WORKER_CLIENT_H
 #define KONCLUDE_WORKER_CLIENT_H
@@ -53,7 +54,9 @@ public:
   int resultRowCount() const;
   int resultVariableCount() const;
   const char *resultVariableName(int varIndex) const;
-  const char *resultBinding(int row, int varIndex) const; // nullptr if unbound
+  // nullptr if unbound; "" for a variable of a later component of a
+  // disconnected pattern (see docs/INCREMENTAL_REASONING.md §4)
+  const char *resultBinding(int row, int varIndex) const;
 
   bool checkConsistency(bool *consistent);
   bool checkSatisfiability(const std::string &classIRI, bool *satisfiable);

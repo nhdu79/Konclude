@@ -26,11 +26,14 @@ Task 5c), so memory stays bounded by what one worker accumulates in N changes.
    failed request is retried once.
 
 The client needs only `konclude_embedded.h` (for the assertion structs); it
-does not link libKonclude or Qt. Its methods mirror Powerlifted's
-`KoncludeReasoner` (`src/search/konclude_reasoner.h`): `ok`, `loadOntology`,
-`tellAndRetract`, `query`, `lastError`, plus `tellAndRetractAssertions`,
-result accessors, consistency/satisfiability checks, and diagnostics
-(`workerPid`, `workerRssKb`, `restartCount`).
+does not link libKonclude or Qt. Its methods mirror the embedded C API:
+`ok`, `loadOntology`, `tellAndRetract`, `tellAndRetractAssertions`, `query`
+and result accessors, consistency/satisfiability checks, `lastError`, and
+diagnostics (`workerPid`, `workerRssKb`, `restartCount`).
+
+Powerlifted compiles this client into its search (`build.py --konclude`)
+and uses it through `src/search/konclude/state_reasoner.h` there; see
+`docs/EMBEDDED_INTERFACE.md` §5.
 
 ## Build and test (from the repo root)
 

@@ -739,7 +739,7 @@ predate this branch; see `docs/INCREMENTAL_REASONING.md` §4):
 The hang matters for the worker: the client has no timeout yet, so a hung
 query blocks the search.
 
-## Task 5d: Why the per-state leak survives handle destruction. Investigated; B1 and B3 fixed
+## Task 5d: Why the per-state leak survives handle destruction. Investigated; B1, B3 and B2 (jobs) fixed
 
 **Question.** Each state change costs ~1.8 kB per fact in the state, and
 `konclude_destroy_reasoner` gives none of it back (Task 5c). Where does it go?
@@ -843,7 +843,7 @@ into a context's pools; the pools are dropped in bulk, e.g.
 **Fix options** (one change each, per CLAUDE.md "Task Scope"):
 1. B1: `delete mQueryResult` in `~CComplexAnsweringQuery`. **Done**, see
    "B1 fix" below.
-2. B2/B3/B4: complete the destructors (B3 **done**, see "B3 fix" below). For B2, check that no running
+2. B2/B3/B4: complete the destructors (B3 **done**, B2 jobs **done**; see below). For B2, check that no running
    calculation still uses the job when the item is replaced or deleted.
 3. C: allocate in memory that lives until the cache has written the data
    (e.g. the cache's write-data pools, kept until teardown by 5c), or delete
@@ -924,3 +924,54 @@ deletes `mQueryResult`. Ownership checks before the change:
   memory errors and 0 failures;
 - the CLI `sparqlfile` answers and the 5 incremental request files give
   the same answers as the pre-B1 build.
+
+**B2 fix (jobs only): delete a saturation job once its calculation is done.**
+- *Root.* Each saturation job (`CTotallyPrecomputationThread`, five
+  `getApproximatedSaturationCalculationJob` sites) was stored on the
+  precomputation item (`setSaturationCalculationJob`) and never deleted,
+  with its per-individual constructs.
+- *Why deleting is safe.*
+  1. `CConcurrentTaskCalculationManager::calculateJob` builds the task
+     from the job synchronously
+     (`CSatisfiableCalculationTaskFromCalculationJobGenerator`).
+  2. The task copies values from the constructs and keeps only data the job
+     doesn't own: linkings, individuals, and the adapters, which
+     `~CApproximatedSaturationCalculationJob` doesn't delete.
+  3. Neither `getSaturationCalculationJob` (item or callback event) is ever
+     called, and every saturation job is submitted through
+     `CPrecomputationThread::processCalculationJob`, so it gets a
+     completion callback.
+- *Change.* The saturation-callback branch of
+  `CPrecomputationThread::processCustomsEvents` deletes the job after
+  `precomputationTested`. The item's pointer is marked as not owning. It is
+  not deleted in the setter, because jobs of one item can run in parallel.
+- *Left out: the `CSaturationIndividualDataItem`s* (~0.25 MB per 100 states).
+  - An item is the individual's reference linking. The task's saturation
+    nodes point to it and it points back
+    (`setIndividualProcessNodeForIndividual`).
+  - Saturation tasks are retained until teardown (5c), and their data is
+    shared across revisions (5b).
+  - So freeing the items when a precomputation item is deleted needs the
+    same reachability analysis as the retained saturation tasks.
+
+| Measure | B1 + B3 | + B2 jobs |
+|---|---|---|
+| Growth, `embedded_incremental_growth_benchmark 300 2 100 0` | 468 kB/state | 447 kB/state |
+| RSS after destroying that handle | 96.7 MB | 89.0 MB |
+| LSan leaks at 100 states (jobs + constructs) | 7.4 MB (0.66 MB) | 6.7 MB (0) |
+
+**Verified.**
+- Normal build:
+  - the drivers, both benchmarks and the worker equivalence test pass;
+  - handle cycles keep 0 threads (small ~1.0 MB, roberts ~13 MB per cycle,
+    unchanged).
+- ASan, no memory errors:
+  - state, property and CQ drivers;
+  - the 100-state growth run;
+  - `embedded_state_benchmark 30 10 5 5`;
+  - roberts handle cycles.
+- CLI vs. the pre-B1 build:
+  - roberts and galen classification: identical subsumption closures;
+  - roberts realisation: identical assertions (except the known-random
+    `PersonWithManySibling`);
+  - `sparqlfile` and the 5 incremental request files: same answers.

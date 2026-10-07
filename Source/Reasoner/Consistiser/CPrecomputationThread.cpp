@@ -305,6 +305,11 @@ namespace Konclude {
 
 					precomputationTested(ontPreCompItem,testingItem,spcce);
 
+					// The task was built from the job when it was submitted (calculateJob)
+					// and keeps only data the job doesn't own (linkings, adapters), so the
+					// job is no longer needed.
+					delete spcce->getSaturationCalculationJob();
+
 					if (statisticCollection) {
 						ontPreCompItem->reuseCalculationStatisticsCollection(statisticCollection);
 					}

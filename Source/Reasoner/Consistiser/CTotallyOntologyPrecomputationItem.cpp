@@ -745,6 +745,7 @@ namespace Konclude {
 			}
 
 			CTotallyOntologyPrecomputationItem* CTotallyOntologyPrecomputationItem::setSaturationCalculationJob(CApproximatedSaturationCalculationJob* calculationJob) {
+				// not owned: CPrecomputationThread deletes the job once its calculation is done
 				mApproxSatCalcJob = calculationJob;
 				return this;
 			}
